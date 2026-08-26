@@ -1,0 +1,15 @@
+node_modules
+.next
+coverage
+playwright-report
+test-results
+.turbo
+.pnpm-store
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+dist
+out
+
