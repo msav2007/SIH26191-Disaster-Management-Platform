@@ -1,16 +1,18 @@
 import { render, screen } from '@testing-library/react';
 
-import HomePage from '@/app/page';
+import DashboardPage from '@/app/(app)/dashboard/page';
 
-describe('HomePage', () => {
-  it('renders the landing page with the command center entry point', () => {
-    render(<HomePage />);
+describe('DashboardPage', () => {
+  it('renders the command center dashboard overview', async () => {
+    const Component = await DashboardPage();
+    render(Component);
 
     expect(
       screen.getByRole('heading', {
-        name: /Production-grade foundation for an authority-facing disaster relocation decision platform/i,
+        name: /Multi-Hazard Disaster Relocation Command Center/i,
       }),
     ).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: /Open Command Center/i })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /Open GIS Workspace/i })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /Statutory Reports/i })).toBeInTheDocument();
   });
 });

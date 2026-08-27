@@ -1,22 +1,47 @@
 @import 'tailwindcss';
 
 :root {
-  --bg: #eef4fb;
-  --bg-accent: #dbe7f6;
+  --bg: #f3f6fa;
+  --bg-accent: #e5edf7;
   --surface: #ffffff;
-  --surface-muted: #f5f8fc;
-  --surface-strong: #0e1b30;
-  --border: #d8e2ef;
-  --border-strong: #294266;
-  --text: #0f1c2f;
-  --text-muted: #52637b;
-  --text-inverse: #eaf2fb;
-  --accent: #0f766e;
-  --accent-strong: #0c4a6e;
-  --warning: #b45309;
-  --danger: #b91c1c;
-  --success: #166534;
-  --shadow-soft: 0 12px 32px rgba(14, 27, 48, 0.08);
+  --surface-muted: #f8fafc;
+  --surface-strong: #0b1526;
+  --border: #d4dfed;
+  --border-strong: #1e3a5f;
+  --text: #0b1526;
+  --text-muted: #4b5d73;
+  --text-inverse: #f0f6fc;
+  
+  --accent: #0284c7;
+  --accent-strong: #0369a1;
+  --accent-soft: #e0f2fe;
+
+  --critical: #dc2626;
+  --critical-soft: #fee2e2;
+  --critical-border: #fca5a5;
+
+  --high: #d97706;
+  --high-soft: #fef3c7;
+  --high-border: #fcd34d;
+
+  --moderate: #ca8a04;
+  --moderate-soft: #fef9c3;
+  --moderate-border: #fde047;
+
+  --safe: #16a34a;
+  --safe-soft: #dcfce7;
+  --safe-border: #86efac;
+
+  --info: #2563eb;
+  --info-soft: #dbeafe;
+  --info-border: #93c5fd;
+
+  --neutral: #64748b;
+  --neutral-soft: #f1f5f9;
+  --neutral-border: #cbd5e1;
+
+  --shadow-subtle: 0 1px 3px rgba(11, 21, 38, 0.05), 0 1px 2px rgba(11, 21, 38, 0.03);
+  --shadow-panel: 0 4px 12px rgba(11, 21, 38, 0.06);
 }
 
 * {
@@ -36,10 +61,11 @@ body {
     Aptos,
     'Noto Sans',
     'Helvetica Neue',
+    system-ui,
     sans-serif;
   background:
-    radial-gradient(circle at top left, rgba(15, 118, 110, 0.14), transparent 28%),
-    linear-gradient(180deg, var(--bg-accent) 0%, var(--bg) 48%, #f8fbff 100%);
+    radial-gradient(circle at top left, rgba(2, 132, 199, 0.08), transparent 32%),
+    linear-gradient(180deg, var(--bg-accent) 0%, var(--bg) 60%, #ffffff 100%);
 }
 
 a {
@@ -61,8 +87,67 @@ textarea {
 
 .surface-grid {
   background-image:
-    linear-gradient(rgba(41, 66, 102, 0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(41, 66, 102, 0.04) 1px, transparent 1px);
-  background-size: 24px 24px;
+    linear-gradient(rgba(14, 30, 54, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(14, 30, 54, 0.03) 1px, transparent 1px);
+  background-size: 20px 20px;
 }
 
+.tabnum {
+  font-variant-numeric: tabular-nums;
+}
+
+.label-xs {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+}
+
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 1.2cm;
+  }
+
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+    font-size: 11pt;
+  }
+
+  aside,
+  nav,
+  .no-print,
+  button,
+  .print-hide {
+    display: none !important;
+  }
+
+  .print-only {
+    display: block !important;
+  }
+
+  .print-page {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+    background: #ffffff !important;
+  }
+
+  table {
+    page-break-inside: auto;
+  }
+
+  tr {
+    page-break-inside: avoid;
+    page-break-after: auto;
+  }
+
+  .page-break {
+    page-break-before: always;
+  }
+}

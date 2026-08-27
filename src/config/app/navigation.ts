@@ -27,6 +27,11 @@ export const appNavigation: NavigationItem[] = [
     description: 'Future authority-ready report generation.',
   },
   {
+    href: '/scenarios',
+    label: 'Scenario Simulator',
+    description: 'Multi-hazard climate and environmental impact simulation.',
+  },
+  {
     href: '/admin',
     label: 'Administration',
     description: 'Platform governance, configuration, and diagnostics.',
