@@ -29,7 +29,9 @@ export function ScenarioImpactKpiStrip({ summary }: ScenarioImpactKpiStripProps)
         <p className="tabnum mt-1 text-xl font-black text-sky-700">
           {totalHabitationsEscalated}
         </p>
-        <p className="text-[10px] text-slate-500">Of {summary.totalHabitationsEvaluated} assessed</p>
+        <p className="text-[10px] text-slate-500 font-medium">
+          {totalHabitationsEscalated > 0 ? `${totalHabitationsEscalated} of ${summary.totalHabitationsEvaluated} escalated` : 'All at baseline level'}
+        </p>
       </div>
 
       {/* 2. Critical Settlements Shift */}
@@ -38,10 +40,16 @@ export function ScenarioImpactKpiStrip({ summary }: ScenarioImpactKpiStripProps)
           Critical Tiers
         </p>
         <div className="mt-1 flex items-baseline gap-1.5">
-          <span className="tabnum text-xl font-black text-red-700">{scenarioCriticalHabitations}</span>
-          <span className="tabnum text-xs font-bold text-red-600">(+{newlyCriticalHabitations})</span>
+          <span className="tabnum text-xl font-black text-red-700">
+            {baselineCriticalHabitations} → {scenarioCriticalHabitations}
+          </span>
+          {newlyCriticalHabitations > 0 && (
+            <span className="tabnum text-xs font-bold text-red-600">(+{newlyCriticalHabitations})</span>
+          )}
         </div>
-        <p className="text-[10px] text-red-600">Was {baselineCriticalHabitations} in baseline</p>
+        <p className="text-[10px] text-red-600">
+          {newlyCriticalHabitations > 0 ? `+${newlyCriticalHabitations} newly critical` : 'No new critical habitations'}
+        </p>
       </div>
 
       {/* 3. Immediate Relocation Shift */}
@@ -50,10 +58,16 @@ export function ScenarioImpactKpiStrip({ summary }: ScenarioImpactKpiStripProps)
           Immediate Relocation (0–6mo)
         </p>
         <div className="mt-1 flex items-baseline gap-1.5">
-          <span className="tabnum text-xl font-black text-amber-700">{scenarioImmediateRelocations}</span>
-          <span className="tabnum text-xs font-bold text-amber-600">(+{newlyImmediateRelocations})</span>
+          <span className="tabnum text-xl font-black text-amber-700">
+            {baselineImmediateRelocations} → {scenarioImmediateRelocations}
+          </span>
+          {newlyImmediateRelocations > 0 && (
+            <span className="tabnum text-xs font-bold text-amber-600">(+{newlyImmediateRelocations})</span>
+          )}
         </div>
-        <p className="text-[10px] text-amber-700">Was {baselineImmediateRelocations} in baseline</p>
+        <p className="text-[10px] text-amber-700">
+          {newlyImmediateRelocations > 0 ? `+${newlyImmediateRelocations} immediate mandate` : 'No urgent escalation'}
+        </p>
       </div>
 
       {/* 4. Population at Elevated Risk */}
@@ -64,7 +78,9 @@ export function ScenarioImpactKpiStrip({ summary }: ScenarioImpactKpiStripProps)
         <p className="tabnum mt-1 text-xl font-black text-slate-900">
           +{additionalPopulationAtRisk.toLocaleString('en-IN')}
         </p>
-        <p className="text-[10px] text-slate-500">Residents in escalated tiers</p>
+        <p className="text-[10px] text-slate-500">
+          {additionalPopulationAtRisk > 0 ? 'Residents entering high tiers' : 'Zero additional risk exposure'}
+        </p>
       </div>
 
       {/* 5. Additional Relocation Demand */}
@@ -75,7 +91,9 @@ export function ScenarioImpactKpiStrip({ summary }: ScenarioImpactKpiStripProps)
         <p className="tabnum mt-1 text-xl font-black text-slate-900">
           {additionalRelocationDemand.toLocaleString('en-IN')}
         </p>
-        <p className="text-[10px] text-slate-500">Immediate absorption demand</p>
+        <p className="text-[10px] text-slate-500">
+          {additionalRelocationDemand > 0 ? 'Newly displaced residents' : 'Baseline demand sufficient'}
+        </p>
       </div>
 
       {/* 6. Net Absorption Headroom / Deficit */}
@@ -107,7 +125,7 @@ export function ScenarioImpactKpiStrip({ summary }: ScenarioImpactKpiStripProps)
         >
           {capacityDeficit > 0
             ? `${capacityDeficit.toLocaleString('en-IN')} person deficit`
-            : 'Sufficient headroom'}
+            : 'Sufficient safe headroom'}
         </p>
       </div>
     </div>

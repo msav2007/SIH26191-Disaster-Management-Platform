@@ -5,7 +5,6 @@ export function AppLogo() {
     <Link className="group flex items-center gap-3 transition-opacity hover:opacity-95" href="/dashboard">
       <div className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-cyan-500 to-blue-700 shadow-md shadow-cyan-900/30 ring-1 ring-white/20">
         <span className="font-mono text-xs font-black tracking-wider text-white">SDMA</span>
-        <span className="absolute -bottom-0.5 -right-0.5 size-2.5 rounded-full border-2 border-[#09132b] bg-emerald-400" />
       </div>
       <div className="min-w-0">
         <div className="flex items-center gap-1.5">

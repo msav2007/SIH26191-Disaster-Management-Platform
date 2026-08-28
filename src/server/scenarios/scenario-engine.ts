@@ -40,7 +40,10 @@ export function simulateHabitationScenario(
     );
   } else if (habitation.primaryHazard === 'flood') {
     scenarioHazardRaw = Math.round(
-      habitation.factors.hazardIntensity * modifiers.rainfallMultiplier * modifiers.floodIntensityMultiplier,
+      habitation.factors.hazardIntensity *
+        modifiers.rainfallMultiplier *
+        ((modifiers.floodIntensityMultiplier + modifiers.slopeSaturationFactor) / 2) +
+        modifiers.cloudburstSurge * 0.50,
     );
   } else if (habitation.primaryHazard === 'cloudburst') {
     scenarioHazardRaw = Math.round(
@@ -48,11 +51,16 @@ export function simulateHabitationScenario(
     );
   } else if (habitation.primaryHazard === 'coastal_erosion') {
     scenarioHazardRaw = Math.round(
-      habitation.factors.hazardIntensity * modifiers.floodIntensityMultiplier * (modifiers.rainfallMultiplier > 1 ? 1.08 : 1),
+      habitation.factors.hazardIntensity *
+        modifiers.floodIntensityMultiplier *
+        (modifiers.rainfallMultiplier > 1 ? 1.08 : 1) +
+        modifiers.cloudburstSurge * 0.25,
     );
   } else {
     scenarioHazardRaw = Math.round(
-      habitation.factors.hazardIntensity * ((modifiers.rainfallMultiplier + modifiers.slopeSaturationFactor) / 2),
+      habitation.factors.hazardIntensity *
+        ((modifiers.rainfallMultiplier + modifiers.slopeSaturationFactor) / 2) +
+        modifiers.cloudburstSurge * 0.30,
     );
   }
 

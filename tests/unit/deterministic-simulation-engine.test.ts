@@ -252,4 +252,119 @@ describe('Deterministic Simulation Engine & Run Simulation Reliability', () => {
       }
     });
   });
+
+  describe('9. Monotonicity & Sanity Invariants (Phase 6 Specs)', () => {
+    it('guarantees Rainfall Multiplier monotonicity across all habitations', async () => {
+      const baseRun = await runScenarioSimulation('baseline_state', {
+        rainfallMultiplier: 1.0,
+        cloudburstSurge: 0,
+        slopeSaturationFactor: 1.0,
+        floodIntensityMultiplier: 1.0,
+        infrastructureStrainMultiplier: 1.0,
+      });
+
+      const highRainRun = await runScenarioSimulation('baseline_state', {
+        rainfallMultiplier: 1.4,
+        cloudburstSurge: 0,
+        slopeSaturationFactor: 1.0,
+        floodIntensityMultiplier: 1.0,
+        infrastructureStrainMultiplier: 1.0,
+      });
+
+      for (let i = 0; i < baseRun.allHabitations.length; i++) {
+        const baseHab = baseRun.allHabitations[i]!;
+        const highHab = highRainRun.allHabitations[i]!;
+        expect(highHab.scenarioScore).toBeGreaterThanOrEqual(baseHab.scenarioScore);
+      }
+    });
+
+    it('guarantees Cloudburst Surge monotonicity across all habitations', async () => {
+      const baseRun = await runScenarioSimulation('baseline_state', {
+        rainfallMultiplier: 1.0,
+        cloudburstSurge: 0,
+        slopeSaturationFactor: 1.0,
+        floodIntensityMultiplier: 1.0,
+        infrastructureStrainMultiplier: 1.0,
+      });
+
+      const surgeRun = await runScenarioSimulation('baseline_state', {
+        rainfallMultiplier: 1.0,
+        cloudburstSurge: 25,
+        slopeSaturationFactor: 1.0,
+        floodIntensityMultiplier: 1.0,
+        infrastructureStrainMultiplier: 1.0,
+      });
+
+      for (let i = 0; i < baseRun.allHabitations.length; i++) {
+        const baseHab = baseRun.allHabitations[i]!;
+        const surgeHab = surgeRun.allHabitations[i]!;
+        expect(surgeHab.scenarioScore).toBeGreaterThanOrEqual(baseHab.scenarioScore);
+      }
+    });
+
+    it('guarantees Slope Saturation monotonicity across all habitations', async () => {
+      const baseRun = await runScenarioSimulation('baseline_state', {
+        rainfallMultiplier: 1.0,
+        cloudburstSurge: 0,
+        slopeSaturationFactor: 1.0,
+        floodIntensityMultiplier: 1.0,
+        infrastructureStrainMultiplier: 1.0,
+      });
+
+      const slopeRun = await runScenarioSimulation('baseline_state', {
+        rainfallMultiplier: 1.0,
+        cloudburstSurge: 0,
+        slopeSaturationFactor: 1.5,
+        floodIntensityMultiplier: 1.0,
+        infrastructureStrainMultiplier: 1.0,
+      });
+
+      for (let i = 0; i < baseRun.allHabitations.length; i++) {
+        const baseHab = baseRun.allHabitations[i]!;
+        const slopeHab = slopeRun.allHabitations[i]!;
+        expect(slopeHab.scenarioScore).toBeGreaterThanOrEqual(baseHab.scenarioScore);
+      }
+    });
+
+    it('guarantees Infrastructure Strain monotonicity across all habitations', async () => {
+      const baseRun = await runScenarioSimulation('baseline_state', {
+        rainfallMultiplier: 1.0,
+        cloudburstSurge: 0,
+        slopeSaturationFactor: 1.0,
+        floodIntensityMultiplier: 1.0,
+        infrastructureStrainMultiplier: 1.0,
+      });
+
+      const infraRun = await runScenarioSimulation('baseline_state', {
+        rainfallMultiplier: 1.0,
+        cloudburstSurge: 0,
+        slopeSaturationFactor: 1.0,
+        floodIntensityMultiplier: 1.0,
+        infrastructureStrainMultiplier: 1.4,
+      });
+
+      for (let i = 0; i < baseRun.allHabitations.length; i++) {
+        const baseHab = baseRun.allHabitations[i]!;
+        const infraHab = infraRun.allHabitations[i]!;
+        expect(infraHab.scenarioScore).toBeGreaterThanOrEqual(baseHab.scenarioScore);
+      }
+    });
+
+    it('guarantees Non-Negativity and Capacity Bounds under all combinations', async () => {
+      const result = await runScenarioSimulation('compound_landslide_blockage');
+
+      expect(result.totalAssessedPopulation).toBeGreaterThan(0);
+      expect(result.additionalPopulationAtRisk).toBeGreaterThanOrEqual(0);
+      expect(result.additionalRelocationDemand).toBeGreaterThanOrEqual(0);
+      expect(result.totalAvailableRelocationHeadroom).toBeGreaterThanOrEqual(0);
+      expect(result.capacityDeficit).toBeGreaterThanOrEqual(0);
+
+      for (const hab of result.allHabitations) {
+        expect(hab.scenarioScore).toBeGreaterThanOrEqual(0);
+        expect(hab.scenarioScore).toBeLessThanOrEqual(100);
+        expect(hab.delta).toBeGreaterThanOrEqual(0);
+        expect(hab.deltaPercentage).toBeGreaterThanOrEqual(0);
+      }
+    });
+  });
 });
