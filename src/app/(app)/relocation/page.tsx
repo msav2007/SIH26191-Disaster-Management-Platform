@@ -13,12 +13,14 @@ import { getRelocationSites } from '@/server/repositories/relocation-sites';
 export interface RelocationPageProps {
   searchParams?: Promise<{
     habitationId?: string;
+    siteId?: string;
   }>;
 }
 
 export default async function RelocationPage(props: RelocationPageProps) {
   const searchParams = props.searchParams ? await props.searchParams : undefined;
   const targetHabitationId = searchParams?.habitationId ?? null;
+  const targetSiteId = searchParams?.siteId ?? null;
 
   const [plans, kpis, rawSites] = await Promise.all([
     listAllRelocationPlans(),
@@ -51,6 +53,7 @@ export default async function RelocationPage(props: RelocationPageProps) {
 
       <RelocationWorkspace
         initialHabitationId={targetHabitationId}
+        initialSiteId={targetSiteId}
         kpis={kpis}
         plans={plans}
         siteInventory={siteInventory}

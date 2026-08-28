@@ -8,7 +8,16 @@ import {
   listHabitationRiskAssessments,
 } from '@/server/risk/risk-service';
 
-export default async function HabitationsPage() {
+export interface HabitationsPageProps {
+  searchParams?: Promise<{
+    selected?: string;
+  }>;
+}
+
+export default async function HabitationsPage(props: HabitationsPageProps) {
+  const searchParams = props.searchParams ? await props.searchParams : undefined;
+  const initialSelectedId = searchParams?.selected ?? null;
+
   const [items, rollup] = await Promise.all([
     listHabitationRiskAssessments(),
     getRegionalRiskRollup(),
@@ -32,7 +41,11 @@ export default async function HabitationsPage() {
         title="Vulnerable Habitations Prioritization"
       />
 
-      <HabitationsWorkspace items={items} rollup={rollup} />
+      <HabitationsWorkspace
+        initialSelectedId={initialSelectedId}
+        items={items}
+        rollup={rollup}
+      />
     </div>
   );
 }

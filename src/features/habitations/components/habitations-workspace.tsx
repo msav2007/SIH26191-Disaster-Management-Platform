@@ -12,6 +12,7 @@ import { HabitationKpiSummary } from './habitation-kpi-summary';
 import { HabitationPrioritizationTable } from './habitation-prioritization-table';
 
 export interface HabitationsWorkspaceProps {
+  initialSelectedId?: string | null | undefined;
   items: HabitationWithRisk[];
   rollup: {
     totalHabitations: number;
@@ -28,8 +29,18 @@ export interface HabitationsWorkspaceProps {
   };
 }
 
-export function HabitationsWorkspace({ items, rollup }: HabitationsWorkspaceProps) {
-  const [selectedItem, setSelectedItem] = useState<HabitationWithRisk | null>(() => items[0] ?? null);
+export function HabitationsWorkspace({
+  initialSelectedId,
+  items,
+  rollup,
+}: HabitationsWorkspaceProps) {
+  const [selectedItem, setSelectedItem] = useState<HabitationWithRisk | null>(() => {
+    if (initialSelectedId) {
+      const match = items.find((i) => i.habitation.id === initialSelectedId);
+      if (match) return match;
+    }
+    return items[0] ?? null;
+  });
 
   return (
     <div className="space-y-6">

@@ -100,13 +100,13 @@ export function ScenarioControlPanel({
       <div className="mt-4">
         <div className="flex items-center justify-between mb-1.5">
           <label className="text-[11px] font-bold uppercase tracking-wider text-slate-700 block" htmlFor="scenario-preset-selector">
-            <span className="text-sky-700 font-black mr-1">STEP 1:</span> Choose Scenario Model Preset
+            <span className="text-blue-700 font-black mr-1">STEP 1:</span> Choose Scenario Model Preset
           </label>
           <span className="text-[10px] text-slate-500 font-mono">Preset ID: {selectedPresetId}</span>
         </div>
         <select
           id="scenario-preset-selector"
-          className="h-9 w-full rounded-lg border border-slate-200 bg-slate-50/60 px-3 text-xs font-semibold text-slate-900 transition-colors focus:border-cyan-500 focus:bg-white focus:outline-none disabled:opacity-60"
+          className="h-9.5 w-full rounded-lg border border-slate-300 bg-white px-3 text-xs font-semibold text-slate-900 shadow-xs transition-colors hover:border-slate-400 focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 focus:outline-none disabled:opacity-60"
           disabled={isSimulating}
           onChange={(e) => onPresetChange(e.target.value)}
           value={selectedPresetId}
@@ -117,14 +117,14 @@ export function ScenarioControlPanel({
             </option>
           ))}
         </select>
-        <p className="mt-1.5 text-xs text-slate-500 leading-relaxed">{currentPreset.description}</p>
+        <p className="mt-1.5 text-xs text-slate-600 leading-relaxed">{currentPreset.description}</p>
       </div>
 
       {/* 3. Step 2: Scenario Parameter Sliders */}
       <div className="mt-5">
         <div className="mb-2">
           <span className="text-[11px] font-bold uppercase tracking-wider text-slate-700">
-            <span className="text-sky-700 font-black mr-1">STEP 2:</span> Adjust Hazard & Stress Modifiers
+            <span className="text-blue-700 font-black mr-1">STEP 2:</span> Adjust Hazard & Stress Modifiers
           </span>
         </div>
         <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2 lg:grid-cols-4">

@@ -2,6 +2,7 @@ import { z } from 'zod';
 import type {
   Habitation,
   HazardType,
+  RedZone,
   RelocationSite,
 } from '@/types/domain';
 import type { FactorWeights } from '@/server/risk/risk-config';
@@ -185,3 +186,40 @@ export function validateRelocationSites(sites: RelocationSite[]): void {
     }
   }
 }
+
+export const redZoneSchema = z.object({
+  id: z.string().min(1),
+  name: z.string().min(1),
+  district: z.string().min(1),
+  primaryHazard: z.enum(hazardTypes),
+  severity: z.enum(['critical', 'high', 'moderate', 'low']),
+  areaSqKm: z.number().positive('Area must be positive.'),
+  affectedPopulation: z.number().int().nonnegative('Affected population cannot be negative.'),
+  coordinates: z.object({
+    latitude: z.number().min(-90).max(90),
+    longitude: z.number().min(-180).max(180),
+  }),
+});
+
+export function validateRedZones(zones: RedZone[]): void {
+  if (!Array.isArray(zones) || zones.length === 0) {
+    throw new CalculationValidationError('Red zones collection cannot be empty.');
+  }
+
+  const seenIds = new Set<string>();
+  for (const z of zones) {
+    if (seenIds.has(z.id)) {
+      throw new CalculationValidationError(`Duplicate red zone ID detected: '${z.id}'`);
+    }
+    seenIds.add(z.id);
+
+    const parsed = redZoneSchema.safeParse(z);
+    if (!parsed.success) {
+      throw new CalculationValidationError(
+        `Invalid red zone data for '${z.id}': ${parsed.error.message}`,
+        parsed.error.format(),
+      );
+    }
+  }
+}
+

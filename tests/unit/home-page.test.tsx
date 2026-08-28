@@ -8,7 +8,7 @@ describe('HomePage', () => {
 
     expect(
       screen.getByRole('heading', {
-        name: /Production-grade foundation for an authority-facing disaster relocation decision platform/i,
+        name: /Production Decision-Support System for Multi-Hazard Relocation/i,
       }),
     ).toBeInTheDocument();
     expect(screen.getByRole('link', { name: /Open Command Center/i })).toBeInTheDocument();

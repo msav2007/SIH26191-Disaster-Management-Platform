@@ -134,7 +134,7 @@ export function ReportsWorkspace({
       <div className="no-print flex flex-wrap items-center justify-between gap-3 rounded-xl border border-slate-200 bg-white p-4 shadow-xs">
         <div className="flex flex-wrap items-center gap-3">
           {/* Report Type Selector */}
-          <div className="flex rounded-lg border border-slate-200 bg-slate-100 p-0.5">
+          <div className="flex rounded-lg border border-slate-200 bg-slate-100 p-1">
             <button
               className={`rounded-md px-3.5 py-1.5 text-xs font-semibold transition-all ${
                 reportType === 'executive_summary'
@@ -173,7 +173,7 @@ export function ReportsWorkspace({
           {/* District Filter */}
           <select
             aria-label="Filter reports by district"
-            className="h-8.5 rounded-lg border border-slate-200 bg-slate-50/60 px-3 text-xs font-semibold text-slate-900 focus:border-cyan-500 focus:bg-white focus:outline-none"
+            className="h-8.5 rounded-lg border border-slate-300 bg-white px-3 text-xs font-semibold text-slate-900 shadow-xs hover:border-slate-400 focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 focus:outline-none"
             onChange={(e) => setSelectedDistrict(e.target.value)}
             value={selectedDistrict}
           >
@@ -194,7 +194,7 @@ export function ReportsWorkspace({
               <select
                 id="habitation-report-selector"
                 aria-label="Select target habitation for report generation"
-                className="h-8.5 rounded-lg border border-slate-200 bg-slate-50/60 px-3 text-xs font-semibold text-slate-900 focus:border-cyan-500 focus:bg-white focus:outline-none"
+                className="h-8.5 rounded-lg border border-slate-300 bg-white px-3 text-xs font-semibold text-slate-900 shadow-xs hover:border-slate-400 focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 focus:outline-none"
                 onChange={(e) => handleHabitationChange(e.target.value)}
                 value={selectedHabitationId}
               >

@@ -2,10 +2,10 @@ export const siteConfig = {
   name: 'SIH26191 Disaster Management Platform',
   shortName: 'SIH26191 Command Center',
   description:
-    'Phase 0 foundation for a GIS-enabled disaster-relocation decision-support platform.',
+    'Production Decision-Support System for Multi-Hazard Relocation.',
   problemCode: 'SIH26191 [SW]',
-  phaseLabel: 'Phase 0 Foundation',
+  phaseLabel: 'Production Decision Support',
   dataDisclaimer:
-    'This foundation does not ship official government data. Future demo datasets must be clearly labeled as simulated or demo data.',
+    'Seeded and simulated test records are explicitly tagged as DEMO DATA for statutory integrity.',
 } as const;
 

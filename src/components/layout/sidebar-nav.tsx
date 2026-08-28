@@ -31,9 +31,11 @@ function getNavIcon(href: string) {
 export function SidebarNav({
   groups,
   items,
+  onNavigate,
 }: {
   groups?: NavigationGroup[];
   items?: NavigationItem[];
+  onNavigate?: () => void;
 }) {
   const pathname = usePathname();
 
@@ -66,17 +68,18 @@ export function SidebarNav({
                     className={cn(
                       'group flex items-center justify-between gap-3 rounded-lg px-3 py-2 text-xs font-medium transition-all',
                       isActive
-                        ? 'bg-gradient-to-r from-cyan-950/80 to-blue-950/60 text-white shadow-xs ring-1 ring-cyan-500/40'
-                        : 'text-slate-300 hover:bg-slate-900/40 hover:text-white',
+                        ? 'bg-blue-600 text-white font-semibold shadow-xs'
+                        : 'text-slate-300 hover:bg-slate-800/60 hover:text-white',
                     )}
                     href={item.href}
+                    onClick={() => onNavigate?.()}
                   >
                     <div className="flex items-center gap-2.5">
                       <span
                         className={cn(
                           'transition-colors',
                           isActive
-                            ? 'text-cyan-400'
+                            ? 'text-white'
                             : 'text-slate-400 group-hover:text-slate-300',
                         )}
                       >
@@ -85,12 +88,15 @@ export function SidebarNav({
                       <span>{item.label}</span>
                     </div>
 
-                    {isActive && (
-                      <span className="size-1.5 rounded-full bg-cyan-400 shadow-xs shadow-cyan-400/80" />
-                    )}
-
                     {item.badge && (
-                      <span className="rounded bg-cyan-950 px-1.5 py-0.5 text-[9px] font-bold text-cyan-300 ring-1 ring-cyan-500/30">
+                      <span
+                        className={cn(
+                          'rounded px-1.5 py-0.5 text-[9px] font-bold',
+                          isActive
+                            ? 'bg-blue-800 text-blue-100'
+                            : 'bg-slate-800 text-cyan-300 ring-1 ring-cyan-500/20',
+                        )}
+                      >
                         {item.badge}
                       </span>
                     )}

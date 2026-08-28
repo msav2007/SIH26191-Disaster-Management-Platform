@@ -4,74 +4,85 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { buttonStyles } from '@/components/ui/button';
 import { ShieldAlertIcon, CheckIcon, BuildingIcon, MapPinIcon } from '@/components/ui/icons';
+import { AVAILABLE_ROLES, getActiveRole, setActiveRole } from '@/lib/auth/session';
 
-const roles = [
+const roleItems = [
   {
-    id: 'sdma_admin',
-    title: 'SDMA Relief Commissioner / Admin',
+    id: AVAILABLE_ROLES.sdma_admin.id,
+    title: AVAILABLE_ROLES.sdma_admin.title,
     desc: 'Full executive command, scenario simulation, and statutory relocation orders.',
     icon: ShieldAlertIcon,
-    badge: 'FULL ACCESS',
+    badge: AVAILABLE_ROLES.sdma_admin.badge,
+    jurisdiction: AVAILABLE_ROLES.sdma_admin.jurisdiction,
   },
   {
-    id: 'district_collector',
-    title: 'District Collector / Magistrate',
+    id: AVAILABLE_ROLES.district_collector.id,
+    title: AVAILABLE_ROLES.district_collector.title,
     desc: 'District prioritization review, site approvals, and resettlement planning.',
     icon: BuildingIcon,
-    badge: 'DISTRICT GOVERNANCE',
+    badge: AVAILABLE_ROLES.district_collector.badge,
+    jurisdiction: AVAILABLE_ROLES.district_collector.jurisdiction,
   },
   {
-    id: 'geotech_surveyor',
-    title: 'Field Geotechnical Surveyor',
+    id: AVAILABLE_ROLES.geotech_surveyor.id,
+    title: AVAILABLE_ROLES.geotech_surveyor.title,
     desc: 'Topographic slope data verification, household audits, and sensor logging.',
     icon: MapPinIcon,
-    badge: 'FIELD AUDIT',
+    badge: AVAILABLE_ROLES.geotech_surveyor.badge,
+    jurisdiction: AVAILABLE_ROLES.geotech_surveyor.jurisdiction,
   },
 ];
 
 export function LoginPanel() {
-  const [selectedRole, setSelectedRole] = useState('sdma_admin');
+  const [selectedRoleId, setSelectedRoleId] = useState<string>(() => {
+    return getActiveRole().id;
+  });
+
+  const handleSelectRole = (roleId: string) => {
+    setSelectedRoleId(roleId);
+    setActiveRole(roleId);
+  };
 
   return (
     <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
       <div className="flex items-center gap-3">
-        <div className="flex size-11 items-center justify-center rounded-xl bg-gradient-to-br from-cyan-600 to-sky-800 text-white shadow-sm ring-1 ring-white/20">
+        <div className="flex size-11 items-center justify-center rounded-xl bg-blue-700 text-white shadow-sm ring-1 ring-white/20">
           <ShieldAlertIcon className="size-6" />
         </div>
         <div>
-          <span className="text-[11px] font-bold uppercase tracking-wider text-sky-700">
-            National Disaster Management Authority / SDMA
+          <span className="text-[11px] font-bold uppercase tracking-wider text-blue-700">
+            State Disaster Management Authority
           </span>
           <h1 className="text-xl font-black text-slate-900">
-            Disaster Management & Relocation Decision Platform
+            Disaster Relocation Intelligence Platform
           </h1>
         </div>
       </div>
 
       <p className="mt-4 text-xs text-slate-600 leading-relaxed">
-        Select your authorized role profile to access the operational command center, risk triage queues, and relocation capacity engines.
+        Select your authorized statutory role profile to enter the operational command center, risk triage queues, and carrying capacity allocation engines.
       </p>
 
       <div className="mt-6 space-y-3">
-        {roles.map((role) => {
-          const isSelected = selectedRole === role.id;
+        {roleItems.map((role) => {
+          const isSelected = selectedRoleId === role.id;
           const Icon = role.icon;
           return (
             <button
               key={role.id}
               className={`w-full text-left rounded-xl border p-4 transition-all ${
                 isSelected
-                  ? 'border-cyan-500 bg-cyan-50/40 ring-2 ring-cyan-500/20'
+                  ? 'border-blue-600 bg-blue-50/70 ring-2 ring-blue-600/25 shadow-xs'
                   : 'border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50/60'
               }`}
-              onClick={() => setSelectedRole(role.id)}
+              onClick={() => handleSelectRole(role.id)}
               type="button"
             >
               <div className="flex items-start justify-between gap-3">
                 <div className="flex items-center gap-3">
                   <div
                     className={`flex size-9 items-center justify-center rounded-lg ${
-                      isSelected ? 'bg-cyan-600 text-white' : 'bg-slate-100 text-slate-600'
+                      isSelected ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-600'
                     }`}
                   >
                     <Icon className="size-4.5" />
@@ -79,6 +90,9 @@ export function LoginPanel() {
                   <div>
                     <span className="font-bold text-xs text-slate-900">{role.title}</span>
                     <p className="mt-0.5 text-[11px] text-slate-500">{role.desc}</p>
+                    <span className="mt-1 inline-block text-[10px] text-slate-400 font-mono">
+                      Jurisdiction: {role.jurisdiction}
+                    </span>
                   </div>
                 </div>
 
@@ -86,7 +100,7 @@ export function LoginPanel() {
                   <span className="rounded bg-slate-100 px-1.5 py-0.5 font-mono text-[9px] font-bold text-slate-700">
                     {role.badge}
                   </span>
-                  {isSelected && <CheckIcon className="size-4 text-cyan-600 font-bold" />}
+                  {isSelected && <CheckIcon className="size-4 text-blue-600 font-bold" />}
                 </div>
               </div>
             </button>
@@ -103,6 +117,7 @@ export function LoginPanel() {
         <Link
           className={buttonStyles({ size: 'md', variant: 'primary' })}
           href="/dashboard"
+          onClick={() => setActiveRole(selectedRoleId)}
         >
           Enter Command Dashboard →
         </Link>

@@ -70,9 +70,11 @@ export function ScenarioComparisonTable({
                 return (
                   <tr
                     key={r.habitation.id}
-                    className={`cursor-pointer transition-all ${
+                    aria-label={`Inspect simulation result for ${r.habitation.name}`}
+                    aria-pressed={isSelected}
+                    className={`cursor-pointer transition-all focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-inset ${
                       isSelected
-                        ? 'bg-sky-50/80 ring-1 ring-inset ring-sky-300'
+                        ? 'bg-blue-50/80 font-medium ring-1 ring-inset ring-blue-300'
                         : isNewlyCritical
                           ? 'bg-red-50/30 hover:bg-red-50/50'
                           : isCritical
@@ -80,6 +82,14 @@ export function ScenarioComparisonTable({
                             : 'hover:bg-slate-50/80'
                     }`}
                     onClick={() => onSelectHabitation(r.habitation.id)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        onSelectHabitation(r.habitation.id);
+                      }
+                    }}
+                    role="button"
+                    tabIndex={0}
                   >
                     {/* 1. Settlement */}
                     <td className="px-3.5 py-2.5">

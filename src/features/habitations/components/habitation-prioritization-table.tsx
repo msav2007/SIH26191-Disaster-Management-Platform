@@ -265,12 +265,22 @@ export function HabitationPrioritizationTable({
                   return (
                     <tr
                       key={h.id}
-                      className={`cursor-pointer transition-colors ${
+                      aria-label={`Select ${h.name} habitation dossier`}
+                      aria-pressed={isSelected}
+                      className={`cursor-pointer transition-colors focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-inset ${
                         isSelected
-                          ? 'bg-sky-50/80 font-medium ring-1 ring-inset ring-sky-300'
+                          ? 'bg-blue-50/80 font-medium ring-1 ring-inset ring-blue-300'
                           : 'hover:bg-slate-50/70'
                       }`}
                       onClick={() => onSelect(item)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault();
+                          onSelect(item);
+                        }
+                      }}
+                      role="button"
+                      tabIndex={0}
                     >
                       <td className="px-3.5 py-2.5">
                         <div className="flex flex-col">

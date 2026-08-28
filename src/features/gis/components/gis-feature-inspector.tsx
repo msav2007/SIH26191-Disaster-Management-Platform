@@ -216,7 +216,10 @@ export function GisFeatureInspector({
           )}
 
           <div className="border-t border-[var(--border)] pt-2">
-            <Link className="inline-flex w-full items-center justify-center rounded-sm bg-[var(--accent)] px-3 py-2 text-xs font-semibold text-white hover:bg-[var(--accent-strong)]" href="/habitations">
+            <Link
+              className="inline-flex w-full items-center justify-center rounded-sm bg-[var(--accent)] px-3 py-2 text-xs font-semibold text-white hover:bg-[var(--accent-strong)]"
+              href={`/habitations?selected=${h.id}`}
+            >
               Open Full Habitation Dossier →
             </Link>
           </div>
@@ -306,7 +309,10 @@ export function GisFeatureInspector({
           </dl>
 
           <div className="border-t border-[var(--border)] pt-2">
-            <Link className="inline-flex w-full items-center justify-center rounded-sm bg-[var(--accent)] px-3 py-2 text-xs font-semibold text-white hover:bg-[var(--accent-strong)]" href="/relocation">
+            <Link
+              className="inline-flex w-full items-center justify-center rounded-sm bg-[var(--accent)] px-3 py-2 text-xs font-semibold text-white hover:bg-[var(--accent-strong)]"
+              href={`/relocation?siteId=${s.id}`}
+            >
               Open Full Site Assessment →
             </Link>
           </div>

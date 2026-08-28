@@ -22,7 +22,8 @@ import { RelocationSitesTable } from './relocation-sites-table';
 export interface RelocationWorkspaceProps {
   plans: HabitationRelocationPlan[];
   kpis: RelocationKpiSummary;
-  initialHabitationId?: string | null;
+  initialHabitationId?: string | null | undefined;
+  initialSiteId?: string | null | undefined;
   siteInventory: Array<{
     site: RelocationSite;
     capacity: SiteCapacityAssessment;
@@ -31,11 +32,15 @@ export interface RelocationWorkspaceProps {
 
 export function RelocationWorkspace({
   initialHabitationId,
+  initialSiteId,
   kpis,
   plans,
   siteInventory,
 }: RelocationWorkspaceProps) {
-  const [activeTab, setActiveTab] = useState<'matching' | 'inventory'>('matching');
+  const [activeTab, setActiveTab] = useState<'matching' | 'inventory'>(() => {
+    if (initialSiteId) return 'inventory';
+    return 'matching';
+  });
 
   // Selected habitation state
   const [selectedHabitationId, setSelectedHabitationId] = useState<string>(() => {
@@ -60,7 +65,13 @@ export function RelocationWorkspace({
   const [selectedInventorySite, setSelectedInventorySite] = useState<{
     site: RelocationSite;
     capacity: SiteCapacityAssessment;
-  } | null>(() => siteInventory[0] ?? null);
+  } | null>(() => {
+    if (initialSiteId) {
+      const match = siteInventory.find((s) => s.site.id === initialSiteId);
+      if (match) return match;
+    }
+    return siteInventory[0] ?? null;
+  });
 
   const handleSelectHabitation = (habId: string) => {
     setSelectedHabitationId(habId);
@@ -119,7 +130,7 @@ export function RelocationWorkspace({
       <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-slate-200 bg-white p-4 shadow-xs">
         <div className="flex flex-wrap items-center gap-3">
           {/* Mode Switcher */}
-          <div className="flex rounded-lg border border-slate-200 bg-slate-100 p-0.5">
+          <div className="flex rounded-lg border border-slate-200 bg-slate-100 p-1">
             <button
               className={`rounded-md px-3.5 py-1.5 text-xs font-semibold transition-all ${
                 activeTab === 'matching'

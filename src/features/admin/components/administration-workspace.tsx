@@ -15,6 +15,57 @@ type AdminTab = 'data' | 'system' | 'audit' | 'users';
 
 export function AdministrationWorkspace() {
   const [activeTab, setActiveTab] = useState<AdminTab>('data');
+  const [isVerifying, setIsVerifying] = useState(false);
+  const [verificationResult, setVerificationResult] = useState<{
+    success: boolean;
+    message: string;
+    counts?: { habitations: number; relocationSites: number; redZones: number };
+    timestamp?: string;
+  } | null>(null);
+  const [exportError, setExportError] = useState<string | null>(null);
+
+  const handleVerify = async () => {
+    setIsVerifying(true);
+    setVerificationResult(null);
+    try {
+      const res = await fetch('/api/admin/verify');
+      const data = await res.json();
+      if (res.ok && data.status === 'success') {
+        setVerificationResult({
+          success: true,
+          message: data.data.summary,
+          counts: data.data.counts,
+          timestamp: data.data.verifiedAt,
+        });
+      } else {
+        setVerificationResult({
+          success: false,
+          message: data.message || 'Verification failed against statutory schemas.',
+        });
+      }
+    } catch {
+      setVerificationResult({
+        success: false,
+        message: 'Network error communicating with validation engine.',
+      });
+    } finally {
+      setIsVerifying(false);
+    }
+  };
+
+  const handleExportBackup = () => {
+    setExportError(null);
+    try {
+      const link = document.createElement('a');
+      link.href = '/api/admin/backup';
+      link.download = `sih26191-master-db-backup-${new Date().toISOString().split('T')[0]}.json`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch {
+      setExportError('Failed to trigger master backup snapshot export.');
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -43,12 +94,12 @@ export function AdministrationWorkspace() {
       </div>
 
       {/* 2. Admin Navigation Tabs */}
-      <div className="flex rounded-xl border border-slate-200 bg-white p-1.5 shadow-xs">
+      <div className="flex rounded-lg border border-slate-200 bg-slate-100 p-1">
         <button
-          className={`flex-1 rounded-lg py-2 text-xs font-semibold transition-all ${
+          className={`flex-1 rounded-md py-2 text-xs font-semibold transition-all ${
             activeTab === 'data'
-              ? 'bg-sky-700 text-white shadow-xs'
-              : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+              ? 'bg-white text-slate-900 shadow-xs'
+              : 'text-slate-600 hover:text-slate-900'
           }`}
           onClick={() => setActiveTab('data')}
           type="button"
@@ -56,10 +107,10 @@ export function AdministrationWorkspace() {
           Data Management & Registries
         </button>
         <button
-          className={`flex-1 rounded-lg py-2 text-xs font-semibold transition-all ${
+          className={`flex-1 rounded-md py-2 text-xs font-semibold transition-all ${
             activeTab === 'system'
-              ? 'bg-sky-700 text-white shadow-xs'
-              : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+              ? 'bg-white text-slate-900 shadow-xs'
+              : 'text-slate-600 hover:text-slate-900'
           }`}
           onClick={() => setActiveTab('system')}
           type="button"
@@ -67,10 +118,10 @@ export function AdministrationWorkspace() {
           System Configuration & Model Weights
         </button>
         <button
-          className={`flex-1 rounded-lg py-2 text-xs font-semibold transition-all ${
+          className={`flex-1 rounded-md py-2 text-xs font-semibold transition-all ${
             activeTab === 'audit'
-              ? 'bg-sky-700 text-white shadow-xs'
-              : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+              ? 'bg-white text-slate-900 shadow-xs'
+              : 'text-slate-600 hover:text-slate-900'
           }`}
           onClick={() => setActiveTab('audit')}
           type="button"
@@ -78,10 +129,10 @@ export function AdministrationWorkspace() {
           Statutory Audit Logs & Provenance
         </button>
         <button
-          className={`flex-1 rounded-lg py-2 text-xs font-semibold transition-all ${
+          className={`flex-1 rounded-md py-2 text-xs font-semibold transition-all ${
             activeTab === 'users'
-              ? 'bg-sky-700 text-white shadow-xs'
-              : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+              ? 'bg-white text-slate-900 shadow-xs'
+              : 'text-slate-600 hover:text-slate-900'
           }`}
           onClick={() => setActiveTab('users')}
           type="button"
@@ -110,7 +161,7 @@ export function AdministrationWorkspace() {
                 <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
                   Relocation Sites Inventory
                 </span>
-                <span className="size-2 rounded-full bg-sky-500" />
+                <span className="size-2 rounded-full bg-blue-600" />
               </div>
               <p className="tabnum mt-2 text-2xl font-black text-slate-900">7 Parcels</p>
               <p className="mt-1 text-[11px] text-slate-500">10-dimension capacity verified</p>
@@ -123,26 +174,86 @@ export function AdministrationWorkspace() {
                 </span>
                 <span className="size-2 rounded-full bg-red-500" />
               </div>
-              <p className="tabnum mt-2 text-2xl font-black text-slate-900">3 Moratoriums</p>
+              <p className="tabnum mt-2 text-2xl font-black text-slate-900">6 Moratoriums</p>
               <p className="mt-1 text-[11px] text-slate-500">Official gazette boundaries</p>
             </div>
           </div>
 
           {/* Master Registries Overview Table */}
           <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-xs">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-              <h2 className="text-sm font-bold text-slate-900">Seeded Dataset Registries</h2>
+            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-3">
+              <div>
+                <h2 className="text-sm font-bold text-slate-900">Seeded Dataset Registries</h2>
+                <p className="text-[11px] text-slate-500">Authoritative multi-hazard risk and resettlement datasets</p>
+              </div>
               <div className="flex items-center gap-2">
-                <button className={buttonStyles({ size: 'sm', variant: 'secondary' })} type="button">
-                  <RefreshIcon className="size-3.5 text-slate-500" />
-                  Verify Seed Fixtures
+                <button
+                  className={buttonStyles({ size: 'sm', variant: 'secondary' })}
+                  disabled={isVerifying}
+                  onClick={handleVerify}
+                  type="button"
+                >
+                  <RefreshIcon className={`size-3.5 text-slate-500 ${isVerifying ? 'animate-spin' : ''}`} />
+                  {isVerifying ? 'Validating Schemas...' : 'Verify Seed Fixtures'}
                 </button>
-                <button className={buttonStyles({ size: 'sm', variant: 'secondary' })} type="button">
+                <button
+                  className={buttonStyles({ size: 'sm', variant: 'secondary' })}
+                  onClick={handleExportBackup}
+                  type="button"
+                >
                   <DownloadIcon className="size-3.5 text-slate-500" />
                   Export Master DB Backup
                 </button>
               </div>
             </div>
+
+            {exportError && (
+              <div className="mt-3 rounded-lg border border-red-200 bg-red-50 p-3 text-xs text-red-700">
+                {exportError}
+              </div>
+            )}
+
+            {verificationResult && (
+              <div
+                className={`mt-3 rounded-lg border p-3.5 text-xs transition-all ${
+                  verificationResult.success
+                    ? 'border-emerald-200 bg-emerald-50 text-emerald-900'
+                    : 'border-red-200 bg-red-50 text-red-900'
+                }`}
+              >
+                <div className="flex items-start justify-between gap-2">
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span
+                        className={`inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-[10px] font-bold ${
+                          verificationResult.success
+                            ? 'bg-emerald-200 text-emerald-900'
+                            : 'bg-red-200 text-red-900'
+                        }`}
+                      >
+                        {verificationResult.success ? <CheckIcon className="size-3" /> : '✗'}
+                        {verificationResult.success ? 'SCHEMA VALIDATED' : 'VALIDATION ERROR'}
+                      </span>
+                      <span className="font-bold">{verificationResult.message}</span>
+                    </div>
+
+                    {verificationResult.counts && (
+                      <p className="mt-1.5 text-[11px] text-emerald-800">
+                        Verified: <strong>{verificationResult.counts.habitations} Habitations</strong>,{' '}
+                        <strong>{verificationResult.counts.relocationSites} Relocation Sites</strong>,{' '}
+                        <strong>{verificationResult.counts.redZones} Statutory Red Zones</strong> (100% schema compliant).
+                      </p>
+                    )}
+                  </div>
+
+                  {verificationResult.timestamp && (
+                    <span className="font-mono text-[10px] text-emerald-700 shrink-0">
+                      {new Date(verificationResult.timestamp).toLocaleTimeString()}
+                    </span>
+                  )}
+                </div>
+              </div>
+            )}
 
             <div className="mt-4 space-y-3 text-xs">
               <div className="flex items-center justify-between rounded-lg border border-slate-100 bg-slate-50/70 p-3">
