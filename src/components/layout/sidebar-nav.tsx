@@ -69,7 +69,7 @@ export function SidebarNav({
                       'group flex items-center justify-between gap-3 rounded-lg px-3 py-2 text-xs font-medium transition-all',
                       isActive
                         ? 'bg-blue-600 text-white font-semibold shadow-xs'
-                        : 'text-slate-300 hover:bg-slate-800/60 hover:text-white',
+                        : 'text-slate-300 hover:bg-slate-800/70 hover:text-white',
                     )}
                     href={item.href}
                     onClick={() => onNavigate?.()}
@@ -80,7 +80,7 @@ export function SidebarNav({
                           'transition-colors',
                           isActive
                             ? 'text-white'
-                            : 'text-slate-400 group-hover:text-slate-300',
+                            : 'text-slate-400 group-hover:text-slate-200',
                         )}
                       >
                         {getNavIcon(item.href)}
@@ -93,8 +93,8 @@ export function SidebarNav({
                         className={cn(
                           'rounded px-1.5 py-0.5 text-[9px] font-bold',
                           isActive
-                            ? 'bg-blue-800 text-blue-100'
-                            : 'bg-slate-800 text-cyan-300 ring-1 ring-cyan-500/20',
+                            ? 'bg-blue-700 text-white'
+                            : 'bg-slate-800 text-blue-300 ring-1 ring-blue-500/20',
                         )}
                       >
                         {item.badge}

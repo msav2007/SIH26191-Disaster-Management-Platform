@@ -91,18 +91,18 @@ export function RelocationWorkspace({
   return (
     <div className="space-y-6">
       {/* 1. Page Header */}
-      <div className="flex flex-wrap items-center justify-between gap-4 rounded-xl border border-slate-200 bg-white p-5 shadow-xs">
+      <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-xs">
         <div>
           <div className="flex items-center gap-2">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-sky-700">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-blue-700">
               State Disaster Management Authority
             </span>
-            <span className="rounded bg-emerald-50 px-1.5 py-0.5 text-[10px] font-bold text-emerald-700 ring-1 ring-emerald-600/20">
+            <span className="rounded bg-emerald-50 px-1.5 py-0.5 text-[10px] font-bold text-emerald-800 ring-1 ring-emerald-600/20">
               RELOCATION PLANNING
             </span>
           </div>
           <h1 className="mt-1 text-lg font-bold text-slate-900">
-            Relocation Planning & Site Matching
+            Relocation Planning &amp; Site Matching
           </h1>
           <p className="mt-0.5 text-xs text-slate-500">
             Match displaced populations from high-risk habitations to safe candidate resettlement sites based on carrying capacity, transit distance, and essential services readiness.
@@ -113,11 +113,12 @@ export function RelocationWorkspace({
           <ProvenanceTag value="DEMO DATA" />
           {activePlan && (
             <Link
-              className={buttonStyles({ size: 'sm', variant: 'secondary' })}
+              className={buttonStyles({ size: 'sm', variant: 'primary' })}
               href={`/map?selected=${activePlan.habitation.id}`}
+              title="Inspect habitation and candidate relocation sites on interactive GIS vector map"
             >
               <MapPinIcon className="size-3.5" />
-              View on GIS Map
+              Open GIS Risk Map →
             </Link>
           )}
         </div>
@@ -127,14 +128,14 @@ export function RelocationWorkspace({
       <RelocationKpiSummaryBar summary={kpis} />
 
       {/* 3. Main Workspace Navigation & Habitation Selector */}
-      <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-slate-200 bg-white p-4 shadow-xs">
+      <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-xs">
         <div className="flex flex-wrap items-center gap-3">
           {/* Mode Switcher */}
-          <div className="flex rounded-lg border border-slate-200 bg-slate-100 p-1">
+          <div className="flex rounded-xl border border-slate-200 bg-slate-100 p-1">
             <button
-              className={`rounded-md px-3.5 py-1.5 text-xs font-semibold transition-all ${
+              className={`rounded-lg px-3.5 py-1.5 text-xs font-bold transition-all ${
                 activeTab === 'matching'
-                  ? 'bg-white text-slate-900 shadow-xs'
+                  ? 'bg-blue-600 text-white shadow-xs'
                   : 'text-slate-600 hover:text-slate-900'
               }`}
               onClick={() => setActiveTab('matching')}
@@ -143,9 +144,9 @@ export function RelocationWorkspace({
               Habitation Matching
             </button>
             <button
-              className={`rounded-md px-3.5 py-1.5 text-xs font-semibold transition-all ${
+              className={`rounded-lg px-3.5 py-1.5 text-xs font-bold transition-all ${
                 activeTab === 'inventory'
-                  ? 'bg-white text-slate-900 shadow-xs'
+                  ? 'bg-blue-600 text-white shadow-xs'
                   : 'text-slate-600 hover:text-slate-900'
               }`}
               onClick={() => setActiveTab('inventory')}
@@ -164,7 +165,7 @@ export function RelocationWorkspace({
               <select
                 id="habitation-selector"
                 aria-label="Select target habitation for relocation matching"
-                className="h-8.5 rounded-lg border border-slate-200 bg-slate-50/60 px-3 text-xs font-semibold text-slate-900 focus:border-cyan-500 focus:bg-white focus:outline-none"
+                className="h-8.5 rounded-lg border border-slate-200 bg-slate-50/60 px-3 text-xs font-semibold text-slate-900 focus:border-blue-500 focus:bg-white focus:outline-none"
                 onChange={(e) => handleSelectHabitation(e.target.value)}
                 value={selectedHabitationId}
               >
@@ -183,15 +184,17 @@ export function RelocationWorkspace({
             <Link
               className={buttonStyles({ size: 'sm', variant: 'secondary' })}
               href="/habitations"
+              title="View all assessed habitations and risk rankings"
             >
-              Habitation Queue
+              View Risk Queue →
             </Link>
             <Link
-              className={buttonStyles({ size: 'sm', variant: 'secondary' })}
+              className={buttonStyles({ size: 'sm', variant: 'outline' })}
               href={`/map?selected=${activePlan.habitation.id}`}
+              title="Inspect habitation and candidate relocation sites on interactive GIS vector map"
             >
               <MapPinIcon className="size-3.5" />
-              View on GIS
+              View on Map
             </Link>
           </div>
         )}

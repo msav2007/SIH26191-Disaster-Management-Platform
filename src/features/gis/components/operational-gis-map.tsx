@@ -62,17 +62,6 @@ export type LayerKey =
   | 'relocation_sites'
   | 'infrastructure';
 
-const LAYERS_CONFIG: Array<{ key: LayerKey; label: string; tone: string; group: 'hazards' | 'assets' }> = [
-  { key: 'red_zones', label: 'Multi-Hazard Red Zones', tone: '#dc2626', group: 'hazards' },
-  { key: 'landslide', label: 'Landslide Risk Scarp', tone: '#d97706', group: 'hazards' },
-  { key: 'flood', label: 'Flood Inundation Envelope', tone: '#2563eb', group: 'hazards' },
-  { key: 'coastal_erosion', label: 'Coastal Erosion Belt', tone: '#0284c7', group: 'hazards' },
-  { key: 'cloudburst', label: 'Cloudburst Debris Torrent', tone: '#9333ea', group: 'hazards' },
-  { key: 'habitations', label: 'Vulnerable Habitations', tone: '#dc2626', group: 'assets' },
-  { key: 'relocation_sites', label: 'Candidate Relocation Sites', tone: '#16a34a', group: 'assets' },
-  { key: 'infrastructure', label: 'Critical Infrastructure', tone: '#4b5d73', group: 'assets' },
-];
-
 const MAP_STYLES = [
   { key: 'terrain', label: 'Topographic' },
   { key: 'administrative', label: 'Administrative' },
@@ -199,20 +188,20 @@ export function OperationalGisMap({
       } ${className ?? ''}`}
     >
       {/* Top Header & GIS Controls */}
-      <header className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 bg-slate-50/80 px-4 py-3">
-        <div className="flex items-center gap-2.5">
-          <span className="flex size-7 items-center justify-center rounded-lg bg-sky-600 text-white shadow-2xs">
-            <LayersIcon className="size-4" />
+      <header className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 bg-white/95 px-5 py-4">
+        <div className="flex items-center gap-3">
+          <span className="flex size-8 items-center justify-center rounded-xl bg-blue-600 text-white shadow-2xs">
+            <LayersIcon className="size-4.5" />
           </span>
           <div>
             <div className="flex items-center gap-2">
-              <h2 className="text-xs font-bold uppercase tracking-wider text-slate-900">
-                Operational Multi-Hazard GIS
+              <h2 className="text-sm font-bold text-slate-900">
+                GIS Risk Map
               </h2>
               <ProvenanceTag value="DEMO DATA" />
             </div>
-            <p className="text-[10px] text-slate-500">
-              EPSG:4326 Projection · Real Coordinates Linked to Drizzle Domain Models
+            <p className="text-xs text-slate-500">
+              Explore statutory red zones, vulnerable habitations, candidate relocation sites and critical infrastructure.
             </p>
           </div>
         </div>
@@ -585,28 +574,152 @@ export function OperationalGisMap({
 
           {/* Layer Control Drawer */}
           {showLayerDrawer && (
-            <fieldset className="absolute left-12 top-3 z-20 w-64 rounded-xl border border-slate-200 bg-white/95 p-3.5 shadow-md backdrop-blur-md">
-              <legend className="text-[10px] font-bold uppercase tracking-wider text-slate-600 mb-2">GIS Layer Visibility</legend>
-              <div className="space-y-1.5">
-                {LAYERS_CONFIG.map((l) => (
-                  <label
-                    key={l.key}
-                    className="flex cursor-pointer items-center justify-between rounded-lg px-2 py-1.5 text-xs text-slate-700 hover:bg-slate-50"
-                  >
+            <div className="absolute left-12 top-3 z-20 w-72 rounded-2xl border border-slate-200 bg-white/95 p-4 shadow-lg backdrop-blur-md">
+              <div className="flex items-center justify-between border-b border-slate-100 pb-2 mb-3">
+                <span className="text-xs font-bold text-slate-900">Map Layers</span>
+                <span className="text-[10px] text-slate-500 font-mono">EPSG:4326</span>
+              </div>
+
+              <div className="space-y-3.5 max-h-96 overflow-y-auto pr-1">
+                {/* 1. RISK GROUP */}
+                <div>
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-red-800 block mb-1.5">
+                    1. Risk &amp; Hazard Envelopes
+                  </span>
+                  <div className="space-y-1">
+                    <label className="flex cursor-pointer items-center justify-between rounded-lg px-2 py-1 text-xs text-slate-700 hover:bg-slate-50">
+                      <div className="flex items-center gap-2">
+                        <span className="size-2.5 rounded-full bg-red-600 shrink-0" />
+                        <div>
+                          <span className="font-semibold block">Statutory Red Zones</span>
+                          <span className="text-[10px] text-slate-400">Restricted runout areas</span>
+                        </div>
+                      </div>
+                      <input
+                        checked={layers.red_zones}
+                        className="size-3.5 accent-blue-600"
+                        onChange={(e) => setLayers((prev) => ({ ...prev, red_zones: e.target.checked }))}
+                        type="checkbox"
+                      />
+                    </label>
+
+                    <label className="flex cursor-pointer items-center justify-between rounded-lg px-2 py-1 text-xs text-slate-700 hover:bg-slate-50">
+                      <div className="flex items-center gap-2">
+                        <span className="size-2.5 rounded-full bg-amber-500 shrink-0" />
+                        <span className="text-[11px]">Landslide Risk Scarp</span>
+                      </div>
+                      <input
+                        checked={layers.landslide}
+                        className="size-3.5 accent-blue-600"
+                        onChange={(e) => setLayers((prev) => ({ ...prev, landslide: e.target.checked }))}
+                        type="checkbox"
+                      />
+                    </label>
+
+                    <label className="flex cursor-pointer items-center justify-between rounded-lg px-2 py-1 text-xs text-slate-700 hover:bg-slate-50">
+                      <div className="flex items-center gap-2">
+                        <span className="size-2.5 rounded-full bg-blue-600 shrink-0" />
+                        <span className="text-[11px]">Flood Inundation Envelope</span>
+                      </div>
+                      <input
+                        checked={layers.flood}
+                        className="size-3.5 accent-blue-600"
+                        onChange={(e) => setLayers((prev) => ({ ...prev, flood: e.target.checked }))}
+                        type="checkbox"
+                      />
+                    </label>
+
+                    <label className="flex cursor-pointer items-center justify-between rounded-lg px-2 py-1 text-xs text-slate-700 hover:bg-slate-50">
+                      <div className="flex items-center gap-2">
+                        <span className="size-2.5 rounded-full bg-sky-600 shrink-0" />
+                        <span className="text-[11px]">Coastal Erosion Belt</span>
+                      </div>
+                      <input
+                        checked={layers.coastal_erosion}
+                        className="size-3.5 accent-blue-600"
+                        onChange={(e) => setLayers((prev) => ({ ...prev, coastal_erosion: e.target.checked }))}
+                        type="checkbox"
+                      />
+                    </label>
+
+                    <label className="flex cursor-pointer items-center justify-between rounded-lg px-2 py-1 text-xs text-slate-700 hover:bg-slate-50">
+                      <div className="flex items-center gap-2">
+                        <span className="size-2.5 rounded-full bg-purple-600 shrink-0" />
+                        <span className="text-[11px]">Cloudburst Debris Torrent</span>
+                      </div>
+                      <input
+                        checked={layers.cloudburst}
+                        className="size-3.5 accent-blue-600"
+                        onChange={(e) => setLayers((prev) => ({ ...prev, cloudburst: e.target.checked }))}
+                        type="checkbox"
+                      />
+                    </label>
+                  </div>
+                </div>
+
+                {/* 2. SETTLEMENTS GROUP */}
+                <div className="border-t border-slate-100 pt-2">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-700 block mb-1.5">
+                    2. Settlements &amp; Sites
+                  </span>
+                  <div className="space-y-1">
+                    <label className="flex cursor-pointer items-center justify-between rounded-lg px-2 py-1 text-xs text-slate-700 hover:bg-slate-50">
+                      <div className="flex items-center gap-2">
+                        <span className="size-2.5 rounded-full bg-red-600 shrink-0" />
+                        <div>
+                          <span className="font-semibold block">Vulnerable Habitations</span>
+                          <span className="text-[10px] text-slate-400">Assessed settlements</span>
+                        </div>
+                      </div>
+                      <input
+                        checked={layers.habitations}
+                        className="size-3.5 accent-blue-600"
+                        onChange={(e) => setLayers((prev) => ({ ...prev, habitations: e.target.checked }))}
+                        type="checkbox"
+                      />
+                    </label>
+
+                    <label className="flex cursor-pointer items-center justify-between rounded-lg px-2 py-1 text-xs text-slate-700 hover:bg-slate-50">
+                      <div className="flex items-center gap-2">
+                        <span className="size-2.5 rounded-sm bg-emerald-600 shrink-0" />
+                        <div>
+                          <span className="font-semibold block">Relocation Sites</span>
+                          <span className="text-[10px] text-slate-400">Safer candidate parcels</span>
+                        </div>
+                      </div>
+                      <input
+                        checked={layers.relocation_sites}
+                        className="size-3.5 accent-blue-600"
+                        onChange={(e) => setLayers((prev) => ({ ...prev, relocation_sites: e.target.checked }))}
+                        type="checkbox"
+                      />
+                    </label>
+                  </div>
+                </div>
+
+                {/* 3. INFRASTRUCTURE GROUP */}
+                <div className="border-t border-slate-100 pt-2">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-700 block mb-1.5">
+                    3. Infrastructure
+                  </span>
+                  <label className="flex cursor-pointer items-center justify-between rounded-lg px-2 py-1 text-xs text-slate-700 hover:bg-slate-50">
                     <div className="flex items-center gap-2">
-                      <span className="size-2.5 shrink-0 rounded-sm" style={{ backgroundColor: l.tone }} />
-                      <span>{l.label}</span>
+                      <span className="size-2.5 rotate-45 bg-blue-700 shrink-0" />
+                      <div>
+                        <span className="font-semibold block">Critical Infrastructure</span>
+                        <span className="text-[10px] text-slate-400">Hospitals, helipads, DEOCs</span>
+                      </div>
                     </div>
                     <input
-                      checked={layers[l.key]}
-                      className="size-3.5 accent-sky-600"
-                      onChange={(e) => setLayers((prev) => ({ ...prev, [l.key]: e.target.checked }))}
+                      checked={layers.infrastructure}
+                      className="size-3.5 accent-blue-600"
+                      onChange={(e) => setLayers((prev) => ({ ...prev, infrastructure: e.target.checked }))}
                       type="checkbox"
                     />
                   </label>
-                ))}
+                </div>
               </div>
-            </fieldset>
+            </div>
           )}
         </div>
 
@@ -621,30 +734,30 @@ export function OperationalGisMap({
       </div>
 
       {/* Map Legend Footer */}
-      <footer className="flex flex-wrap items-center gap-x-4 gap-y-1.5 border-t border-slate-200 bg-slate-50/80 px-4 py-2.5 text-xs">
-        <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Map Legend</span>
+      <footer className="flex flex-wrap items-center gap-x-5 gap-y-2 border-t border-slate-200 bg-white px-5 py-3 text-xs">
+        <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Legend:</span>
         <div className="flex items-center gap-1.5">
-          <span className="size-2.5 rounded-full bg-red-600" />
-          <span className="text-slate-700">Critical Zone / Priority</span>
+          <span className="size-3 rounded-full bg-red-600 border border-white shadow-2xs" />
+          <span className="text-slate-800 font-medium">🔴 Red Zone <span className="text-slate-500 text-[11px]">(High-Risk / Statutory Restricted Area)</span></span>
         </div>
         <div className="flex items-center gap-1.5">
-          <span className="size-2.5 rounded-full bg-amber-500" />
-          <span className="text-slate-700">High Priority</span>
+          <span className="size-2.5 rounded-full bg-amber-500 border border-white shadow-2xs" />
+          <span className="text-slate-800 font-medium">● Habitation <span className="text-slate-500 text-[11px]">(Vulnerable Settlement)</span></span>
         </div>
         <div className="flex items-center gap-1.5">
-          <span className="size-2.5 rounded-sm bg-emerald-600" />
-          <span className="text-slate-700">Relocation Site</span>
+          <span className="size-2.5 rounded-sm bg-emerald-600 border border-white shadow-2xs" />
+          <span className="text-slate-800 font-medium">◆ Relocation Site <span className="text-slate-500 text-[11px]">(Candidate Safer Resettlement Area)</span></span>
         </div>
         <div className="flex items-center gap-1.5">
-          <span className="size-2 rotate-45 bg-sky-600" />
-          <span className="text-slate-700">Infrastructure</span>
+          <span className="size-2.5 rotate-45 bg-blue-700 border border-white shadow-2xs" />
+          <span className="text-slate-800 font-medium">■ Critical Infrastructure <span className="text-slate-500 text-[11px]">(Hospital / Helipad / DEOC / Shelter)</span></span>
         </div>
-        <div className="ml-auto flex items-center gap-3 text-[11px] text-slate-500">
+        <div className="ml-auto flex items-center gap-2 text-[11px] text-slate-500 font-mono">
           <span>{redZonesFixture.length} Red Zones</span>
           <span>·</span>
           <span>{habitationsFixture.length} Habitations</span>
           <span>·</span>
-          <span>{relocationSitesFixture.length} Relocation Sites</span>
+          <span>{relocationSitesFixture.length} Sites</span>
         </div>
       </footer>
     </div>

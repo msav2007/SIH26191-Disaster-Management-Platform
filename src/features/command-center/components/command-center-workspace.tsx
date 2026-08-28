@@ -19,13 +19,13 @@ export function CommandCenterWorkspace({ data }: CommandCenterWorkspaceProps) {
   return (
     <div className="space-y-6">
       {/* 1. Page Header & Operational Status */}
-      <div className="flex flex-wrap items-center justify-between gap-4 rounded-xl border border-slate-200 bg-white p-5 shadow-xs">
+      <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-xs">
         <div>
           <div className="flex items-center gap-2">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-sky-700">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-blue-700">
               State Disaster Management Authority
             </span>
-            <span className="rounded bg-emerald-50 px-1.5 py-0.5 text-[10px] font-bold text-emerald-700 ring-1 ring-emerald-600/20">
+            <span className="rounded bg-emerald-50 px-1.5 py-0.5 text-[10px] font-bold text-emerald-800 ring-1 ring-emerald-600/20">
               OPERATIONAL
             </span>
           </div>
@@ -39,13 +39,21 @@ export function CommandCenterWorkspace({ data }: CommandCenterWorkspaceProps) {
 
         <div className="flex flex-wrap items-center gap-2.5 text-xs">
           <ProvenanceTag value="DEMO DATA" />
-          <Link className={buttonStyles({ size: 'sm', variant: 'primary' })} href="/map">
+          <Link
+            className={buttonStyles({ size: 'sm', variant: 'primary' })}
+            href="/map"
+            title="View red zones, vulnerable habitations and candidate relocation sites"
+          >
             <MapPinIcon className="size-3.5" />
-            GIS Risk Map
+            Open GIS Risk Map →
           </Link>
-          <Link className={buttonStyles({ size: 'sm', variant: 'secondary' })} href="/scenarios">
+          <Link
+            className={buttonStyles({ size: 'sm', variant: 'secondary' })}
+            href="/scenarios"
+            title="Test rainfall, cloudburst and infrastructure stress"
+          >
             <SlidersIcon className="size-3.5" />
-            Scenario Simulator
+            Run Climate Scenario →
           </Link>
         </div>
       </div>
@@ -53,21 +61,21 @@ export function CommandCenterWorkspace({ data }: CommandCenterWorkspaceProps) {
       {/* 2. Five Compact Operational KPI Cards */}
       <div className="grid grid-cols-2 gap-3.5 sm:grid-cols-3 lg:grid-cols-5">
         {/* KPI 1: Assessed Settlements */}
-        <div className="rounded-xl border border-slate-200/90 bg-white p-4 shadow-xs transition-all hover:border-slate-300">
+        <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-xs transition-all hover:border-slate-300">
           <div className="flex items-center justify-between">
-            <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">
+            <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500">
               Assessed Settlements
             </p>
             <span className="size-2 rounded-full bg-slate-400" />
           </div>
           <p className="tabnum mt-2 text-2xl font-black text-slate-900">{kpis.totalAssessedHabitations}</p>
-          <p className="mt-1 text-[11px] text-slate-500">Across 6 surveyed districts</p>
+          <p className="mt-1 text-[11px] text-slate-500">Assessed Habitations across 6 districts</p>
         </div>
 
         {/* KPI 2: Critical Settlements */}
-        <div className="rounded-xl border border-red-200 bg-red-50/40 p-4 shadow-xs transition-all hover:border-red-300">
+        <div className="rounded-2xl border border-red-200 bg-red-50/40 p-4 shadow-xs transition-all hover:border-red-300">
           <div className="flex items-center justify-between">
-            <p className="text-[11px] font-semibold uppercase tracking-wider text-red-800">
+            <p className="text-[10px] font-bold uppercase tracking-wider text-red-800">
               Critical Status
             </p>
             <span className="size-2 rounded-full bg-red-500 animate-pulse" />
@@ -77,9 +85,9 @@ export function CommandCenterWorkspace({ data }: CommandCenterWorkspaceProps) {
         </div>
 
         {/* KPI 3: High Risk / Immediate Relocation */}
-        <div className="rounded-xl border border-amber-200 bg-amber-50/40 p-4 shadow-xs transition-all hover:border-amber-300">
+        <div className="rounded-2xl border border-amber-200 bg-amber-50/40 p-4 shadow-xs transition-all hover:border-amber-300">
           <div className="flex items-center justify-between">
-            <p className="text-[11px] font-semibold uppercase tracking-wider text-amber-800">
+            <p className="text-[10px] font-bold uppercase tracking-wider text-amber-800">
               Immediate Relocation
             </p>
             <span className="size-2 rounded-full bg-amber-500" />
@@ -89,12 +97,12 @@ export function CommandCenterWorkspace({ data }: CommandCenterWorkspaceProps) {
         </div>
 
         {/* KPI 4: Population at Risk */}
-        <div className="rounded-xl border border-slate-200/90 bg-white p-4 shadow-xs transition-all hover:border-slate-300">
+        <div className="rounded-2xl border border-blue-200 bg-blue-50/30 p-4 shadow-xs transition-all hover:border-blue-300">
           <div className="flex items-center justify-between">
-            <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">
+            <p className="text-[10px] font-bold uppercase tracking-wider text-blue-800">
               People at Risk
             </p>
-            <span className="size-2 rounded-full bg-sky-500" />
+            <span className="size-2 rounded-full bg-blue-600" />
           </div>
           <p className="tabnum mt-2 text-2xl font-black text-slate-900">
             {kpis.totalPopulationAtRisk.toLocaleString('en-IN')}
@@ -103,9 +111,9 @@ export function CommandCenterWorkspace({ data }: CommandCenterWorkspaceProps) {
         </div>
 
         {/* KPI 5: Relocation Headroom */}
-        <div className="rounded-xl border border-emerald-200 bg-emerald-50/40 p-4 shadow-xs transition-all hover:border-emerald-300">
+        <div className="rounded-2xl border border-emerald-200 bg-emerald-50/40 p-4 shadow-xs transition-all hover:border-emerald-300">
           <div className="flex items-center justify-between">
-            <p className="text-[11px] font-semibold uppercase tracking-wider text-emerald-800">
+            <p className="text-[10px] font-bold uppercase tracking-wider text-emerald-800">
               Relocation Headroom
             </p>
             <span className="size-2 rounded-full bg-emerald-500" />
@@ -120,53 +128,53 @@ export function CommandCenterWorkspace({ data }: CommandCenterWorkspaceProps) {
       {/* 3. Middle Section: Left (Geographic Overview) + Right (Scenario Simulator) */}
       <div className="grid grid-cols-1 gap-5 lg:grid-cols-12">
         {/* Left 7 Cols: Risk Map / Geographic Overview */}
-        <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-xs lg:col-span-7 flex flex-col justify-between">
+        <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-xs lg:col-span-7 flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-              <div className="flex items-center gap-2">
-                <div className="flex size-7 items-center justify-center rounded-lg bg-sky-50 text-sky-700">
-                  <MapPinIcon className="size-4" />
+              <div className="flex items-center gap-2.5">
+                <div className="flex size-8 items-center justify-center rounded-xl bg-blue-50 text-blue-700">
+                  <MapPinIcon className="size-4.5" />
                 </div>
                 <div>
                   <h2 className="text-sm font-bold text-slate-900">Geographic Risk Overview</h2>
                   <p className="text-[11px] text-slate-500">Spatial runout & vulnerable settlement catchment</p>
                 </div>
               </div>
-              <Link className="text-xs font-semibold text-sky-700 hover:text-sky-800 hover:underline" href="/map">
+              <Link className="text-xs font-semibold text-blue-700 hover:text-blue-800 hover:underline" href="/map">
                 Open Interactive Map →
               </Link>
             </div>
 
             {/* Geographic Information & Summary */}
             <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
-              <div className="rounded-lg border border-slate-100 bg-slate-50/80 p-3 text-xs">
-                <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-500 block">
+              <div className="rounded-xl border border-slate-100 bg-slate-50/80 p-3 text-xs">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 block">
                   Spatial Bounds
                 </span>
                 <span className="font-mono text-xs font-bold text-slate-800 mt-1 block">
                   11.55°N, 76.13°E
                 </span>
-                <span className="text-[10px] text-slate-500">Wayanad & Ghats Sector</span>
+                <span className="text-[10px] text-slate-500">WGS84 EPSG:4326</span>
               </div>
 
-              <div className="rounded-lg border border-slate-100 bg-slate-50/80 p-3 text-xs">
-                <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-500 block">
+              <div className="rounded-xl border border-red-100 bg-red-50/40 p-3 text-xs">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-red-800 block">
                   Active Red Zones
                 </span>
                 <span className="font-mono text-xs font-bold text-red-700 mt-1 block">
                   3 Statutory Zones
                 </span>
-                <span className="text-[10px] text-slate-500">High runout risk areas</span>
+                <span className="text-[10px] text-red-600">High runout risk areas</span>
               </div>
 
-              <div className="rounded-lg border border-slate-100 bg-slate-50/80 p-3 text-xs">
-                <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-500 block">
+              <div className="rounded-xl border border-emerald-100 bg-emerald-50/40 p-3 text-xs">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-800 block">
                   Safe Sectors
                 </span>
                 <span className="font-mono text-xs font-bold text-emerald-700 mt-1 block">
                   {capacityOverview.totalSites} Relocation Sites
                 </span>
-                <span className="text-[10px] text-slate-500">Government revenue land</span>
+                <span className="text-[10px] text-emerald-700">Revenue land parcels</span>
               </div>
             </div>
 
@@ -177,11 +185,11 @@ export function CommandCenterWorkspace({ data }: CommandCenterWorkspaceProps) {
                 {capacityOverview.topConstrainedSites.slice(0, 3).map((site) => (
                   <div
                     key={site.siteId}
-                    className="flex items-center justify-between rounded-lg border border-slate-100 bg-white p-2.5 text-xs shadow-2xs hover:border-slate-200"
+                    className="flex items-center justify-between rounded-xl border border-slate-100 bg-slate-50/50 p-2.5 text-xs hover:border-slate-200 transition-colors"
                   >
                     <div>
                       <span className="font-bold text-slate-900">{site.siteName}</span>
-                      <div className="text-[11px] text-amber-700">
+                      <div className="text-[11px] text-amber-800">
                         Constrained by: <span className="font-semibold">{site.limitingFactor}</span>
                       </div>
                     </div>
@@ -204,19 +212,19 @@ export function CommandCenterWorkspace({ data }: CommandCenterWorkspaceProps) {
         </div>
 
         {/* Right 5 Cols: Scenario Simulator Panel */}
-        <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-xs lg:col-span-5 flex flex-col justify-between">
+        <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-xs lg:col-span-5 flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-              <div className="flex items-center gap-2">
-                <div className="flex size-7 items-center justify-center rounded-lg bg-cyan-50 text-cyan-700">
-                  <SlidersIcon className="size-4" />
+              <div className="flex items-center gap-2.5">
+                <div className="flex size-8 items-center justify-center rounded-xl bg-blue-50 text-blue-700">
+                  <SlidersIcon className="size-4.5" />
                 </div>
                 <div>
-                  <h2 className="text-sm font-bold text-slate-900">Scenario Simulator</h2>
+                  <h2 className="text-sm font-bold text-slate-900">Scenario Outlook</h2>
                   <p className="text-[11px] text-slate-500">Climate & stress escalation model</p>
                 </div>
               </div>
-              <span className="rounded-md bg-cyan-50 px-2 py-0.5 text-[10px] font-bold text-cyan-800 ring-1 ring-cyan-600/20">
+              <span className="rounded-md bg-blue-50 px-2 py-0.5 text-[10px] font-bold text-blue-800 ring-1 ring-blue-600/20">
                 ACTIVE
               </span>
             </div>
@@ -233,25 +241,25 @@ export function CommandCenterWorkspace({ data }: CommandCenterWorkspaceProps) {
 
             {/* Parameter Pills */}
             <div className="mt-3.5 grid grid-cols-2 gap-2">
-              <div className="rounded-lg border border-slate-100 bg-slate-50/70 p-2 text-xs">
+              <div className="rounded-xl border border-slate-100 bg-slate-50/70 p-2 text-xs">
                 <span className="text-[10px] text-slate-500 block">Rainfall Multiplier</span>
-                <span className="tabnum font-bold text-sky-700 mt-0.5 block">
+                <span className="tabnum font-bold text-blue-700 mt-0.5 block">
                   {activeScenario.modifiersApplied.rainfallMultiplier.toFixed(2)}×
                 </span>
               </div>
-              <div className="rounded-lg border border-slate-100 bg-slate-50/70 p-2 text-xs">
+              <div className="rounded-xl border border-slate-100 bg-slate-50/70 p-2 text-xs">
                 <span className="text-[10px] text-slate-500 block">Cloudburst Surge</span>
                 <span className="tabnum font-bold text-amber-700 mt-0.5 block">
                   +{activeScenario.modifiersApplied.cloudburstSurge} pts
                 </span>
               </div>
-              <div className="rounded-lg border border-slate-100 bg-slate-50/70 p-2 text-xs">
+              <div className="rounded-xl border border-slate-100 bg-slate-50/70 p-2 text-xs">
                 <span className="text-[10px] text-slate-500 block">Slope Saturation</span>
                 <span className="tabnum font-bold text-red-700 mt-0.5 block">
                   {activeScenario.modifiersApplied.slopeSaturationFactor.toFixed(2)}×
                 </span>
               </div>
-              <div className="rounded-lg border border-slate-100 bg-slate-50/70 p-2 text-xs">
+              <div className="rounded-xl border border-slate-100 bg-slate-50/70 p-2 text-xs">
                 <span className="text-[10px] text-slate-500 block">Infra Strain</span>
                 <span className="tabnum font-bold text-slate-800 mt-0.5 block">
                   {activeScenario.modifiersApplied.infrastructureStrainMultiplier.toFixed(2)}×
@@ -260,10 +268,10 @@ export function CommandCenterWorkspace({ data }: CommandCenterWorkspaceProps) {
             </div>
 
             {/* Impact Highlights */}
-            <div className="mt-3.5 rounded-lg border border-cyan-100 bg-cyan-50/50 p-3 text-xs space-y-1.5">
+            <div className="mt-3.5 rounded-xl border border-blue-100 bg-blue-50/40 p-3 text-xs space-y-1.5">
               <div className="flex justify-between">
                 <span className="text-slate-600">Settlements Escalated:</span>
-                <span className="tabnum font-bold text-cyan-900">
+                <span className="tabnum font-bold text-blue-900">
                   +{activeScenario.totalHabitationsEscalated}
                 </span>
               </div>
@@ -288,43 +296,45 @@ export function CommandCenterWorkspace({ data }: CommandCenterWorkspaceProps) {
               href="/scenarios"
             >
               <SlidersIcon className="size-3.5" />
-              Open Scenario Simulator & Modifiers
+              Open Scenario Simulator &amp; Modifiers →
             </Link>
           </div>
         </div>
       </div>
 
-      {/* 4. Full Width: Top Priority Settlements Matrix */}
-      <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-xs">
+      {/* 4. Full Width: Operational Habitation Priority Queue */}
+      <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-xs">
         <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-3">
           <div>
             <div className="flex items-center gap-2">
               <ShieldAlertIcon className="size-4 text-red-600" />
-              <h2 className="text-sm font-bold text-slate-900">Top Priority Settlements</h2>
+              <h2 className="text-sm font-bold text-slate-900">
+                Top Priority Settlements (Operational Habitation Priority Queue)
+              </h2>
             </div>
             <p className="text-[11px] text-slate-500">
               Ranked by deterministic risk scoring and statutory relocation timelines
             </p>
           </div>
-          <Link className="text-xs font-semibold text-sky-700 hover:text-sky-800 hover:underline" href="/habitations">
+          <Link className="text-xs font-semibold text-blue-700 hover:text-blue-800 hover:underline" href="/habitations">
             View All Habitations ({kpis.totalAssessedHabitations}) →
           </Link>
         </div>
 
         <div className="mt-3.5 overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="border-b border-slate-200 bg-slate-50/80 text-[11px] uppercase font-semibold text-slate-600">
+            <thead className="border-b border-slate-200 bg-slate-50/80 text-[10px] uppercase font-bold tracking-wider text-slate-600">
               <tr>
-                <th className="px-3 py-2.5">#</th>
-                <th className="px-3 py-2.5">Settlement</th>
-                <th className="px-3 py-2.5">District</th>
-                <th className="px-3 py-2.5 text-right">Baseline</th>
-                <th className="px-3 py-2.5 text-right">Scenario</th>
-                <th className="px-3 py-2.5 text-right">Change</th>
-                <th className="px-3 py-2.5">Risk Tier</th>
-                <th className="px-3 py-2.5">Timeline</th>
-                <th className="px-3 py-2.5 text-right">Population</th>
-                <th className="px-3 py-2.5">Recommended Action</th>
+                <th className="px-3.5 py-2.5">#</th>
+                <th className="px-3.5 py-2.5">Settlement</th>
+                <th className="px-3.5 py-2.5">District</th>
+                <th className="px-3.5 py-2.5 text-right">Baseline</th>
+                <th className="px-3.5 py-2.5 text-right">Scenario</th>
+                <th className="px-3.5 py-2.5 text-right">Change</th>
+                <th className="px-3.5 py-2.5">Risk Tier</th>
+                <th className="px-3.5 py-2.5">Timeline</th>
+                <th className="px-3.5 py-2.5 text-right">Population</th>
+                <th className="px-3.5 py-2.5">Recommended Action</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
@@ -343,12 +353,12 @@ export function CommandCenterWorkspace({ data }: CommandCenterWorkspaceProps) {
                       isCritical ? 'bg-red-50/20' : ''
                     }`}
                   >
-                    <td className="tabnum px-3 py-2.5 font-mono text-xs font-bold text-slate-500">
+                    <td className="tabnum px-3.5 py-2.5 font-mono text-xs font-bold text-slate-500">
                       #{item.rank}
                     </td>
-                    <td className="px-3 py-2.5">
+                    <td className="px-3.5 py-2.5">
                       <Link
-                        className="font-bold text-slate-900 hover:text-sky-700 hover:underline"
+                        className="font-bold text-slate-900 hover:text-blue-700 hover:underline"
                         href={`/habitations?selected=${item.habitationId}`}
                       >
                         {item.habitationName}
@@ -357,14 +367,14 @@ export function CommandCenterWorkspace({ data }: CommandCenterWorkspaceProps) {
                         {item.households} households
                       </div>
                     </td>
-                    <td className="px-3 py-2.5 text-slate-600">{item.district}</td>
-                    <td className="tabnum px-3 py-2.5 text-right font-medium text-slate-700">
+                    <td className="px-3.5 py-2.5 text-slate-600">{item.district}</td>
+                    <td className="tabnum px-3.5 py-2.5 text-right font-medium text-slate-700">
                       {item.compositeRiskScore.toFixed(1)}
                     </td>
-                    <td className="tabnum px-3 py-2.5 text-right font-bold text-slate-900">
+                    <td className="tabnum px-3.5 py-2.5 text-right font-bold text-slate-900">
                       {scenarioScore.toFixed(1)}
                     </td>
-                    <td className="tabnum px-3 py-2.5 text-right font-bold">
+                    <td className="tabnum px-3.5 py-2.5 text-right font-bold">
                       {delta > 0 ? (
                         <span className="text-amber-700">+{delta.toFixed(1)}</span>
                       ) : delta < 0 ? (
@@ -373,23 +383,23 @@ export function CommandCenterWorkspace({ data }: CommandCenterWorkspaceProps) {
                         <span className="text-slate-400">0.0</span>
                       )}
                     </td>
-                    <td className="px-3 py-2.5">
+                    <td className="px-3.5 py-2.5">
                       <StatusPill tone={getPriorityTone(item.priority)}>
                         {item.priority}
                       </StatusPill>
                     </td>
-                    <td className="px-3 py-2.5 font-medium text-slate-700">
+                    <td className="px-3.5 py-2.5 font-medium text-slate-700">
                       {item.urgencyWindow || getTimelineWindow(item.timeline)}
                     </td>
-                    <td className="tabnum px-3 py-2.5 text-right font-semibold text-slate-800">
+                    <td className="tabnum px-3.5 py-2.5 text-right font-semibold text-slate-800">
                       {item.population.toLocaleString('en-IN')}
                     </td>
-                    <td className="px-3 py-2.5">
+                    <td className="px-3.5 py-2.5">
                       <Link
-                        className="inline-flex items-center gap-1 text-[11px] font-semibold text-sky-700 hover:text-sky-900 hover:underline"
+                        className="inline-flex items-center gap-1 text-[11px] font-semibold text-blue-700 hover:text-blue-900 hover:underline"
                         href={`/relocation?habitationId=${item.habitationId}`}
                       >
-                        Relocate <ChevronRightIcon className="size-3" />
+                        Find Relocation Site <ChevronRightIcon className="size-3" />
                       </Link>
                     </td>
                   </tr>

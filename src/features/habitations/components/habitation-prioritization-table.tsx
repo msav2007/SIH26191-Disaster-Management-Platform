@@ -89,7 +89,7 @@ export function HabitationPrioritizationTable({
         <button
           className={`rounded-lg px-3 py-1 text-xs font-semibold transition-all ${
             priorityFilter === 'all' && hazardFilter === 'all' && timelineFilter === 'all'
-              ? 'bg-sky-700 text-white shadow-xs'
+              ? 'bg-blue-600 text-white shadow-xs'
               : 'border border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
           }`}
           onClick={() => {
@@ -350,11 +350,11 @@ export function HabitationPrioritizationTable({
 
                       <td className="px-3.5 py-2.5">
                         <Link
-                          className="inline-flex items-center gap-1 text-[11px] font-semibold text-sky-700 hover:text-sky-900 hover:underline"
+                          className="inline-flex items-center gap-1 text-[11px] font-semibold text-blue-700 hover:text-blue-900 hover:underline"
                           href={`/relocation?habitationId=${h.id}`}
                           onClick={(e) => e.stopPropagation()}
                         >
-                          Relocate <ChevronRightIcon className="size-3" />
+                          Find Relocation Site <ChevronRightIcon className="size-3" />
                         </Link>
                       </td>
                     </tr>

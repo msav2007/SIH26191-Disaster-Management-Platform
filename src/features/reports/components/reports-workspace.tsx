@@ -107,21 +107,21 @@ export function ReportsWorkspace({
   return (
     <div className="space-y-6">
       {/* 1. Page Header */}
-      <div className="no-print flex flex-wrap items-center justify-between gap-4 rounded-xl border border-slate-200 bg-white p-5 shadow-xs">
+      <div className="no-print flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-xs">
         <div>
           <div className="flex items-center gap-2">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-sky-700">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-blue-700">
               State Disaster Management Authority
             </span>
-            <span className="rounded bg-sky-50 px-1.5 py-0.5 text-[10px] font-bold text-sky-700 ring-1 ring-sky-600/20">
+            <span className="rounded bg-blue-50 px-1.5 py-0.5 text-[10px] font-bold text-blue-800 ring-1 ring-blue-600/20">
               OFFICIAL RECORDS
             </span>
           </div>
           <h1 className="mt-1 text-lg font-bold text-slate-900">
-            Executive & Statutory Decision Reports
+            Executive &amp; Statutory Decision Reports
           </h1>
           <p className="mt-0.5 text-xs text-slate-500">
-            Generate and export official decision-ready reports for district collectors, relief commissioners, and planning authorities.
+            Generate and export official decision-ready reports for district collectors, relief commissioners, and planning authorities under DMA 2005.
           </p>
         </div>
 
@@ -131,14 +131,14 @@ export function ReportsWorkspace({
       </div>
 
       {/* 2. Action & Configuration Toolbar (Hidden during print) */}
-      <div className="no-print flex flex-wrap items-center justify-between gap-3 rounded-xl border border-slate-200 bg-white p-4 shadow-xs">
+      <div className="no-print flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-xs">
         <div className="flex flex-wrap items-center gap-3">
           {/* Report Type Selector */}
-          <div className="flex rounded-lg border border-slate-200 bg-slate-100 p-1">
+          <div className="flex rounded-xl border border-slate-200 bg-slate-100 p-1">
             <button
-              className={`rounded-md px-3.5 py-1.5 text-xs font-semibold transition-all ${
+              className={`rounded-lg px-3.5 py-1.5 text-xs font-bold transition-all ${
                 reportType === 'executive_summary'
-                  ? 'bg-white text-slate-900 shadow-xs'
+                  ? 'bg-blue-600 text-white shadow-xs'
                   : 'text-slate-600 hover:text-slate-900'
               }`}
               onClick={() => handleReportTypeChange('executive_summary')}
@@ -147,9 +147,9 @@ export function ReportsWorkspace({
               Executive Summary
             </button>
             <button
-              className={`rounded-md px-3.5 py-1.5 text-xs font-semibold transition-all ${
+              className={`rounded-lg px-3.5 py-1.5 text-xs font-bold transition-all ${
                 reportType === 'vulnerability_dossier'
-                  ? 'bg-white text-slate-900 shadow-xs'
+                  ? 'bg-blue-600 text-white shadow-xs'
                   : 'text-slate-600 hover:text-slate-900'
               }`}
               onClick={() => handleReportTypeChange('vulnerability_dossier')}
@@ -158,9 +158,9 @@ export function ReportsWorkspace({
               Vulnerability Dossier
             </button>
             <button
-              className={`rounded-md px-3.5 py-1.5 text-xs font-semibold transition-all ${
+              className={`rounded-lg px-3.5 py-1.5 text-xs font-bold transition-all ${
                 reportType === 'relocation_justification'
-                  ? 'bg-white text-slate-900 shadow-xs'
+                  ? 'bg-blue-600 text-white shadow-xs'
                   : 'text-slate-600 hover:text-slate-900'
               }`}
               onClick={() => handleReportTypeChange('relocation_justification')}
@@ -213,6 +213,7 @@ export function ReportsWorkspace({
           <button
             className={buttonStyles({ size: 'sm', variant: 'primary' })}
             onClick={handlePrint}
+            title="Format and print official DMA resettlement order dossier"
             type="button"
           >
             <PrinterIcon className="size-3.5" />
@@ -223,6 +224,7 @@ export function ReportsWorkspace({
             className={buttonStyles({ size: 'sm', variant: 'secondary' })}
             download
             href={`/api/reports/export/csv?type=${reportType === 'relocation_justification' ? 'relocations' : 'habitations'}&district=${selectedDistrict}`}
+            title="Download tabular dataset as CSV spreadsheet"
           >
             <DownloadIcon className="size-3.5" />
             Export CSV
@@ -232,6 +234,7 @@ export function ReportsWorkspace({
             className={buttonStyles({ size: 'sm', variant: 'secondary' })}
             download
             href={`/api/reports/export/json?type=${reportType}&habitationId=${selectedHabitationId}&district=${selectedDistrict}`}
+            title="Download machine-readable structured JSON decision document"
           >
             <DownloadIcon className="size-3.5" />
             Export JSON

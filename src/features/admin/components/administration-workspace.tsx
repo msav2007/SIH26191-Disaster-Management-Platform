@@ -70,10 +70,10 @@ export function AdministrationWorkspace() {
   return (
     <div className="space-y-6">
       {/* 1. Page Header */}
-      <div className="flex flex-wrap items-center justify-between gap-4 rounded-xl border border-slate-200 bg-white p-5 shadow-xs">
+      <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-xs">
         <div>
           <div className="flex items-center gap-2">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-sky-700">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-blue-700">
               State Disaster Management Authority
             </span>
             <span className="rounded bg-slate-100 px-1.5 py-0.5 text-[10px] font-bold text-slate-700 ring-1 ring-slate-200">
@@ -81,7 +81,7 @@ export function AdministrationWorkspace() {
             </span>
           </div>
           <h1 className="mt-1 text-lg font-bold text-slate-900">
-            Administration & Technical Governance Console
+            Administration &amp; Technical Governance Console
           </h1>
           <p className="mt-0.5 text-xs text-slate-500">
             Manage system configurations, data registries, audit trails, and role-based permissions safely isolated from operational workflows.
@@ -94,50 +94,50 @@ export function AdministrationWorkspace() {
       </div>
 
       {/* 2. Admin Navigation Tabs */}
-      <div className="flex rounded-lg border border-slate-200 bg-slate-100 p-1">
+      <div className="flex rounded-xl border border-slate-200 bg-slate-100 p-1">
         <button
-          className={`flex-1 rounded-md py-2 text-xs font-semibold transition-all ${
+          className={`flex-1 rounded-lg py-2 text-xs font-bold transition-all ${
             activeTab === 'data'
-              ? 'bg-white text-slate-900 shadow-xs'
+              ? 'bg-blue-600 text-white shadow-xs'
               : 'text-slate-600 hover:text-slate-900'
           }`}
           onClick={() => setActiveTab('data')}
           type="button"
         >
-          Data Management & Registries
+          Data Management &amp; Registries
         </button>
         <button
-          className={`flex-1 rounded-md py-2 text-xs font-semibold transition-all ${
+          className={`flex-1 rounded-lg py-2 text-xs font-bold transition-all ${
             activeTab === 'system'
-              ? 'bg-white text-slate-900 shadow-xs'
+              ? 'bg-blue-600 text-white shadow-xs'
               : 'text-slate-600 hover:text-slate-900'
           }`}
           onClick={() => setActiveTab('system')}
           type="button"
         >
-          System Configuration & Model Weights
+          System Configuration &amp; Model Weights
         </button>
         <button
-          className={`flex-1 rounded-md py-2 text-xs font-semibold transition-all ${
+          className={`flex-1 rounded-lg py-2 text-xs font-bold transition-all ${
             activeTab === 'audit'
-              ? 'bg-white text-slate-900 shadow-xs'
+              ? 'bg-blue-600 text-white shadow-xs'
               : 'text-slate-600 hover:text-slate-900'
           }`}
           onClick={() => setActiveTab('audit')}
           type="button"
         >
-          Statutory Audit Logs & Provenance
+          Statutory Audit Logs &amp; Provenance
         </button>
         <button
-          className={`flex-1 rounded-md py-2 text-xs font-semibold transition-all ${
+          className={`flex-1 rounded-lg py-2 text-xs font-bold transition-all ${
             activeTab === 'users'
-              ? 'bg-white text-slate-900 shadow-xs'
+              ? 'bg-blue-600 text-white shadow-xs'
               : 'text-slate-600 hover:text-slate-900'
           }`}
           onClick={() => setActiveTab('users')}
           type="button"
         >
-          User Management & Roles
+          User Management &amp; Roles
         </button>
       </div>
 
@@ -179,21 +179,21 @@ export function AdministrationWorkspace() {
             </div>
           </div>
 
-          {/* Master Registries Overview Table */}
+          {/* Master Registries & Actions */}
           <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-xs">
             <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-3">
               <div>
-                <h2 className="text-sm font-bold text-slate-900">Seeded Dataset Registries</h2>
-                <p className="text-[11px] text-slate-500">Authoritative multi-hazard risk and resettlement datasets</p>
+                <h2 className="text-sm font-bold text-slate-900">Data Validation &amp; Master Export</h2>
+                <p className="text-[11px] text-slate-500">Statutory dataset verification and complete database snapshot backup</p>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex flex-wrap items-center gap-2">
                 <button
-                  className={buttonStyles({ size: 'sm', variant: 'secondary' })}
+                  className={buttonStyles({ size: 'sm', variant: 'primary' })}
                   disabled={isVerifying}
                   onClick={handleVerify}
                   type="button"
                 >
-                  <RefreshIcon className={`size-3.5 text-slate-500 ${isVerifying ? 'animate-spin' : ''}`} />
+                  <RefreshIcon className={`size-3.5 ${isVerifying ? 'animate-spin' : ''}`} />
                   {isVerifying ? 'Validating Schemas...' : 'Verify Seed Fixtures'}
                 </button>
                 <button

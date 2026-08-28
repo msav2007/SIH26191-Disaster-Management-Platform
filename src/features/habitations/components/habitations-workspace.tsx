@@ -45,18 +45,18 @@ export function HabitationsWorkspace({
   return (
     <div className="space-y-6">
       {/* 1. Page Header */}
-      <div className="flex flex-wrap items-center justify-between gap-4 rounded-xl border border-slate-200 bg-white p-5 shadow-xs">
+      <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-xs">
         <div>
           <div className="flex items-center gap-2">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-sky-700">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-blue-700">
               State Disaster Management Authority
             </span>
-            <span className="rounded bg-sky-50 px-1.5 py-0.5 text-[10px] font-bold text-sky-700 ring-1 ring-sky-600/20">
+            <span className="rounded bg-blue-50 px-1.5 py-0.5 text-[10px] font-bold text-blue-800 ring-1 ring-blue-600/20">
               RISK ASSESSMENT
             </span>
           </div>
           <h1 className="mt-1 text-lg font-bold text-slate-900">
-            Settlement Risk Assessment & Vulnerability Queue
+            Settlement Risk Assessment &amp; Vulnerability Queue
           </h1>
           <p className="mt-0.5 text-xs text-slate-500">
             Multi-hazard risk scoring and vulnerability profiles for habitations across surveyed districts.
@@ -65,13 +65,21 @@ export function HabitationsWorkspace({
 
         <div className="flex flex-wrap items-center gap-2.5 text-xs">
           <ProvenanceTag value="DEMO DATA" />
-          <Link className={buttonStyles({ size: 'sm', variant: 'secondary' })} href="/map">
+          <Link
+            className={buttonStyles({ size: 'sm', variant: 'primary' })}
+            href="/map"
+            title="View red zones, vulnerable habitations and candidate relocation sites"
+          >
             <MapPinIcon className="size-3.5" />
-            GIS Risk Map
+            Open GIS Risk Map →
           </Link>
-          <Link className={buttonStyles({ size: 'sm', variant: 'secondary' })} href="/scenarios">
+          <Link
+            className={buttonStyles({ size: 'sm', variant: 'secondary' })}
+            href="/scenarios"
+            title="Test rainfall, cloudburst and infrastructure stress"
+          >
             <SlidersIcon className="size-3.5" />
-            Scenario Simulator
+            Run Climate Scenario →
           </Link>
         </div>
       </div>

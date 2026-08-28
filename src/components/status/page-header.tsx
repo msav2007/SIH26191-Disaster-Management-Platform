@@ -14,15 +14,15 @@ export function PageHeader({
   title: string;
 }) {
   return (
-    <div className="flex flex-col gap-4 border-b border-[var(--border)] pb-6 lg:flex-row lg:items-end lg:justify-between">
-      <div className="space-y-3">
-        {badge ? <Badge variant="outline">{badge}</Badge> : null}
-        <div className="space-y-2">
-          <h1 className="text-3xl font-semibold tracking-tight text-[var(--text)]">{title}</h1>
-          <p className="max-w-3xl text-sm leading-7 text-[var(--text-muted)]">{description}</p>
+    <div className="flex flex-col gap-4 border-b border-slate-200 bg-white rounded-2xl p-5 shadow-xs lg:flex-row lg:items-end lg:justify-between">
+      <div className="space-y-2">
+        {badge ? <Badge variant="info">{badge}</Badge> : null}
+        <div className="space-y-1">
+          <h1 className="text-xl font-bold tracking-tight text-slate-900">{title}</h1>
+          <p className="max-w-3xl text-xs leading-relaxed text-slate-500">{description}</p>
         </div>
       </div>
-      {actions ? <div className="flex flex-wrap gap-3">{actions}</div> : null}
+      {actions ? <div className="flex flex-wrap gap-2.5">{actions}</div> : null}
     </div>
   );
 }

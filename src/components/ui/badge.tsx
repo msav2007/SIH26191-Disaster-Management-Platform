@@ -13,14 +13,14 @@ type BadgeVariant =
   | 'teal';
 
 const variantClasses: Record<BadgeVariant, string> = {
-  amber: 'border-amber-200 bg-amber-50 text-[var(--high)]',
-  critical: 'border-[var(--critical-border)] bg-[var(--critical-soft)] text-[var(--critical)]',
-  high: 'border-[var(--high-border)] bg-[var(--high-soft)] text-[var(--high)]',
-  moderate: 'border-[var(--moderate-border)] bg-[var(--moderate-soft)] text-[var(--moderate)]',
-  safe: 'border-[var(--safe-border)] bg-[var(--safe-soft)] text-[var(--safe)]',
-  info: 'border-[var(--info-border)] bg-[var(--info-soft)] text-[var(--info)]',
-  outline: 'border-[var(--border)] bg-[var(--surface-muted)] text-[var(--text-muted)]',
-  teal: 'border-teal-200 bg-teal-50 text-[var(--accent-strong)]',
+  amber: 'border-amber-200 bg-amber-50 text-amber-800',
+  critical: 'border-red-200 bg-red-50 text-red-800',
+  high: 'border-amber-200 bg-amber-50 text-amber-800',
+  moderate: 'border-yellow-200 bg-yellow-50 text-yellow-800',
+  safe: 'border-emerald-200 bg-emerald-50 text-emerald-800',
+  info: 'border-blue-200 bg-blue-50 text-blue-800',
+  outline: 'border-slate-200 bg-slate-50 text-slate-700',
+  teal: 'border-blue-200 bg-blue-50 text-blue-800',
 };
 
 export function Badge({

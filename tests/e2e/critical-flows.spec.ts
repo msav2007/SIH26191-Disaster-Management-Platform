@@ -14,7 +14,7 @@ test.describe('SIH26191 Critical Authority Flows (Phase 9)', () => {
 
     // Click Chooralmala
     await page.getByRole('link', { name: /Chooralmala Town Settlement/i }).click();
-    await expect(page.getByText('HAB-WY-01')).toBeVisible();
+    await expect(page.getByText('HAB-WY-01').first()).toBeVisible();
   });
 
   test('FLOW 2: Habitations Prioritization -> Evidence Dossier -> Relocation Matching', async ({ page }) => {

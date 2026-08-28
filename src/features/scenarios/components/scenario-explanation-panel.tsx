@@ -29,7 +29,7 @@ export function ScenarioExplanationPanel({
       <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-3">
         <div>
           <span className="text-[10px] font-bold uppercase tracking-wider text-sky-700">
-            Grounded Impact Analysis
+            Grounded AI Decision Briefing
           </span>
           <h2 className="text-sm font-bold text-slate-900 mt-0.5">
             Explainable Scenario Impact Analysis: {habitation.name}

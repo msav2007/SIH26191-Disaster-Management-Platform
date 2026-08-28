@@ -13,11 +13,19 @@ export default async function MapPage() {
       <PageHeader
         actions={
           <>
-            <Link className={buttonStyles({ size: 'sm', variant: 'secondary' })} href="/habitations">
-              Habitations Queue ({summary.habitations.critical} critical)
+            <Link
+              className={buttonStyles({ size: 'sm', variant: 'secondary' })}
+              href="/habitations"
+              title="View all assessed habitations and risk rankings"
+            >
+              View Risk Queue ({summary.habitations.critical} critical) →
             </Link>
-            <Link className={buttonStyles({ size: 'sm', variant: 'primary' })} href="/relocation">
-              Relocation Capacity ({summary.relocationSites.availableCapacity.toLocaleString('en-IN')} available)
+            <Link
+              className={buttonStyles({ size: 'sm', variant: 'primary' })}
+              href="/relocation"
+              title="Inspect candidate relocation sites and available headroom"
+            >
+              Inspect Relocation Sites ({summary.relocationSites.availableCapacity.toLocaleString('en-IN')} headroom) →
             </Link>
           </>
         }

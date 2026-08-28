@@ -2,22 +2,22 @@
 
 :root {
   /* Layout & Surfaces */
-  --bg: #f4f6fa;
-  --bg-subtle: #edf2f7;
+  --bg: #f1f5f9;
+  --bg-subtle: #e8edf5;
   --surface: #ffffff;
-  --surface-glass: rgba(255, 255, 255, 0.88);
-  --surface-glass-subtle: rgba(248, 250, 252, 0.75);
+  --surface-glass: rgba(255, 255, 255, 0.94);
+  --surface-glass-subtle: rgba(248, 250, 252, 0.88);
   --surface-muted: #f8fafc;
-  --surface-strong: #081226;
-  --surface-sidebar: #09132b;
-  --surface-sidebar-hover: #122247;
-  --surface-sidebar-active: #172a59;
+  --surface-strong: #091224;
+  --surface-sidebar: #0c1427;
+  --surface-sidebar-hover: #17233f;
+  --surface-sidebar-active: #2563eb;
   
   /* Borders */
   --border: #e2e8f0;
   --border-subtle: #edf2f7;
   --border-strong: #cbd5e1;
-  --border-sidebar: #192a52;
+  --border-sidebar: #1e293b;
   
   /* Typography */
   --text: #0f172a;
@@ -27,14 +27,14 @@
   --text-sidebar: #94a3b8;
   --text-sidebar-bright: #ffffff;
   
-  /* Interaction Accent (Cyan / Professional Blue) */
-  --accent: #0284c7;
-  --accent-hover: #0369a1;
-  --accent-strong: #075985;
-  --accent-soft: #e0f2fe;
-  --accent-cyan: #06b6d4;
-  --accent-cyan-soft: #ecfeff;
-  --accent-border: #bae6fd;
+  /* Interaction Accent (Royal Blue / Command Navy) */
+  --accent: #2563eb;
+  --accent-hover: #1d4ed8;
+  --accent-strong: #1e40af;
+  --accent-soft: #eff6ff;
+  --accent-cyan: #0284c7;
+  --accent-cyan-soft: #f0f9ff;
+  --accent-border: #bfdbfe;
 
   /* Restrained Status Colors */
   --critical: #dc2626;
@@ -67,9 +67,9 @@
   --neutral-border: #cbd5e1;
 
   /* Shadows & Elevations */
-  --shadow-subtle: 0 1px 3px rgba(15, 23, 42, 0.04), 0 1px 2px rgba(15, 23, 42, 0.02);
-  --shadow-card: 0 4px 12px -2px rgba(15, 23, 42, 0.05), 0 2px 6px -1px rgba(15, 23, 42, 0.03);
-  --shadow-elevated: 0 10px 25px -3px rgba(15, 23, 42, 0.07), 0 4px 10px -2px rgba(15, 23, 42, 0.04);
+  --shadow-subtle: 0 1px 3px 0 rgba(15, 23, 42, 0.05), 0 1px 2px -1px rgba(15, 23, 42, 0.03);
+  --shadow-card: 0 2px 6px -1px rgba(15, 23, 42, 0.06), 0 1px 4px -1px rgba(15, 23, 42, 0.04);
+  --shadow-elevated: 0 10px 25px -3px rgba(15, 23, 42, 0.08), 0 4px 10px -2px rgba(15, 23, 42, 0.04);
 }
 
 * {
@@ -95,8 +95,9 @@ body {
     sans-serif;
   background-color: var(--bg);
   background-image:
-    radial-gradient(at 0% 0%, rgba(2, 132, 199, 0.03) 0px, transparent 50%),
-    radial-gradient(at 100% 0%, rgba(6, 182, 212, 0.03) 0px, transparent 50%);
+    radial-gradient(at 0% 0%, rgba(37, 99, 235, 0.035) 0px, transparent 50%),
+    radial-gradient(at 100% 0%, rgba(30, 64, 175, 0.025) 0px, transparent 50%),
+    radial-gradient(at 50% 100%, rgba(15, 23, 42, 0.015) 0px, transparent 50%);
   background-attachment: fixed;
 }
 
@@ -129,7 +130,7 @@ textarea {
 .command-card {
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 14px;
+  border-radius: 16px;
   box-shadow: var(--shadow-subtle);
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }

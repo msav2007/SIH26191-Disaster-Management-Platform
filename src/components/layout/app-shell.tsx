@@ -126,7 +126,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         {/* Main Content Workspace Surface */}
         <div className="flex min-h-screen flex-col bg-[var(--bg)]">
           {/* Top Glass Header */}
-          <header className="sticky top-0 z-40 border-b border-[var(--border)] bg-white/80 px-4 py-3 backdrop-blur-md sm:px-6 lg:px-8">
+          <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/95 px-4 py-3 backdrop-blur-md sm:px-6 lg:px-8">
             <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
               <div className="flex items-center gap-3">
                 {/* Mobile Menu Toggle Button */}
@@ -145,8 +145,8 @@ export function AppShell({ children }: { children: ReactNode }) {
               </div>
 
               <div className="flex flex-wrap items-center gap-2 text-xs">
-                <div className="flex items-center gap-1.5 rounded-lg border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-[11px] font-semibold text-emerald-800">
-                  <span className="size-1.5 rounded-full bg-emerald-600" />
+                <div className="flex items-center gap-1.5 rounded-lg border border-blue-200 bg-blue-50 px-2.5 py-1 text-[11px] font-semibold text-blue-800">
+                  <span className="size-1.5 rounded-full bg-blue-600" />
                   {activeRole.shortTitle} Active
                 </div>
                 <span className="rounded-lg border border-slate-200 bg-slate-100 px-2.5 py-1 font-mono text-[10px] font-medium text-slate-600">

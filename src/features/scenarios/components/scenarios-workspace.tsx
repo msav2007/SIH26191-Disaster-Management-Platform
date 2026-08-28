@@ -175,13 +175,13 @@ export function ScenariosWorkspace({
   return (
     <div className="space-y-6">
       {/* 1. Page Header */}
-      <div className="flex flex-wrap items-center justify-between gap-4 rounded-xl border border-slate-200 bg-white p-5 shadow-xs">
+      <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-xs">
         <div>
           <div className="flex items-center gap-2">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-sky-700">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-blue-700">
               State Disaster Management Authority
             </span>
-            <span className="rounded bg-cyan-50 px-1.5 py-0.5 text-[10px] font-bold text-cyan-800 ring-1 ring-cyan-600/20">
+            <span className="rounded bg-blue-50 px-1.5 py-0.5 text-[10px] font-bold text-blue-800 ring-1 ring-blue-600/20">
               CLIMATE STRESS MODEL
             </span>
           </div>
@@ -195,9 +195,20 @@ export function ScenariosWorkspace({
 
         <div className="flex flex-wrap items-center gap-2.5 text-xs">
           <ProvenanceTag value="DEMO DATA" />
-          <Link className={buttonStyles({ size: 'sm', variant: 'secondary' })} href="/map">
+          <Link
+            className={buttonStyles({ size: 'sm', variant: 'primary' })}
+            href="/map"
+            title="Inspect escalated risk zones and vulnerable settlements on interactive GIS vector map"
+          >
             <MapPinIcon className="size-3.5" />
-            View on GIS Workspace
+            Open GIS Risk Map →
+          </Link>
+          <Link
+            className={buttonStyles({ size: 'sm', variant: 'secondary' })}
+            href="/habitations"
+            title="View all assessed habitations and baseline risk triage queue"
+          >
+            View Risk Queue →
           </Link>
         </div>
       </div>

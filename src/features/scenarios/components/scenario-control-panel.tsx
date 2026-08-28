@@ -136,7 +136,7 @@ export function ScenarioControlPanel({
                 {modifiers.rainfallMultiplier.toFixed(2)}x ({Math.round((modifiers.rainfallMultiplier - 1) * 100)}%)
               </span>
             </div>
-            <p className="mt-0.5 text-[10px] text-slate-500">Precipitation intensity scaling</p>
+            <p className="mt-0.5 text-[10px] text-slate-500">Increase precipitation intensity</p>
             <input
               aria-label="Adjust precipitation multiplier"
               className="mt-2.5 w-full accent-sky-600 disabled:opacity-60"
@@ -156,7 +156,7 @@ export function ScenarioControlPanel({
               <span className="text-slate-700">Cloudburst Surge:</span>
               <span className="tabnum font-bold text-amber-700">+{modifiers.cloudburstSurge} pts</span>
             </div>
-            <p className="mt-0.5 text-[10px] text-slate-500">Short-duration flash flood surge</p>
+            <p className="mt-0.5 text-[10px] text-slate-500">Increase extreme short-duration rainfall</p>
             <input
               aria-label="Adjust cloudburst intensity surge"
               className="mt-2.5 w-full accent-amber-600 disabled:opacity-60"
@@ -176,7 +176,7 @@ export function ScenarioControlPanel({
               <span className="text-slate-700">Slope Saturation:</span>
               <span className="tabnum font-bold text-red-700">{modifiers.slopeSaturationFactor.toFixed(2)}x</span>
             </div>
-            <p className="mt-0.5 text-[10px] text-slate-500">Groundwater pore pressure multiplier</p>
+            <p className="mt-0.5 text-[10px] text-slate-500">Increase terrain saturation</p>
             <input
               aria-label="Adjust slope pore saturation multiplier"
               className="mt-2.5 w-full accent-red-600 disabled:opacity-60"
@@ -196,7 +196,7 @@ export function ScenarioControlPanel({
               <span className="text-slate-700">Infra Strain:</span>
               <span className="tabnum font-bold text-slate-900">{modifiers.infrastructureStrainMultiplier.toFixed(2)}x</span>
             </div>
-            <p className="mt-0.5 text-[10px] text-slate-500">Corridor road and power grid disruption</p>
+            <p className="mt-0.5 text-[10px] text-slate-500">Increase infrastructure stress</p>
             <input
               aria-label="Adjust infrastructure strain multiplier"
               className="mt-2.5 w-full accent-slate-800 disabled:opacity-60"
