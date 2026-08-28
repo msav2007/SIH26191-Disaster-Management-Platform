@@ -32,16 +32,16 @@ export function ModulePlaceholder({
 
       <div className="grid gap-6 xl:grid-cols-[1.2fr_0.8fr]">
         <Card className="space-y-4 p-6">
-          <div className="flex items-center justify-between gap-3">
-            <h2 className="text-xl font-semibold text-[var(--text)]">Current Responsibility</h2>
+          <div className="flex items-center justify-between gap-3 border-b border-slate-100 pb-3">
+            <h2 className="text-base font-bold text-slate-900">Current Responsibility</h2>
             <StatusIndicator label="Foundation only" tone="planned" />
           </div>
-          <p className="text-sm leading-7 text-[var(--text-muted)]">{currentScope}</p>
-          <ul className="space-y-3 text-sm leading-6 text-[var(--text-muted)]">
+          <p className="text-xs leading-relaxed text-slate-600">{currentScope}</p>
+          <ul className="space-y-2.5 text-xs text-slate-700">
             {responsibilities.map((item) => (
               <li
                 key={item}
-                className="rounded-2xl border border-[var(--border)] bg-[var(--surface-muted)] px-4 py-3"
+                className="rounded-xl border border-slate-200 bg-slate-50/60 px-4 py-3"
               >
                 {item}
               </li>
@@ -50,12 +50,12 @@ export function ModulePlaceholder({
         </Card>
 
         <Card className="space-y-4 p-6">
-          <h2 className="text-xl font-semibold text-[var(--text)]">Next Milestones</h2>
-          <ul className="space-y-3 text-sm leading-6 text-[var(--text-muted)]">
+          <h2 className="text-base font-bold text-slate-900 border-b border-slate-100 pb-3">Next Milestones</h2>
+          <ul className="space-y-2.5 text-xs text-slate-700">
             {nextMilestones.map((item) => (
               <li
                 key={item}
-                className="rounded-2xl border border-dashed border-[var(--border)] px-4 py-3"
+                className="rounded-xl border border-dashed border-slate-300 bg-slate-50/30 px-4 py-3"
               >
                 {item}
               </li>
@@ -66,4 +66,3 @@ export function ModulePlaceholder({
     </div>
   );
 }
-

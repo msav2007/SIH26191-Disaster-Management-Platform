@@ -3,14 +3,19 @@ import type { AppRole } from '@/types/app';
 export type NavigationItem = {
   href:
     | '/dashboard'
-    | '/map'
     | '/habitations'
+    | '/habitations?filter=critical'
+    | '/scenarios'
     | '/relocation'
     | '/reports'
-    | '/scenarios'
+    | '/map'
     | '/admin';
   label: string;
-  description: string;
+  badge?: string;
   requiredRoles?: AppRole[];
 };
 
+export type NavigationGroup = {
+  title: string;
+  items: NavigationItem[];
+};

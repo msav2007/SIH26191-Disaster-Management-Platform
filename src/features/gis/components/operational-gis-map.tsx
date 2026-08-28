@@ -194,24 +194,24 @@ export function OperationalGisMap({
 
   return (
     <div
-      className={`relative flex flex-col border border-[var(--border)] bg-[var(--surface)] shadow-[var(--shadow-panel)] ${
-        isFullscreen ? 'fixed inset-3 z-50 rounded-md' : 'rounded-md'
+      className={`relative flex flex-col border border-slate-200 bg-white shadow-xs ${
+        isFullscreen ? 'fixed inset-3 z-50 rounded-xl' : 'rounded-xl'
       } ${className ?? ''}`}
     >
       {/* Top Header & GIS Controls */}
-      <header className="flex flex-wrap items-center justify-between gap-2 border-b border-[var(--border)] bg-[var(--surface-muted)] px-4 py-2.5">
+      <header className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 bg-slate-50/80 px-4 py-3">
         <div className="flex items-center gap-2.5">
-          <span className="flex size-7 items-center justify-center rounded-sm bg-[var(--accent)] text-white">
+          <span className="flex size-7 items-center justify-center rounded-lg bg-sky-600 text-white shadow-2xs">
             <LayersIcon className="size-4" />
           </span>
           <div>
             <div className="flex items-center gap-2">
-              <h2 className="text-xs font-bold uppercase tracking-wider text-[var(--text)]">
+              <h2 className="text-xs font-bold uppercase tracking-wider text-slate-900">
                 Operational Multi-Hazard GIS
               </h2>
               <ProvenanceTag value="DEMO DATA" />
             </div>
-            <p className="text-[10px] text-[var(--text-muted)]">
+            <p className="text-[10px] text-slate-500">
               EPSG:4326 Projection · Real Coordinates Linked to Drizzle Domain Models
             </p>
           </div>
@@ -220,20 +220,20 @@ export function OperationalGisMap({
         <div className="flex flex-wrap items-center gap-2">
           {/* Search Autocomplete */}
           <div className="relative">
-            <SearchIcon className="pointer-events-none absolute left-2.5 top-1/2 size-3.5 -translate-y-1/2 text-[var(--text-muted)]" />
+            <SearchIcon className="pointer-events-none absolute left-2.5 top-1/2 size-3.5 -translate-y-1/2 text-slate-400" />
             <input
               aria-label="Search map settlements and zones"
-              className="h-8 w-56 rounded-sm border border-[var(--border)] bg-[var(--surface)] pl-8 pr-3 text-xs text-[var(--text)] placeholder:text-[var(--text-muted)] focus:border-[var(--accent)] focus:outline-none"
+              className="h-8 w-56 rounded-lg border border-slate-200 bg-white pl-8 pr-3 text-xs text-slate-900 placeholder:text-slate-400 focus:border-cyan-500 focus:outline-none"
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search Chooralmala, Joshimath..."
               value={searchQuery}
             />
             {searchResults.length > 0 && (
-              <ul className="absolute left-0 top-9 z-30 w-72 overflow-hidden rounded-sm border border-[var(--border)] bg-[var(--surface)] shadow-[var(--shadow-panel)]">
+              <ul className="absolute left-0 top-9 z-30 w-72 overflow-hidden rounded-lg border border-slate-200 bg-white shadow-md">
                 {searchResults.map((res) => (
                   <li key={res.id}>
                     <button
-                      className="flex w-full flex-col px-3 py-2 text-left transition-colors hover:bg-[var(--surface-muted)]"
+                      className="flex w-full flex-col px-3 py-2 text-left transition-colors hover:bg-slate-50"
                       onClick={() => {
                         focusCoordinates(res.coords, 3.6);
                         setSelectedFeature(res.feature);
@@ -241,8 +241,8 @@ export function OperationalGisMap({
                       }}
                       type="button"
                     >
-                      <span className="text-xs font-semibold text-[var(--text)]">{res.label}</span>
-                      <span className="text-[10px] text-[var(--text-muted)]">{res.sub}</span>
+                      <span className="text-xs font-semibold text-slate-900">{res.label}</span>
+                      <span className="text-[10px] text-slate-500">{res.sub}</span>
                     </button>
                   </li>
                 ))}
@@ -253,7 +253,7 @@ export function OperationalGisMap({
           {/* Style Selector */}
           <select
             aria-label="Select base map style"
-            className="h-8 rounded-sm border border-[var(--border)] bg-[var(--surface)] px-2 text-xs text-[var(--text)] focus:outline-none"
+            className="h-8 rounded-lg border border-slate-200 bg-white px-2.5 text-xs font-medium text-slate-700 focus:outline-none focus:border-cyan-500"
             onChange={(e) => setMapStyle(e.target.value as MapStyleKey)}
             value={mapStyle}
           >
@@ -267,10 +267,10 @@ export function OperationalGisMap({
           {/* Layer Control Toggle */}
           <button
             aria-label="Toggle layer visibility panel"
-            className={`inline-flex h-8 items-center gap-1.5 rounded-sm border px-2.5 text-xs font-semibold transition-colors ${
+            className={`inline-flex h-8 items-center gap-1.5 rounded-lg border px-3 text-xs font-semibold transition-all ${
               showLayerDrawer
-                ? 'border-[var(--accent)] bg-[var(--accent-soft)] text-[var(--accent-strong)]'
-                : 'border-[var(--border)] bg-[var(--surface)] text-[var(--text)] hover:bg-[var(--surface-muted)]'
+                ? 'border-sky-300 bg-sky-50 text-sky-800'
+                : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
             }`}
             onClick={() => setShowLayerDrawer((prev) => !prev)}
             type="button"
@@ -282,7 +282,7 @@ export function OperationalGisMap({
           {/* Fullscreen Toggle */}
           <button
             aria-label="Toggle fullscreen map view"
-            className="inline-flex size-8 items-center justify-center rounded-sm border border-[var(--border)] bg-[var(--surface)] text-[var(--text)] hover:bg-[var(--surface-muted)]"
+            className="inline-flex size-8 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
             onClick={() => setIsFullscreen((prev) => !prev)}
             type="button"
           >
@@ -526,22 +526,22 @@ export function OperationalGisMap({
           {/* Hover Tooltip */}
           {hoverInfo && (
             <div
-              className="pointer-events-none absolute z-20 max-w-xs rounded-sm border border-[var(--border)] bg-[var(--surface)] px-2.5 py-1.5 shadow-[var(--shadow-panel)]"
+              className="pointer-events-none absolute z-20 max-w-xs rounded-lg border border-slate-200 bg-white/95 px-3 py-2 shadow-md backdrop-blur-sm"
               style={{
                 left: Math.min(hoverInfo.x * zoom + offset.x + 14, 500),
                 top: hoverInfo.y * zoom + offset.y + 14,
               }}
             >
-              <p className="text-xs font-bold text-[var(--text)]">{hoverInfo.title}</p>
-              <p className="text-[10px] text-[var(--text-muted)]">{hoverInfo.subtitle}</p>
+              <p className="text-xs font-bold text-slate-900">{hoverInfo.title}</p>
+              <p className="text-[10px] text-slate-500">{hoverInfo.subtitle}</p>
             </div>
           )}
 
           {/* Map Controls (Zoom, Reset) */}
-          <div className="absolute left-3 top-3 flex flex-col overflow-hidden rounded-sm border border-[var(--border)] bg-[var(--surface)] shadow-[var(--shadow-subtle)]">
+          <div className="absolute left-3 top-3 flex flex-col overflow-hidden rounded-lg border border-slate-200 bg-white shadow-xs">
             <button
               aria-label="Zoom in"
-              className="flex size-8 items-center justify-center text-[var(--text)] hover:bg-[var(--surface-muted)]"
+              className="flex size-8 items-center justify-center text-slate-700 hover:bg-slate-50"
               onClick={() => handleZoom(0.4)}
               type="button"
             >
@@ -549,7 +549,7 @@ export function OperationalGisMap({
             </button>
             <button
               aria-label="Zoom out"
-              className="flex size-8 items-center justify-center border-t border-[var(--border)] text-[var(--text)] hover:bg-[var(--surface-muted)]"
+              className="flex size-8 items-center justify-center border-t border-slate-200 text-slate-700 hover:bg-slate-50"
               onClick={() => handleZoom(-0.4)}
               type="button"
             >
@@ -557,7 +557,7 @@ export function OperationalGisMap({
             </button>
             <button
               aria-label="Reset map extent"
-              className="flex size-8 items-center justify-center border-t border-[var(--border)] text-[var(--text)] hover:bg-[var(--surface-muted)]"
+              className="flex size-8 items-center justify-center border-t border-slate-200 text-slate-700 hover:bg-slate-50"
               onClick={handleReset}
               type="button"
             >
@@ -566,16 +566,16 @@ export function OperationalGisMap({
           </div>
 
           {/* Scale & Dynamic Cursor Coordinates */}
-          <div className="absolute bottom-3 left-3 flex items-center gap-3 rounded-sm border border-[var(--border)] bg-[var(--surface)]/90 px-2.5 py-1 text-[11px] text-[var(--text-muted)] shadow-[var(--shadow-subtle)] backdrop-blur-sm">
+          <div className="absolute bottom-3 left-3 flex items-center gap-3 rounded-lg border border-slate-200 bg-white/90 px-3 py-1.5 text-[11px] text-slate-600 shadow-xs backdrop-blur-sm">
             <span className="tabnum font-semibold">Zoom {zoom.toFixed(1)}×</span>
-            <span className="h-3 w-px bg-[var(--border)]" />
+            <span className="h-3 w-px bg-slate-200" />
             <div className="flex items-center gap-1">
-              <span className="h-1.5 w-12 bg-[var(--text-muted)]/70" />
+              <span className="h-1.5 w-12 bg-slate-400" />
               <span>~100 km</span>
             </div>
             {cursorCoords && (
               <>
-                <span className="h-3 w-px bg-[var(--border)]" />
+                <span className="h-3 w-px bg-slate-200" />
                 <span className="tabnum font-mono text-[10px]">
                   {cursorCoords.lat.toFixed(3)}°N, {cursorCoords.lng.toFixed(3)}°E
                 </span>
@@ -585,13 +585,13 @@ export function OperationalGisMap({
 
           {/* Layer Control Drawer */}
           {showLayerDrawer && (
-            <fieldset className="absolute left-12 top-3 z-20 w-64 rounded-sm border border-[var(--border)] bg-[var(--surface)]/95 p-3 shadow-[var(--shadow-panel)] backdrop-blur-md">
-              <legend className="label-xs mb-2">GIS Layer Visibility</legend>
+            <fieldset className="absolute left-12 top-3 z-20 w-64 rounded-xl border border-slate-200 bg-white/95 p-3.5 shadow-md backdrop-blur-md">
+              <legend className="text-[10px] font-bold uppercase tracking-wider text-slate-600 mb-2">GIS Layer Visibility</legend>
               <div className="space-y-1.5">
                 {LAYERS_CONFIG.map((l) => (
                   <label
                     key={l.key}
-                    className="flex cursor-pointer items-center justify-between rounded-sm px-1.5 py-1 text-xs text-[var(--text)] hover:bg-[var(--surface-muted)]"
+                    className="flex cursor-pointer items-center justify-between rounded-lg px-2 py-1.5 text-xs text-slate-700 hover:bg-slate-50"
                   >
                     <div className="flex items-center gap-2">
                       <span className="size-2.5 shrink-0 rounded-sm" style={{ backgroundColor: l.tone }} />
@@ -599,7 +599,7 @@ export function OperationalGisMap({
                     </div>
                     <input
                       checked={layers[l.key]}
-                      className="size-3.5 accent-[var(--accent)]"
+                      className="size-3.5 accent-sky-600"
                       onChange={(e) => setLayers((prev) => ({ ...prev, [l.key]: e.target.checked }))}
                       type="checkbox"
                     />
@@ -611,7 +611,7 @@ export function OperationalGisMap({
         </div>
 
         {/* Right Side / Responsive Feature Inspector */}
-        <aside className="w-80 shrink-0 border-l border-[var(--border)] bg-[var(--surface)] md:w-96">
+        <aside className="w-80 shrink-0 border-l border-slate-200 bg-white md:w-96">
           <GisFeatureInspector
             feature={selectedFeature}
             onClose={() => setSelectedFeature(null)}
@@ -621,25 +621,25 @@ export function OperationalGisMap({
       </div>
 
       {/* Map Legend Footer */}
-      <footer className="flex flex-wrap items-center gap-x-4 gap-y-1.5 border-t border-[var(--border)] bg-[var(--surface-muted)] px-4 py-2 text-xs">
-        <span className="label-xs">Map Legend</span>
+      <footer className="flex flex-wrap items-center gap-x-4 gap-y-1.5 border-t border-slate-200 bg-slate-50/80 px-4 py-2.5 text-xs">
+        <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Map Legend</span>
         <div className="flex items-center gap-1.5">
-          <span className="size-2.5 rounded-full bg-[var(--critical)]" />
-          <span>Critical Zone / Priority</span>
+          <span className="size-2.5 rounded-full bg-red-600" />
+          <span className="text-slate-700">Critical Zone / Priority</span>
         </div>
         <div className="flex items-center gap-1.5">
-          <span className="size-2.5 rounded-full bg-[var(--high)]" />
-          <span>High Priority</span>
+          <span className="size-2.5 rounded-full bg-amber-500" />
+          <span className="text-slate-700">High Priority</span>
         </div>
         <div className="flex items-center gap-1.5">
-          <span className="size-2.5 rounded-sm bg-[var(--safe)]" />
-          <span>Relocation Site</span>
+          <span className="size-2.5 rounded-sm bg-emerald-600" />
+          <span className="text-slate-700">Relocation Site</span>
         </div>
         <div className="flex items-center gap-1.5">
-          <span className="size-2 rotate-45 bg-[var(--info)]" />
-          <span>Infrastructure</span>
+          <span className="size-2 rotate-45 bg-sky-600" />
+          <span className="text-slate-700">Infrastructure</span>
         </div>
-        <div className="ml-auto flex items-center gap-3 text-[11px] text-[var(--text-muted)]">
+        <div className="ml-auto flex items-center gap-3 text-[11px] text-slate-500">
           <span>{redZonesFixture.length} Red Zones</span>
           <span>·</span>
           <span>{habitationsFixture.length} Habitations</span>

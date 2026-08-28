@@ -171,11 +171,11 @@ export async function buildRelocationJustificationReport(
   const statutoryMandate = {
     mandateHeadline: plan.decisionExplanation.headline,
     disasterActReference:
-      habitation.priority === 'CRITICAL'
+      plan.riskAssessment.priority === 'CRITICAL'
         ? 'Disaster Management Act 2005 (Section 30/34) - Proactive Resettlement Protocol'
         : 'State Disaster Mitigation Plan (SDMP) - Phased Relocation Guidelines',
     urgencyWindow: plan.riskAssessment.urgencyWindow,
-    priorityLevel: habitation.priority,
+    priorityLevel: plan.riskAssessment.priority,
   };
 
   return {
@@ -211,10 +211,10 @@ export async function buildExecutiveAuthoritySummary(
   const plans = habitations.map((h) => findRelocationCandidates(h, allSites));
 
   const priorityBreakdown = {
-    immediate: plans.filter((p) => p.habitation.priority === 'CRITICAL').length,
-    shortTerm: plans.filter((p) => p.habitation.priority === 'HIGH').length,
-    mediumTerm: plans.filter((p) => p.habitation.priority === 'MEDIUM').length,
-    monitor: plans.filter((p) => p.habitation.priority === 'LOW').length,
+    immediate: plans.filter((p) => p.riskAssessment.priority === 'CRITICAL').length,
+    shortTerm: plans.filter((p) => p.riskAssessment.priority === 'HIGH').length,
+    mediumTerm: plans.filter((p) => p.riskAssessment.priority === 'MEDIUM').length,
+    monitor: plans.filter((p) => p.riskAssessment.priority === 'LOW').length,
   };
 
   // Hazard Distribution
@@ -238,7 +238,8 @@ export async function buildExecutiveAuthoritySummary(
     { district: string; state: string; habitationsCount: number; populationAtRisk: number; criticalCount: number }
   >();
 
-  habitations.forEach((h) => {
+  plans.forEach((p) => {
+    const h = p.habitation;
     const existing = districtMap.get(h.district) ?? {
       district: h.district,
       state: h.state,
@@ -249,7 +250,7 @@ export async function buildExecutiveAuthoritySummary(
 
     existing.habitationsCount++;
     existing.populationAtRisk += h.population;
-    if (h.priority === 'CRITICAL') existing.criticalCount++;
+    if (p.riskAssessment.priority === 'CRITICAL') existing.criticalCount++;
     districtMap.set(h.district, existing);
   });
 
@@ -268,8 +269,8 @@ export async function buildExecutiveAuthoritySummary(
       population: p.habitation.population,
       hazard: p.habitation.primaryHazard,
       riskScore: p.riskAssessment.compositeScore,
-      priority: p.habitation.priority,
-      timeline: p.habitation.timeline,
+      priority: p.riskAssessment.priority,
+      timeline: p.riskAssessment.timeline,
       recommendedSiteName: p.recommendedSite?.site.name ?? null,
     }));
 

@@ -11,6 +11,7 @@ import type {
 import type { Habitation } from '@/types/domain';
 import { buttonStyles } from '@/components/ui/button';
 import { DownloadIcon, PrinterIcon } from '@/components/ui/icons';
+import { ProvenanceTag } from '@/components/ui/provenance-tag';
 import { ExecutiveSummaryReportView } from './executive-summary-report-view';
 import { HabitationDossierReportView } from './habitation-dossier-report-view';
 import { RelocationJustificationReportView } from './relocation-justification-report-view';
@@ -104,17 +105,41 @@ export function ReportsWorkspace({
   };
 
   return (
-    <div className="space-y-4">
-      {/* Action & Configuration Toolbar (Hidden during print) */}
-      <div className="no-print flex flex-wrap items-center justify-between gap-3 rounded-sm border border-[var(--border)] bg-[var(--surface)] p-3 shadow-xs">
+    <div className="space-y-6">
+      {/* 1. Page Header */}
+      <div className="no-print flex flex-wrap items-center justify-between gap-4 rounded-xl border border-slate-200 bg-white p-5 shadow-xs">
+        <div>
+          <div className="flex items-center gap-2">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-sky-700">
+              State Disaster Management Authority
+            </span>
+            <span className="rounded bg-sky-50 px-1.5 py-0.5 text-[10px] font-bold text-sky-700 ring-1 ring-sky-600/20">
+              OFFICIAL RECORDS
+            </span>
+          </div>
+          <h1 className="mt-1 text-lg font-bold text-slate-900">
+            Executive & Statutory Decision Reports
+          </h1>
+          <p className="mt-0.5 text-xs text-slate-500">
+            Generate and export official decision-ready reports for district collectors, relief commissioners, and planning authorities.
+          </p>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-2.5 text-xs">
+          <ProvenanceTag value="DEMO DATA" />
+        </div>
+      </div>
+
+      {/* 2. Action & Configuration Toolbar (Hidden during print) */}
+      <div className="no-print flex flex-wrap items-center justify-between gap-3 rounded-xl border border-slate-200 bg-white p-4 shadow-xs">
         <div className="flex flex-wrap items-center gap-3">
           {/* Report Type Selector */}
-          <div className="flex rounded-sm border border-[var(--border)] bg-[var(--surface-muted)] p-0.5">
+          <div className="flex rounded-lg border border-slate-200 bg-slate-100 p-0.5">
             <button
-              className={`rounded-sm px-3 py-1 text-xs font-semibold transition-colors ${
+              className={`rounded-md px-3.5 py-1.5 text-xs font-semibold transition-all ${
                 reportType === 'executive_summary'
-                  ? 'bg-[var(--surface)] text-[var(--text)] shadow-xs'
-                  : 'text-[var(--text-muted)] hover:text-[var(--text)]'
+                  ? 'bg-white text-slate-900 shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900'
               }`}
               onClick={() => handleReportTypeChange('executive_summary')}
               type="button"
@@ -122,10 +147,10 @@ export function ReportsWorkspace({
               Executive Summary
             </button>
             <button
-              className={`rounded-sm px-3 py-1 text-xs font-semibold transition-colors ${
+              className={`rounded-md px-3.5 py-1.5 text-xs font-semibold transition-all ${
                 reportType === 'vulnerability_dossier'
-                  ? 'bg-[var(--surface)] text-[var(--text)] shadow-xs'
-                  : 'text-[var(--text-muted)] hover:text-[var(--text)]'
+                  ? 'bg-white text-slate-900 shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900'
               }`}
               onClick={() => handleReportTypeChange('vulnerability_dossier')}
               type="button"
@@ -133,10 +158,10 @@ export function ReportsWorkspace({
               Vulnerability Dossier
             </button>
             <button
-              className={`rounded-sm px-3 py-1 text-xs font-semibold transition-colors ${
+              className={`rounded-md px-3.5 py-1.5 text-xs font-semibold transition-all ${
                 reportType === 'relocation_justification'
-                  ? 'bg-[var(--surface)] text-[var(--text)] shadow-xs'
-                  : 'text-[var(--text-muted)] hover:text-[var(--text)]'
+                  ? 'bg-white text-slate-900 shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900'
               }`}
               onClick={() => handleReportTypeChange('relocation_justification')}
               type="button"
@@ -148,7 +173,7 @@ export function ReportsWorkspace({
           {/* District Filter */}
           <select
             aria-label="Filter reports by district"
-            className="h-8 rounded-sm border border-[var(--border)] bg-[var(--surface-muted)] px-2 text-xs font-semibold text-[var(--text)] focus:border-[var(--accent)] focus:outline-none"
+            className="h-8.5 rounded-lg border border-slate-200 bg-slate-50/60 px-3 text-xs font-semibold text-slate-900 focus:border-cyan-500 focus:bg-white focus:outline-none"
             onChange={(e) => setSelectedDistrict(e.target.value)}
             value={selectedDistrict}
           >
@@ -163,13 +188,13 @@ export function ReportsWorkspace({
           {/* Habitation Selector (Visible for Dossier and Justification) */}
           {reportType !== 'executive_summary' && (
             <div className="flex items-center gap-2">
-              <label className="label-xs" htmlFor="habitation-report-selector">
+              <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500" htmlFor="habitation-report-selector">
                 Subject:
               </label>
               <select
                 id="habitation-report-selector"
                 aria-label="Select target habitation for report generation"
-                className="h-8 rounded-sm border border-[var(--border)] bg-[var(--surface-muted)] px-2 text-xs font-semibold text-[var(--text)] focus:border-[var(--accent)] focus:outline-none"
+                className="h-8.5 rounded-lg border border-slate-200 bg-slate-50/60 px-3 text-xs font-semibold text-slate-900 focus:border-cyan-500 focus:bg-white focus:outline-none"
                 onChange={(e) => handleHabitationChange(e.target.value)}
                 value={selectedHabitationId}
               >
@@ -214,9 +239,9 @@ export function ReportsWorkspace({
         </div>
       </div>
 
-      {/* Report Preview Body */}
+      {/* 3. Report Preview Body */}
       {isLoading ? (
-        <div className="rounded-sm border border-[var(--border)] bg-[var(--surface)] p-12 text-center text-xs text-[var(--text-muted)]">
+        <div className="rounded-xl border border-slate-200 bg-white p-12 text-center text-xs text-slate-500 shadow-xs">
           Generating deterministic report dossier...
         </div>
       ) : reportType === 'executive_summary' ? (
@@ -226,7 +251,7 @@ export function ReportsWorkspace({
       ) : reportType === 'relocation_justification' && justificationReport ? (
         <RelocationJustificationReportView report={justificationReport} />
       ) : (
-        <div className="rounded-sm border border-[var(--border)] bg-[var(--surface)] p-12 text-center text-xs text-[var(--text-muted)]">
+        <div className="rounded-xl border border-slate-200 bg-white p-12 text-center text-xs text-slate-500 shadow-xs">
           Select a subject settlement from the dropdown above to render the report.
         </div>
       )}

@@ -1,41 +1,45 @@
-import type { NavigationItem } from '@/types/navigation';
+import type { NavigationGroup, NavigationItem } from '@/types/navigation';
 
-export const appNavigation: NavigationItem[] = [
+export const navigationGroups: NavigationGroup[] = [
   {
-    href: '/dashboard',
-    label: 'Command Center',
-    description: 'Operational overview and health status.',
+    title: 'OPERATIONAL SUITE',
+    items: [
+      {
+        href: '/dashboard',
+        label: 'Command Dashboard',
+      },
+      {
+        href: '/habitations',
+        label: 'Risk Assessment',
+      },
+      {
+        href: '/relocation',
+        label: 'Relocation Planning',
+      },
+      {
+        href: '/scenarios',
+        label: 'Scenario Simulator',
+      },
+      {
+        href: '/map',
+        label: 'GIS Risk Map',
+      },
+      {
+        href: '/reports',
+        label: 'Reports & Exports',
+      },
+    ],
   },
   {
-    href: '/map',
-    label: 'GIS Risk Map',
-    description: 'Future GIS layers and spatial analysis surfaces.',
-  },
-  {
-    href: '/habitations',
-    label: 'Vulnerable Habitations',
-    description: 'Future habitation assessment workflows.',
-  },
-  {
-    href: '/relocation',
-    label: 'Relocation Planning',
-    description: 'Future prioritization and site-matching workflows.',
-  },
-  {
-    href: '/reports',
-    label: 'Reports',
-    description: 'Future authority-ready report generation.',
-  },
-  {
-    href: '/scenarios',
-    label: 'Scenario Simulator',
-    description: 'Multi-hazard climate and environmental impact simulation.',
-  },
-  {
-    href: '/admin',
-    label: 'Administration',
-    description: 'Platform governance, configuration, and diagnostics.',
-    requiredRoles: ['platform_admin'],
+    title: 'GOVERNANCE',
+    items: [
+      {
+        href: '/admin',
+        label: 'Administration Console',
+        requiredRoles: ['platform_admin'],
+      },
+    ],
   },
 ];
 
+export const appNavigation: NavigationItem[] = navigationGroups.flatMap((g) => g.items);

@@ -13,6 +13,9 @@ import { MetricBar } from '@/components/ui/metric-bar';
 import { ProvenanceTag } from '@/components/ui/provenance-tag';
 import { StatusPill } from '@/components/ui/status-pill';
 import { evaluateCandidateSites } from '@/server/gis/spatial-queries';
+import { calculateHabitationRisk } from '@/server/risk/risk-engine';
+import { calculateSiteCapacity } from '@/server/capacity/capacity-engine';
+import { getPriorityTone } from '@/server/classification/classification-engine';
 
 export type SelectedFeature =
   | { type: 'red_zone'; data: RedZone }
@@ -117,7 +120,8 @@ export function GisFeatureInspector({
 
   if (feature.type === 'habitation') {
     const h = feature.data;
-    const tone = h.priority === 'CRITICAL' ? 'critical' : h.priority === 'HIGH' ? 'high' : 'moderate';
+    const risk = calculateHabitationRisk(h);
+    const tone = getPriorityTone(risk.priority);
     const candidateMatches = evaluateCandidateSites(h);
 
     return (
@@ -125,12 +129,15 @@ export function GisFeatureInspector({
         <header className="flex items-start justify-between gap-2 border-b border-[var(--border)] pb-3">
           <div>
             <div className="flex items-center gap-1.5">
-              <StatusPill tone={tone}>{h.priority} Priority</StatusPill>
+              <StatusPill tone={tone}>{risk.priority} Priority</StatusPill>
               <ProvenanceTag value={h.provenance} />
             </div>
             <h3 className="mt-1 text-sm font-bold text-[var(--text)]">{h.name}</h3>
             <p className="text-[11px] text-[var(--text-muted)]">
               {h.id} · {h.block} Block, {h.district}, {h.state}
+            </p>
+            <p className="text-[11px] font-semibold text-[var(--critical)]">
+              Composite Risk: {risk.compositeScore.toFixed(1)} / 100
             </p>
           </div>
           <button
@@ -220,8 +227,9 @@ export function GisFeatureInspector({
 
   if (feature.type === 'relocation_site') {
     const s = feature.data;
-    const available = Math.max(0, s.carryingCapacity - s.currentOccupancy);
-    const utilPct = Math.round((s.currentOccupancy / s.carryingCapacity) * 100);
+    const capacityAssessment = calculateSiteCapacity(s);
+    const available = capacityAssessment.availableHeadroom;
+    const utilPct = capacityAssessment.utilizationPercent;
     const suitabilityTone = s.suitability === 'suitable' ? 'safe' : s.suitability === 'conditionally_suitable' ? 'moderate' : 'critical';
 
     return (
@@ -252,14 +260,14 @@ export function GisFeatureInspector({
           <div className="rounded-sm border border-[var(--info-border)] bg-[var(--info-soft)] p-2.5 text-[11px] text-[var(--info)]">
             <p className="font-semibold">Capacity vs Suitability Distinction</p>
             <p className="mt-0.5 leading-relaxed text-[var(--text)]">
-              This site has <strong>{available.toLocaleString('en-IN')} persons</strong> headroom, but suitability status is <strong>{s.suitability.replace('_', ' ')}</strong> based on infrastructure and statutory clearances.
+              This site has <strong>{available.toLocaleString('en-IN')} persons</strong> effective absorption headroom (bottleneck: {capacityAssessment.limitingFactorLabel}), with suitability status <strong>{s.suitability.replace('_', ' ')}</strong> based on infrastructure and statutory clearances.
             </p>
           </div>
 
           <div className="grid grid-cols-2 gap-2">
             <div className="rounded-sm border border-[var(--border)] bg-[var(--surface-muted)] p-2">
-              <p className="label-xs">Total Capacity</p>
-              <p className="tabnum mt-1 text-base font-bold text-[var(--text)]">{s.carryingCapacity.toLocaleString('en-IN')}</p>
+              <p className="label-xs">Effective Capacity</p>
+              <p className="tabnum mt-1 text-base font-bold text-[var(--text)]">{capacityAssessment.effectiveCapacity.toLocaleString('en-IN')}</p>
             </div>
             <div className="rounded-sm border border-[var(--border)] bg-[var(--surface-muted)] p-2">
               <p className="label-xs">Available Headroom</p>

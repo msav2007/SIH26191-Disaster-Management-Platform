@@ -1,6 +1,5 @@
-import { AdministrationModulePlaceholder } from '@/features/admin/components/administration-module-placeholder';
+import { AdministrationWorkspace } from '@/features/admin/components/administration-workspace';
 
 export default function AdminPage() {
-  return <AdministrationModulePlaceholder />;
+  return <AdministrationWorkspace />;
 }
-

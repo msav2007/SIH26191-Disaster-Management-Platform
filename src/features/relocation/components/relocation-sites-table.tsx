@@ -56,12 +56,12 @@ export function RelocationSitesTable({
   return (
     <div className="flex flex-col space-y-3">
       {/* Filter Toolbar */}
-      <div className="flex flex-wrap items-center gap-2 rounded-sm border border-[var(--border)] bg-[var(--surface)] p-2.5 shadow-[var(--shadow-subtle)]">
+      <div className="flex flex-wrap items-center gap-2.5 rounded-xl border border-slate-200 bg-white p-3.5 shadow-xs">
         <div className="relative min-w-[200px] flex-1">
-          <SearchIcon className="pointer-events-none absolute left-2.5 top-1/2 size-3.5 -translate-y-1/2 text-[var(--text-muted)]" />
+          <SearchIcon className="pointer-events-none absolute left-3 top-1/2 size-3.5 -translate-y-1/2 text-slate-400" />
           <input
             aria-label="Filter relocation candidate sites by name or block"
-            className="h-8 w-full rounded-sm border border-[var(--border)] bg-[var(--surface-muted)] pl-8 pr-2.5 text-xs text-[var(--text)] placeholder:text-[var(--text-muted)] focus:border-[var(--accent)] focus:bg-[var(--surface)] focus:outline-none"
+            className="h-8.5 w-full rounded-lg border border-slate-200 bg-slate-50/60 pl-8.5 pr-3 text-xs text-slate-900 placeholder:text-slate-400 focus:border-cyan-500 focus:bg-white focus:outline-none"
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search site name, code, block..."
             value={searchQuery}
@@ -70,7 +70,7 @@ export function RelocationSitesTable({
 
         <select
           aria-label="Filter by district"
-          className="h-8 rounded-sm border border-[var(--border)] bg-[var(--surface)] px-2 text-xs text-[var(--text)] focus:border-[var(--accent)] focus:outline-none"
+          className="h-8.5 rounded-lg border border-slate-200 bg-white px-2.5 text-xs text-slate-700 focus:border-cyan-500 focus:outline-none font-medium"
           onChange={(e) => setDistrictFilter(e.target.value)}
           value={districtFilter}
         >
@@ -84,7 +84,7 @@ export function RelocationSitesTable({
 
         <select
           aria-label="Filter by capacity status"
-          className="h-8 rounded-sm border border-[var(--border)] bg-[var(--surface)] px-2 text-xs text-[var(--text)] focus:border-[var(--accent)] focus:outline-none"
+          className="h-8.5 rounded-lg border border-slate-200 bg-white px-2.5 text-xs text-slate-700 focus:border-cyan-500 focus:outline-none font-medium"
           onChange={(e) => setStatusFilter(e.target.value)}
           value={statusFilter}
         >
@@ -98,27 +98,27 @@ export function RelocationSitesTable({
       </div>
 
       {/* Table */}
-      <div className="overflow-hidden rounded-sm border border-[var(--border)] bg-[var(--surface)] shadow-[var(--shadow-subtle)]">
+      <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-xs">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="border-b border-[var(--border)] bg-[var(--surface-muted)] text-[10px] font-bold uppercase tracking-wider text-[var(--text-muted)]">
+            <thead className="border-b border-slate-200 bg-slate-50/90 text-[10px] font-bold uppercase tracking-wider text-slate-600">
               <tr>
-                <th className="px-3 py-2.5">Site Name & District</th>
-                <th className="px-3 py-2.5 text-right">Land Area</th>
-                <th className="px-3 py-2.5 text-right">Nominal Cap</th>
-                <th className="px-3 py-2.5 text-right">Occupied</th>
-                <th className="px-3 py-2.5 text-right">Available Headroom</th>
-                <th className="px-3 py-2.5">Utilization</th>
-                <th className="px-3 py-2.5">Limiting Factor</th>
-                <th className="px-3 py-2.5">Status</th>
-                <th className="px-3 py-2.5">Provenance</th>
+                <th className="px-3.5 py-2.5">Site Name & District</th>
+                <th className="px-3.5 py-2.5 text-right">Land Area</th>
+                <th className="px-3.5 py-2.5 text-right">Nominal Cap</th>
+                <th className="px-3.5 py-2.5 text-right">Occupied</th>
+                <th className="px-3.5 py-2.5 text-right">Available Headroom</th>
+                <th className="px-3.5 py-2.5">Utilization</th>
+                <th className="px-3.5 py-2.5">Limiting Factor</th>
+                <th className="px-3.5 py-2.5">Status</th>
+                <th className="px-3.5 py-2.5">Provenance</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[var(--border)]">
+            <tbody className="divide-y divide-slate-100">
               {filteredSites.length === 0 ? (
                 <tr>
                   <td
-                    className="p-8 text-center text-xs text-[var(--text-muted)]"
+                    className="p-8 text-center text-xs text-slate-500"
                     colSpan={9}
                   >
                     No candidate relocation sites found matching the selected filter criteria.
@@ -141,44 +141,44 @@ export function RelocationSitesTable({
                       key={site.id}
                       className={`cursor-pointer transition-colors ${
                         isSelected
-                          ? 'bg-[var(--accent-soft)]/50 font-medium'
-                          : 'hover:bg-[var(--surface-muted)]'
+                          ? 'bg-sky-50/80 font-medium ring-1 ring-inset ring-sky-300'
+                          : 'hover:bg-slate-50/80'
                       }`}
                       onClick={() => onSelect(site, capacity)}
                     >
-                      <td className="px-3 py-2.5">
+                      <td className="px-3.5 py-2.5">
                         <div className="flex flex-col">
-                          <span className="font-bold text-[var(--text)]">{site.name}</span>
-                          <span className="text-[10px] text-[var(--text-muted)]">
+                          <span className="font-bold text-slate-900">{site.name}</span>
+                          <span className="text-[10px] text-slate-500 font-mono">
                             {site.id} · {site.block} Block, {site.district}
                           </span>
                         </div>
                       </td>
 
-                      <td className="tabnum px-3 py-2.5 text-right font-medium text-[var(--text)]">
+                      <td className="tabnum px-3.5 py-2.5 text-right font-medium text-slate-800">
                         {site.areaHectares} ha
                       </td>
 
-                      <td className="tabnum px-3 py-2.5 text-right font-medium text-[var(--text)]">
+                      <td className="tabnum px-3.5 py-2.5 text-right font-medium text-slate-800">
                         {capacity.nominalCapacity.toLocaleString('en-IN')}
                       </td>
 
-                      <td className="tabnum px-3 py-2.5 text-right text-[var(--text-muted)]">
+                      <td className="tabnum px-3.5 py-2.5 text-right text-slate-500">
                         {capacity.currentOccupancy.toLocaleString('en-IN')}
                       </td>
 
-                      <td className="tabnum px-3 py-2.5 text-right font-bold text-[var(--safe)]">
+                      <td className="tabnum px-3.5 py-2.5 text-right font-bold text-emerald-700">
                         {capacity.availableHeadroom.toLocaleString('en-IN')}
-                        <span className="block text-[10px] font-normal text-[var(--text-muted)]">
+                        <span className="block text-[10px] font-normal text-slate-500">
                           of {capacity.effectiveCapacity} eff
                         </span>
                       </td>
 
-                      <td className="px-3 py-2.5" style={{ minWidth: '120px' }}>
+                      <td className="px-3.5 py-2.5" style={{ minWidth: '120px' }}>
                         <div className="space-y-1">
                           <div className="flex items-center justify-between text-[10px]">
-                            <span className="tabnum font-bold">{capacity.utilizationPercent}%</span>
-                            <span className="text-[var(--text-muted)]">{capacity.occupancyBuffer * 100}% buf</span>
+                            <span className="tabnum font-bold text-slate-900">{capacity.utilizationPercent}%</span>
+                            <span className="text-slate-500 font-mono">{capacity.occupancyBuffer * 100}% buf</span>
                           </div>
                           <MetricBar
                             max={100}
@@ -188,22 +188,22 @@ export function RelocationSitesTable({
                         </div>
                       </td>
 
-                      <td className="px-3 py-2.5">
+                      <td className="px-3.5 py-2.5">
                         <div className="flex flex-col text-[11px]">
-                          <span className="font-semibold capitalize text-[var(--high)]">
+                          <span className="font-semibold capitalize text-amber-700">
                             {capacity.limitingFactor}
                           </span>
-                          <span className="text-[10px] text-[var(--text-muted)]">
+                          <span className="text-[10px] text-slate-500">
                             {capacity.limitingFactorLabel}
                           </span>
                         </div>
                       </td>
 
-                      <td className="px-3 py-2.5">
+                      <td className="px-3.5 py-2.5">
                         <StatusPill tone={tone}>{capacity.capacityStatus}</StatusPill>
                       </td>
 
-                      <td className="px-3 py-2.5">
+                      <td className="px-3.5 py-2.5">
                         <ProvenanceTag value={site.provenance} />
                       </td>
                     </tr>
@@ -214,7 +214,7 @@ export function RelocationSitesTable({
           </table>
         </div>
 
-        <footer className="flex items-center justify-between border-t border-[var(--border)] bg-[var(--surface-muted)] px-4 py-2 text-xs text-[var(--text-muted)]">
+        <footer className="flex items-center justify-between border-t border-slate-100 bg-slate-50/80 px-4 py-2.5 text-xs text-slate-500">
           <span>
             Showing <strong>{filteredSites.length}</strong> of {sites.length} candidate sites
           </span>

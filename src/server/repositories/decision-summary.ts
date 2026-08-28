@@ -2,24 +2,26 @@ import {
   districtSummariesFixture,
   habitationsFixture,
   redZonesFixture,
-  relocationSitesFixture,
 } from '@/server/db/fixtures/disaster-data';
+import { getRegionalCapacityRollup } from '@/server/capacity/capacity-service';
+import { calculateHabitationRisk } from '@/server/risk/risk-engine';
 
 export async function getPlatformSummary() {
-  const totalHabitations = habitationsFixture.length;
-  const criticalHabitations = habitationsFixture.filter((h) => h.priority === 'CRITICAL').length;
-  const immediateHabitations = habitationsFixture.filter((h) => h.timeline === 'immediate').length;
-  const populationAtRisk = habitationsFixture.reduce((sum, h) => sum + h.population, 0);
+  const habitationAssessments = habitationsFixture.map((h) => ({
+    habitation: h,
+    risk: calculateHabitationRisk(h),
+  }));
+
+  const totalHabitations = habitationAssessments.length;
+  const criticalHabitations = habitationAssessments.filter((a) => a.risk.priority === 'CRITICAL').length;
+  const immediateHabitations = habitationAssessments.filter((a) => a.risk.timeline === 'immediate').length;
+  const populationAtRisk = habitationAssessments.reduce((sum, a) => sum + a.habitation.population, 0);
 
   const totalRedZones = redZonesFixture.length;
   const criticalRedZones = redZonesFixture.filter((z) => z.severity === 'critical').length;
   const totalRedZoneAreaSqKm = redZonesFixture.reduce((sum, z) => sum + z.areaSqKm, 0);
 
-  const totalSites = relocationSitesFixture.length;
-  const suitableSites = relocationSitesFixture.filter((s) => s.suitability === 'suitable').length;
-  const totalCarryingCapacity = relocationSitesFixture.reduce((sum, s) => sum + s.carryingCapacity, 0);
-  const currentOccupancy = relocationSitesFixture.reduce((sum, s) => sum + s.currentOccupancy, 0);
-  const availableCapacity = Math.max(0, totalCarryingCapacity - currentOccupancy);
+  const capacityRollup = await getRegionalCapacityRollup();
 
   return {
     habitations: {
@@ -34,12 +36,16 @@ export async function getPlatformSummary() {
       areaSqKm: Math.round(totalRedZoneAreaSqKm * 10) / 10,
     },
     relocationSites: {
-      total: totalSites,
-      suitable: suitableSites,
-      carryingCapacity: totalCarryingCapacity,
-      currentOccupancy,
-      availableCapacity,
-      utilizationPct: Math.round((currentOccupancy / totalCarryingCapacity) * 100),
+      total: capacityRollup.totalSites,
+      suitable: capacityRollup.sitesAvailable + capacityRollup.sitesNearCapacity,
+      carryingCapacity: capacityRollup.totalNominalCapacity,
+      effectiveCapacity: capacityRollup.totalEffectiveCapacity,
+      currentOccupancy: capacityRollup.totalCurrentOccupancy,
+      availableCapacity: capacityRollup.totalAvailableHeadroom,
+      utilizationPct:
+        capacityRollup.totalEffectiveCapacity > 0
+          ? Math.round((capacityRollup.totalCurrentOccupancy / capacityRollup.totalEffectiveCapacity) * 100)
+          : 100,
     },
     districts: districtSummariesFixture,
   };

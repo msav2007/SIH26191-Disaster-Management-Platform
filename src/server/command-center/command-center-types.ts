@@ -28,6 +28,7 @@ export interface OperationalPriorityQueueItem {
   riskLevel: Severity;
   priority: PriorityLevel;
   timeline: RelocationTimeline;
+  urgencyWindow: string;
   population: number;
   households: number;
   recommendedSite: CandidateSiteMatchResult | null;

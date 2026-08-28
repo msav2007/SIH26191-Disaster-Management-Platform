@@ -197,7 +197,10 @@ export function calculateSiteCapacity(
   // Effective capacity constrained by the limiting factor multiplied by occupancy buffer
   const effectiveCapacity = Math.round(minVal * buffer);
   const currentOccupancy = site.currentOccupancy;
-  const availableHeadroom = Math.max(0, effectiveCapacity - currentOccupancy);
+  const availableHeadroom =
+    site.hazardExposure === 'critical'
+      ? 0
+      : Math.max(0, effectiveCapacity - currentOccupancy);
   const utilizationPercent =
     effectiveCapacity > 0
       ? Math.min(100, Math.round((currentOccupancy / effectiveCapacity) * 100))

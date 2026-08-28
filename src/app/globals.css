@@ -1,47 +1,75 @@
 @import 'tailwindcss';
 
 :root {
-  --bg: #f3f6fa;
-  --bg-accent: #e5edf7;
+  /* Layout & Surfaces */
+  --bg: #f4f6fa;
+  --bg-subtle: #edf2f7;
   --surface: #ffffff;
+  --surface-glass: rgba(255, 255, 255, 0.88);
+  --surface-glass-subtle: rgba(248, 250, 252, 0.75);
   --surface-muted: #f8fafc;
-  --surface-strong: #0b1526;
-  --border: #d4dfed;
-  --border-strong: #1e3a5f;
-  --text: #0b1526;
-  --text-muted: #4b5d73;
-  --text-inverse: #f0f6fc;
+  --surface-strong: #081226;
+  --surface-sidebar: #09132b;
+  --surface-sidebar-hover: #122247;
+  --surface-sidebar-active: #172a59;
   
+  /* Borders */
+  --border: #e2e8f0;
+  --border-subtle: #edf2f7;
+  --border-strong: #cbd5e1;
+  --border-sidebar: #192a52;
+  
+  /* Typography */
+  --text: #0f172a;
+  --text-muted: #64748b;
+  --text-secondary: #475569;
+  --text-inverse: #f8fafc;
+  --text-sidebar: #94a3b8;
+  --text-sidebar-bright: #ffffff;
+  
+  /* Interaction Accent (Cyan / Professional Blue) */
   --accent: #0284c7;
-  --accent-strong: #0369a1;
+  --accent-hover: #0369a1;
+  --accent-strong: #075985;
   --accent-soft: #e0f2fe;
+  --accent-cyan: #06b6d4;
+  --accent-cyan-soft: #ecfeff;
+  --accent-border: #bae6fd;
 
+  /* Restrained Status Colors */
   --critical: #dc2626;
-  --critical-soft: #fee2e2;
-  --critical-border: #fca5a5;
+  --critical-soft: #fef2f2;
+  --critical-border: #fecaca;
+  --critical-text: #991b1b;
 
   --high: #d97706;
-  --high-soft: #fef3c7;
-  --high-border: #fcd34d;
+  --high-soft: #fffbeb;
+  --high-border: #fde68a;
+  --high-text: #92400e;
 
   --moderate: #ca8a04;
-  --moderate-soft: #fef9c3;
-  --moderate-border: #fde047;
+  --moderate-soft: #fefce8;
+  --moderate-border: #fef08a;
+  --moderate-text: #854d0e;
 
   --safe: #16a34a;
-  --safe-soft: #dcfce7;
-  --safe-border: #86efac;
+  --safe-soft: #f0fdf4;
+  --safe-border: #bbf7d0;
+  --safe-text: #166534;
 
   --info: #2563eb;
-  --info-soft: #dbeafe;
-  --info-border: #93c5fd;
+  --info-soft: #eff6ff;
+  --info-border: #bfdbfe;
+  --info-text: #1e40af;
 
   --neutral: #64748b;
   --neutral-soft: #f1f5f9;
   --neutral-border: #cbd5e1;
 
-  --shadow-subtle: 0 1px 3px rgba(11, 21, 38, 0.05), 0 1px 2px rgba(11, 21, 38, 0.03);
-  --shadow-panel: 0 4px 12px rgba(11, 21, 38, 0.06);
+  /* Shadows & Elevations */
+  --shadow-subtle: 0 1px 3px rgba(15, 23, 42, 0.04), 0 1px 2px rgba(15, 23, 42, 0.02);
+  --shadow-card: 0 4px 12px -2px rgba(15, 23, 42, 0.05), 0 2px 6px -1px rgba(15, 23, 42, 0.03);
+  --shadow-elevated: 0 10px 25px -3px rgba(15, 23, 42, 0.07), 0 4px 10px -2px rgba(15, 23, 42, 0.04);
 }
 
 * {
@@ -59,13 +87,17 @@ body {
   font-family:
     'Segoe UI Variable',
     Aptos,
+    'Inter',
     'Noto Sans',
-    'Helvetica Neue',
+    -apple-system,
+    BlinkMacSystemFont,
     system-ui,
     sans-serif;
-  background:
-    radial-gradient(circle at top left, rgba(2, 132, 199, 0.08), transparent 32%),
-    linear-gradient(180deg, var(--bg-accent) 0%, var(--bg) 60%, #ffffff 100%);
+  background-color: var(--bg);
+  background-image:
+    radial-gradient(at 0% 0%, rgba(2, 132, 199, 0.03) 0px, transparent 50%),
+    radial-gradient(at 100% 0%, rgba(6, 182, 212, 0.03) 0px, transparent 50%);
+  background-attachment: fixed;
 }
 
 a {
@@ -85,11 +117,26 @@ textarea {
   background: var(--accent-strong);
 }
 
-.surface-grid {
-  background-image:
-    linear-gradient(rgba(14, 30, 54, 0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(14, 30, 54, 0.03) 1px, transparent 1px);
-  background-size: 20px 20px;
+/* Glassmorphism & Elevation Utilities */
+.glass-panel {
+  background: var(--surface-glass);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-card);
+}
+
+.command-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  box-shadow: var(--shadow-subtle);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.command-card:hover {
+  box-shadow: var(--shadow-card);
+  border-color: var(--border-strong);
 }
 
 .tabnum {
@@ -97,11 +144,30 @@ textarea {
 }
 
 .label-xs {
-  font-size: 10px;
-  font-weight: 700;
+  font-size: 11px;
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.05em;
   color: var(--text-muted);
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
 }
 
 @media print {

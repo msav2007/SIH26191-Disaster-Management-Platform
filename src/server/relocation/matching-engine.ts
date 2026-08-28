@@ -137,7 +137,7 @@ export function findRelocationCandidates(
 
   if (recommendedSite) {
     headline = `Recommended Relocation Sector: ${recommendedSite.site.name} for ${habitation.name} (Suitability: ${recommendedSite.suitability.suitabilityScore}/100 - ${recommendedSite.suitability.suitabilityBand}).`;
-    rationaleText = `Rank #1 site provides ${recommendedSite.capacity.availableHeadroom.toLocaleString('en-IN')} available headroom at a transit distance of ${recommendedSite.distanceKm} km. Evaluated on ${recommendedSite.site.landClass.replace('_', ' ')} land with '${recommendedSite.site.hazardExposure}' hazard exposure.`;
+    rationaleText = `Rank #1 site provides ${recommendedSite.capacity.availableHeadroom.toLocaleString('en-IN')} available headroom at a transit distance of ${recommendedSite.distanceKm} km. Evaluated on ${(recommendedSite.site.landClass ?? 'government_land').replace('_', ' ')} land with '${recommendedSite.site.hazardExposure}' hazard exposure.`;
 
     keyStrengths.push(...recommendedSite.suitability.strengths);
     constraints.push(...recommendedSite.suitability.warnings);
@@ -156,7 +156,7 @@ export function findRelocationCandidates(
   }
 
   const statutoryMandate =
-    habitation.priority === 'CRITICAL'
+    riskAssessment.priority === 'CRITICAL'
       ? 'Immediate statutory resettlement order under the Disaster Management Act (Section 30) is recommended.'
       : 'Phased relocation and land development scheduled under State Disaster Mitigation Plan.';
 

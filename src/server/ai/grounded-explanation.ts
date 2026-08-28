@@ -29,7 +29,8 @@ export function generateRuleBasedGroundedExplanation(
       ? `Scenario Impact Escalation: ${targetName} transitions to ${scenarioContext.scenarioPriority} Priority`
       : `Scenario Assessment: ${targetName} maintains ${scenarioContext.scenarioPriority} Priority`;
 
-    const executiveSummary = `Under the '${scenarioContext.scenarioName}' simulation, ${targetName} (${district}) exhibits a +${scenarioContext.deltaRisk.toFixed(1)} point shift in composite vulnerability, moving from a baseline score of ${scenarioContext.baselineRisk.toFixed(1)} to ${scenarioContext.scenarioRisk.toFixed(1)} (${riskLevel} severity).`;
+    const deltaSign = scenarioContext.deltaRisk >= 0 ? '+' : '';
+    const executiveSummary = `Under the '${scenarioContext.scenarioName}' simulation, ${targetName} (${district}) exhibits a ${deltaSign}${scenarioContext.deltaRisk.toFixed(1)} point shift in composite vulnerability, moving from a baseline score of ${scenarioContext.baselineRisk.toFixed(1)} to ${scenarioContext.scenarioRisk.toFixed(1)} (${riskLevel} severity).`;
 
     const mathematicalDriverExplanation = `The primary mathematical driver of this escalation is ${scenarioContext.primaryDriver.toUpperCase()} intensity, accounting for the highest weighted contribution delta among all 5 evaluated domains ($S_{\\text{comp}} = \\sum w_i \\cdot S_i$).`;
 

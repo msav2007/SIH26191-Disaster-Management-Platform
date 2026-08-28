@@ -12,7 +12,7 @@ describe('DashboardPage', () => {
         name: /Multi-Hazard Disaster Relocation Command Center/i,
       }),
     ).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: /Open GIS Workspace/i })).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: /Statutory Reports/i })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /GIS Risk Map/i })).toBeInTheDocument();
+    expect(screen.getAllByRole('link', { name: /Scenario Simulator/i }).length).toBeGreaterThan(0);
   });
 });

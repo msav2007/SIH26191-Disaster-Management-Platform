@@ -1,7 +1,10 @@
 import type { Habitation, RelocationSite } from '@/types/domain';
 import { findRelocationCandidates } from '@/server/relocation/matching-engine';
 import { calculateHabitationRisk } from '@/server/risk/risk-engine';
+import { validateScenarioModifiers } from '@/server/validation/data-validation';
 import type {
+  FactorComparison,
+  FactorDriverKey,
   HabitationScenarioResult,
   ScenarioModifiers,
 } from './scenario-types';
@@ -9,19 +12,25 @@ import type {
 /**
  * Deterministically simulates the impact of environmental and hazard modifiers on a single habitation.
  * Preserves strict immutability of the baseline habitation record.
+ * Mathematical invariants guaranteed:
+ *   delta === scenarioScore - baselineScore
+ *   deltaPercentage === (delta / baselineScore) * 100
  */
 export function simulateHabitationScenario(
   habitation: Habitation,
   modifiers: ScenarioModifiers,
   allCandidateSites: RelocationSite[] = [],
 ): HabitationScenarioResult {
-  // 1. Calculate Authoritative Baseline
+  // 1. Validate Input Modifiers
+  validateScenarioModifiers(modifiers);
+
+  // 2. Calculate Authoritative Baseline (Immutable)
   const baselineRisk = calculateHabitationRisk(habitation);
   const baselinePlan = allCandidateSites.length > 0
     ? findRelocationCandidates(habitation, allCandidateSites)
     : null;
 
-  // 2. Compute Transparent Hazard Modifiers
+  // 3. Compute Transparent Hazard Modifiers
   let scenarioHazardRaw = habitation.factors.hazardIntensity;
 
   if (habitation.primaryHazard === 'landslide') {
@@ -69,7 +78,7 @@ export function simulateHabitationScenario(
     ),
   );
 
-  // 3. Create Immutable Scenario Habitation
+  // 4. Create Immutable Scenario Habitation
   const scenarioHabitation: Habitation = {
     ...habitation,
     factors: {
@@ -80,19 +89,19 @@ export function simulateHabitationScenario(
     },
   };
 
-  // 4. Authoritative Scenario Risk Evaluation via Existing Risk Engine
+  // 5. Authoritative Scenario Risk Evaluation via Existing Risk Engine
   const scenarioRisk = calculateHabitationRisk(scenarioHabitation);
 
   const scenarioPlan = allCandidateSites.length > 0
     ? findRelocationCandidates(scenarioHabitation, allCandidateSites)
     : null;
 
-  // 5. Compare Factor Breakdown
-  const factorKeys = ['hazard', 'vulnerability', 'history', 'exposure', 'infrastructure'] as const;
-  const factorComparisons = {} as HabitationScenarioResult['factorComparisons'];
+  // 6. Compare Factor Breakdown
+  const factorKeys: FactorDriverKey[] = ['hazard', 'vulnerability', 'history', 'exposure', 'infrastructure'];
+  const factorComparisons = {} as Record<FactorDriverKey, FactorComparison>;
 
   let maxContributionDelta = -Infinity;
-  let primaryDriverFactor: HabitationScenarioResult['primaryDriverFactor'] = 'hazard';
+  let primaryDriverFactor: FactorDriverKey = 'hazard';
 
   for (const k of factorKeys) {
     const b = baselineRisk.factors[k];
@@ -116,17 +125,21 @@ export function simulateHabitationScenario(
     }
   }
 
-  // 6. Evaluate Transitions
-  const riskDelta = Number((scenarioRisk.compositeScore - baselineRisk.compositeScore).toFixed(1));
-  const pctChange = baselineRisk.compositeScore > 0
-    ? Number(((riskDelta / baselineRisk.compositeScore) * 100).toFixed(1))
+  // 7. Evaluate Transitions & Deltas
+  const baselineScore = baselineRisk.compositeScore;
+  const scenarioScore = scenarioRisk.compositeScore;
+  const delta = Number((scenarioScore - baselineScore).toFixed(1));
+  const deltaPercentage = baselineScore > 0
+    ? Number(((delta / baselineScore) * 100).toFixed(1))
     : 0;
 
   const priorityOrder = { LOW: 0, MEDIUM: 1, HIGH: 2, CRITICAL: 3 };
+  const priorityChanged = baselineRisk.priority !== scenarioRisk.priority;
   const hasEscalated = priorityOrder[scenarioRisk.priority] > priorityOrder[baselineRisk.priority];
   const isNewlyCritical = baselineRisk.priority !== 'CRITICAL' && scenarioRisk.priority === 'CRITICAL';
 
   const timelineOrder = { monitoring: 0, medium_term: 1, short_term: 2, immediate: 3 };
+  const timelineChanged = baselineRisk.timeline !== scenarioRisk.timeline;
   const hasAccelerated = timelineOrder[scenarioRisk.timeline] > timelineOrder[baselineRisk.timeline];
   const isNewlyImmediate = baselineRisk.timeline !== 'immediate' && scenarioRisk.timeline === 'immediate';
 
@@ -134,19 +147,46 @@ export function simulateHabitationScenario(
   const scenarioSite = scenarioPlan?.recommendedSite ?? null;
   const siteRecommendationChanged = baselineSite?.site.id !== scenarioSite?.site.id;
 
-  // 7. Generate Deterministic Step Trace Explanation
+  // 8. Generate Deterministic Step Trace Explanation
   const driverComparison = factorComparisons[primaryDriverFactor];
-  const deterministicExplanation =
-    riskDelta === 0
-      ? `Under this scenario simulation, risk score remains unchanged at ${baselineRisk.compositeScore.toFixed(1)}.`
-      : `Scenario modifiers increased ${primaryDriverFactor} intensity from ${driverComparison.baselineRaw} to ${driverComparison.scenarioRaw} (+${driverComparison.rawDelta} pts). With a model weight of ${Math.round(driverComparison.weight * 100)}%, its contribution shifted by +${driverComparison.contributionDelta.toFixed(1)} pts. Composite risk moved from ${baselineRisk.compositeScore.toFixed(1)} (${baselineRisk.priority}) to ${scenarioRisk.compositeScore.toFixed(1)} (${scenarioRisk.priority}), ${isNewlyImmediate ? 'advancing required relocation urgency to IMMEDIATE (0–6 months).' : isNewlyCritical ? 'escalating settlement priority to CRITICAL.' : 'maintaining the existing triage priority band.'}`;
+  let deterministicExplanation = '';
+  if (delta === 0) {
+    deterministicExplanation = `Under this scenario simulation, risk score remains unchanged at ${baselineScore.toFixed(1)}.`;
+  } else {
+    const rawSign = driverComparison.rawDelta >= 0 ? '+' : '';
+    const contrSign = driverComparison.contributionDelta >= 0 ? '+' : '';
+    const verb = driverComparison.rawDelta >= 0 ? 'increased' : 'reduced';
+    const transitionEffect = isNewlyImmediate
+      ? 'advancing required relocation urgency to IMMEDIATE (0–6 months).'
+      : isNewlyCritical
+        ? 'escalating settlement priority to CRITICAL.'
+        : 'maintaining the existing triage priority band.';
+
+    deterministicExplanation = `Scenario modifiers ${verb} ${primaryDriverFactor} intensity from ${driverComparison.baselineRaw} to ${driverComparison.scenarioRaw} (${rawSign}${driverComparison.rawDelta} pts). With a model weight of ${Math.round(driverComparison.weight * 100)}%, its contribution shifted by ${contrSign}${driverComparison.contributionDelta.toFixed(1)} pts. Composite risk moved from ${baselineScore.toFixed(1)} (${baselineRisk.priority}) to ${scenarioScore.toFixed(1)} (${scenarioRisk.priority}), ${transitionEffect}`;
+  }
 
   return {
     habitation,
     baselineRisk,
     scenarioRisk,
-    riskDelta,
-    pctChange,
+    baselineScore,
+    scenarioScore,
+    delta,
+    deltaPercentage,
+    baselinePriority: baselineRisk.priority,
+    scenarioPriority: scenarioRisk.priority,
+    priorityChanged,
+    baselineTimeline: baselineRisk.timeline,
+    scenarioTimeline: scenarioRisk.timeline,
+    timelineChanged,
+    primaryDriver: primaryDriverFactor,
+    driverContribution: maxContributionDelta > -Infinity ? maxContributionDelta : 0,
+
+    // Backward-compatibility aliases
+    riskDelta: delta,
+    pctChange: deltaPercentage,
+    primaryDriverFactor,
+
     priorityTransition: {
       baseline: baselineRisk.priority,
       scenario: scenarioRisk.priority,
@@ -160,7 +200,6 @@ export function simulateHabitationScenario(
       isNewlyImmediate,
     },
     factorComparisons,
-    primaryDriverFactor,
     baselineRecommendedSite: baselineSite,
     scenarioRecommendedSite: scenarioSite,
     siteRecommendationChanged,

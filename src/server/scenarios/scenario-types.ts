@@ -16,6 +16,17 @@ export interface ScenarioModifiers {
   infrastructureStrainMultiplier: number; // 1.0 = baseline, 1.2 = road/power outages
 }
 
+export interface ScenarioParameterMeta {
+  id: keyof ScenarioModifiers;
+  label: string;
+  min: number;
+  max: number;
+  default: number;
+  step: number;
+  unit: string;
+  description: string;
+}
+
 export interface ScenarioPreset {
   id: string;
   name: string;
@@ -37,12 +48,32 @@ export interface FactorComparison {
   weight: number;
 }
 
+export type FactorDriverKey = 'hazard' | 'vulnerability' | 'history' | 'exposure' | 'infrastructure';
+
 export interface HabitationScenarioResult {
   habitation: Habitation;
   baselineRisk: HabitationRiskResult;
   scenarioRisk: HabitationRiskResult;
-  riskDelta: number; // e.g. +7.3
-  pctChange: number; // e.g. +8.5%
+
+  // Single-source mathematical traceability fields
+  baselineScore: number;
+  scenarioScore: number;
+  delta: number; // Verified: scenarioScore - baselineScore
+  deltaPercentage: number;
+  baselinePriority: PriorityLevel;
+  scenarioPriority: PriorityLevel;
+  priorityChanged: boolean;
+  baselineTimeline: RelocationTimeline;
+  scenarioTimeline: RelocationTimeline;
+  timelineChanged: boolean;
+  primaryDriver: FactorDriverKey;
+  driverContribution: number;
+
+  // Compatibility aliases
+  riskDelta: number;
+  pctChange: number;
+  primaryDriverFactor: FactorDriverKey;
+
   priorityTransition: {
     baseline: PriorityLevel;
     scenario: PriorityLevel;
@@ -55,14 +86,7 @@ export interface HabitationScenarioResult {
     hasAccelerated: boolean;
     isNewlyImmediate: boolean;
   };
-  factorComparisons: {
-    hazard: FactorComparison;
-    vulnerability: FactorComparison;
-    history: FactorComparison;
-    exposure: FactorComparison;
-    infrastructure: FactorComparison;
-  };
-  primaryDriverFactor: 'hazard' | 'vulnerability' | 'history' | 'exposure' | 'infrastructure';
+  factorComparisons: Record<FactorDriverKey, FactorComparison>;
   baselineRecommendedSite: CandidateSiteMatchResult | null;
   scenarioRecommendedSite: CandidateSiteMatchResult | null;
   siteRecommendationChanged: boolean;
@@ -82,10 +106,53 @@ export interface DistrictScenarioImpact {
   additionalPopulationAtRisk: number;
 }
 
+export type SimulationStatus = 'IDLE' | 'RUNNING' | 'COMPLETED' | 'FAILED';
+
+export interface SimulationResultAggregates {
+  totalHabitationsEvaluated: number;
+  totalHabitationsEscalated: number;
+  totalAssessedPopulation: number;
+  totalPopulationAtRiskBaseline: number;
+  totalPopulationAtRiskScenario: number;
+  additionalPopulationAtRisk: number;
+  districtImpacts: DistrictScenarioImpact[];
+}
+
+export interface SimulationResultTransitions {
+  baselineCriticalCount: number;
+  scenarioCriticalCount: number;
+  newlyCriticalCount: number;
+  baselineImmediateCount: number;
+  scenarioImmediateCount: number;
+  newlyImmediateCount: number;
+}
+
+export interface SimulationResultRelocation {
+  additionalRelocationDemand: number;
+  totalDemandScenario: number;
+  capacityDeficit: number;
+}
+
+export interface SimulationResultCapacity {
+  totalAvailableRelocationHeadroom: number;
+  totalEffectiveCapacity: number;
+  totalNominalCapacity: number;
+  totalCurrentOccupancy: number;
+}
+
+export interface SimulationResultMetadata {
+  timestamp: string;
+  status: SimulationStatus;
+  modelStamp: string;
+  provenance: DataProvenance;
+  deterministicSeed: string;
+}
+
 export interface ScenarioImpactSummary {
   scenario: ScenarioPreset;
   modifiersApplied: ScenarioModifiers;
   timestamp: string;
+  status: SimulationStatus;
   totalHabitationsEvaluated: number;
   totalHabitationsEscalated: number;
   baselineCriticalHabitations: number;
@@ -94,6 +161,7 @@ export interface ScenarioImpactSummary {
   baselineImmediateRelocations: number;
   scenarioImmediateRelocations: number;
   newlyImmediateRelocations: number;
+  totalAssessedPopulation: number;
   totalPopulationAtRiskBaseline: number;
   totalPopulationAtRiskScenario: number;
   additionalPopulationAtRisk: number;
@@ -101,6 +169,15 @@ export interface ScenarioImpactSummary {
   totalAvailableRelocationHeadroom: number;
   capacityDeficit: number;
   districtImpacts: DistrictScenarioImpact[];
+  allHabitations: HabitationScenarioResult[];
   changedHabitations: HabitationScenarioResult[];
   provenance: DataProvenance;
+
+  // Complete Structured Result Sub-Objects
+  settlements: HabitationScenarioResult[];
+  aggregates: SimulationResultAggregates;
+  transitions: SimulationResultTransitions;
+  relocation: SimulationResultRelocation;
+  capacity: SimulationResultCapacity;
+  metadata: SimulationResultMetadata;
 }

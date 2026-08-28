@@ -1,5 +1,6 @@
 import type { Habitation, MapPoint, RedZone, RelocationSite } from '@/types/domain';
 import { redZonesFixture, relocationSitesFixture } from '@/server/db/fixtures/disaster-data';
+import { findRelocationCandidates } from '@/server/relocation/matching-engine';
 
 /**
  * Calculates great-circle distance between two WGS84 points in kilometers using the Haversine formula.
@@ -47,43 +48,23 @@ export interface CandidateSiteMatch {
 
 /**
  * Evaluates and ranks candidate relocation sites for a vulnerable habitation.
+ * Delegates directly to authoritative Relocation Matching Engine to eliminate duplicate heuristics.
  */
-export function evaluateCandidateSites(habitation: Habitation): CandidateSiteMatch[] {
-  const candidateIds = new Set(habitation.candidateSiteIds);
+export function evaluateCandidateSites(
+  habitation: Habitation,
+  allSites: RelocationSite[] = relocationSitesFixture,
+): CandidateSiteMatch[] {
+  const plan = findRelocationCandidates(habitation, allSites);
+  const candidateList = [
+    ...(plan.recommendedSite ? [plan.recommendedSite] : []),
+    ...plan.alternativeSites,
+  ];
 
-  const sites = relocationSitesFixture.filter(
-    (s) => candidateIds.has(s.id) || s.district === habitation.district,
-  );
-
-  return sites
-    .map((site) => {
-      const distanceKm = calculateDistanceKm(habitation.coordinates, site.coordinates);
-      const availableCapacity = Math.max(0, site.carryingCapacity - site.currentOccupancy);
-      const coveragePct = Math.min(100, Math.round((availableCapacity / habitation.population) * 100));
-
-      const serviceValues: Record<string, number> = {
-        adequate: 100,
-        partial: 60,
-        inadequate: 20,
-        unassessed: 0,
-      };
-
-      const svcList = Object.values(site.services);
-      const avgService = svcList.reduce((sum, r) => sum + (serviceValues[r] ?? 0), 0) / (svcList.length || 1);
-      const hazardPenalty = { critical: 45, high: 25, moderate: 10, low: 0 }[site.hazardExposure] ?? 0;
-
-      const suitabilityScore = Math.max(
-        0,
-        Math.min(100, Math.round(avgService * 0.6 + (coveragePct / 100) * 40 - hazardPenalty)),
-      );
-
-      return {
-        site,
-        distanceKm,
-        availableCapacity,
-        coveragePct,
-        suitabilityScore,
-      };
-    })
-    .sort((a, b) => b.suitabilityScore - a.suitabilityScore);
+  return candidateList.map((m) => ({
+    site: m.site,
+    distanceKm: m.distanceKm,
+    availableCapacity: m.capacity.availableHeadroom,
+    coveragePct: m.coveragePct,
+    suitabilityScore: m.suitability.suitabilityScore,
+  }));
 }

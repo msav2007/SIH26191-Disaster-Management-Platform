@@ -1,5 +1,6 @@
-import type { ScenarioModifiers, ScenarioPreset } from '@/server/scenarios/scenario-types';
+import type { ScenarioModifiers, ScenarioPreset, SimulationStatus } from '@/server/scenarios/scenario-types';
 import { buttonStyles } from '@/components/ui/button';
+import { SlidersIcon, RefreshIcon, CheckIcon } from '@/components/ui/icons';
 
 export interface ScenarioControlPanelProps {
   presets: ScenarioPreset[];
@@ -10,6 +11,7 @@ export interface ScenarioControlPanelProps {
   onRunSimulation: () => void;
   onResetBaseline: () => void;
   isSimulating: boolean;
+  status?: SimulationStatus;
 }
 
 export function ScenarioControlPanel({
@@ -21,22 +23,51 @@ export function ScenarioControlPanel({
   onRunSimulation,
   presets,
   selectedPresetId,
+  status = 'COMPLETED',
 }: ScenarioControlPanelProps) {
   const currentPreset = presets.find((p) => p.id === selectedPresetId) ?? presets[0]!;
 
   return (
-    <div className="space-y-3.5 rounded-sm border border-[var(--border)] bg-[var(--surface)] p-4 shadow-xs">
-      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[var(--border)] pb-2.5">
+    <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-xs transition-all">
+      {/* 1. Header Bar */}
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-3.5">
         <div>
-          <span className="label-xs text-[var(--accent-strong)]">Multi-Hazard Climate Simulator</span>
-          <h2 className="text-sm font-bold text-[var(--text)]">Scenario Parameters & Modifiers</h2>
+          <div className="flex items-center gap-2">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-sky-700">
+              Multi-Hazard Climate Simulator
+            </span>
+            {status === 'RUNNING' && (
+              <span className="inline-flex items-center gap-1.5 rounded-md bg-sky-50 px-2 py-0.5 text-[10px] font-bold text-sky-700 ring-1 ring-sky-600/20 animate-pulse">
+                <span className="size-1.5 rounded-full bg-sky-600" />
+                SIMULATING...
+              </span>
+            )}
+            {status === 'COMPLETED' && !isSimulating && (
+              <span className="inline-flex items-center gap-1 rounded-md bg-emerald-50 px-2 py-0.5 text-[10px] font-bold text-emerald-700 ring-1 ring-emerald-600/20">
+                <CheckIcon className="size-3 text-emerald-600" />
+                DETERMINISTIC ENGINE ACTIVE
+              </span>
+            )}
+            {status === 'FAILED' && !isSimulating && (
+              <span className="inline-flex items-center gap-1.5 rounded-md bg-red-50 px-2 py-0.5 text-[10px] font-bold text-red-700 ring-1 ring-red-600/20">
+                <span className="size-1.5 rounded-full bg-red-600" />
+                SIMULATION FAILED
+              </span>
+            )}
+          </div>
+          <h2 className="text-sm font-bold text-slate-900 mt-0.5">
+            Scenario Parameters & Modifiers
+          </h2>
         </div>
+
         <div className="flex items-center gap-2">
           <button
             className={buttonStyles({ size: 'sm', variant: 'secondary' })}
+            disabled={isSimulating}
             onClick={onResetBaseline}
             type="button"
           >
+            <RefreshIcon className="size-3 text-slate-500" />
             Reset Baseline
           </button>
           <button
@@ -45,19 +76,35 @@ export function ScenarioControlPanel({
             onClick={onRunSimulation}
             type="button"
           >
-            {isSimulating ? 'Simulating...' : 'Run Simulation'}
+            {isSimulating ? (
+              <span className="inline-flex items-center gap-1.5">
+                <span className="size-3 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                Simulating Engine...
+              </span>
+            ) : status === 'COMPLETED' ? (
+              <span className="inline-flex items-center gap-1.5">
+                <CheckIcon className="size-3.5" />
+                Run Simulation
+              </span>
+            ) : (
+              <span className="inline-flex items-center gap-1.5">
+                <SlidersIcon className="size-3.5" />
+                Run Simulation
+              </span>
+            )}
           </button>
         </div>
       </div>
 
-      {/* Preset Selector */}
-      <div>
-        <label className="label-xs mb-1.5 block" htmlFor="scenario-preset-selector">
+      {/* 2. Active Scenario Preset Selector */}
+      <div className="mt-4">
+        <label className="text-[11px] font-bold uppercase tracking-wider text-slate-600 mb-1.5 block" htmlFor="scenario-preset-selector">
           Scenario Model Preset
         </label>
         <select
           id="scenario-preset-selector"
-          className="h-8 w-full rounded-sm border border-[var(--border)] bg-[var(--surface-muted)] px-2.5 text-xs font-semibold text-[var(--text)] focus:border-[var(--accent)] focus:outline-none"
+          className="h-9 w-full rounded-lg border border-slate-200 bg-slate-50/60 px-3 text-xs font-semibold text-slate-900 transition-colors focus:border-cyan-500 focus:bg-white focus:outline-none disabled:opacity-60"
+          disabled={isSimulating}
           onChange={(e) => onPresetChange(e.target.value)}
           value={selectedPresetId}
         >
@@ -67,21 +114,24 @@ export function ScenarioControlPanel({
             </option>
           ))}
         </select>
-        <p className="mt-1 text-[11px] text-[var(--text-muted)]">{currentPreset.description}</p>
+        <p className="mt-1.5 text-xs text-slate-500 leading-relaxed">{currentPreset.description}</p>
       </div>
 
-      {/* Modifier Sliders */}
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        <div className="rounded-sm border border-[var(--border)] bg-[var(--surface-muted)] p-2.5">
-          <div className="flex justify-between text-xs font-semibold">
-            <span>Rainfall Multiplier:</span>
-            <span className="tabnum text-[var(--accent-strong)]">
+      {/* 3. Scenario Parameter Sliders */}
+      <div className="mt-4 grid grid-cols-1 gap-3.5 sm:grid-cols-2 lg:grid-cols-4">
+        {/* Rainfall Multiplier */}
+        <div className="rounded-xl border border-slate-100 bg-slate-50/60 p-3.5">
+          <div className="flex justify-between items-center text-xs font-semibold">
+            <span className="text-slate-700">Rainfall Multiplier:</span>
+            <span className="tabnum font-bold text-sky-700">
               {modifiers.rainfallMultiplier.toFixed(2)}x ({Math.round((modifiers.rainfallMultiplier - 1) * 100)}%)
             </span>
           </div>
+          <p className="mt-0.5 text-[10px] text-slate-500">Precipitation intensity scaling</p>
           <input
             aria-label="Adjust precipitation multiplier"
-            className="mt-2 w-full accent-[var(--accent)]"
+            className="mt-2.5 w-full accent-sky-600 disabled:opacity-60"
+            disabled={isSimulating}
             max="2.0"
             min="1.0"
             step="0.05"
@@ -91,14 +141,17 @@ export function ScenarioControlPanel({
           />
         </div>
 
-        <div className="rounded-sm border border-[var(--border)] bg-[var(--surface-muted)] p-2.5">
-          <div className="flex justify-between text-xs font-semibold">
-            <span>Cloudburst Surge:</span>
-            <span className="tabnum text-[var(--high)]">+{modifiers.cloudburstSurge} pts</span>
+        {/* Cloudburst Surge */}
+        <div className="rounded-xl border border-slate-100 bg-slate-50/60 p-3.5">
+          <div className="flex justify-between items-center text-xs font-semibold">
+            <span className="text-slate-700">Cloudburst Surge:</span>
+            <span className="tabnum font-bold text-amber-700">+{modifiers.cloudburstSurge} pts</span>
           </div>
+          <p className="mt-0.5 text-[10px] text-slate-500">Short-duration flash flood surge</p>
           <input
             aria-label="Adjust cloudburst intensity surge"
-            className="mt-2 w-full accent-[var(--high)]"
+            className="mt-2.5 w-full accent-amber-600 disabled:opacity-60"
+            disabled={isSimulating}
             max="50"
             min="0"
             step="5"
@@ -108,14 +161,17 @@ export function ScenarioControlPanel({
           />
         </div>
 
-        <div className="rounded-sm border border-[var(--border)] bg-[var(--surface-muted)] p-2.5">
-          <div className="flex justify-between text-xs font-semibold">
-            <span>Slope Saturation:</span>
-            <span className="tabnum text-[var(--critical)]">{modifiers.slopeSaturationFactor.toFixed(2)}x</span>
+        {/* Slope Saturation */}
+        <div className="rounded-xl border border-slate-100 bg-slate-50/60 p-3.5">
+          <div className="flex justify-between items-center text-xs font-semibold">
+            <span className="text-slate-700">Slope Saturation:</span>
+            <span className="tabnum font-bold text-red-700">{modifiers.slopeSaturationFactor.toFixed(2)}x</span>
           </div>
+          <p className="mt-0.5 text-[10px] text-slate-500">Groundwater pore pressure multiplier</p>
           <input
             aria-label="Adjust slope pore saturation multiplier"
-            className="mt-2 w-full accent-[var(--critical)]"
+            className="mt-2.5 w-full accent-red-600 disabled:opacity-60"
+            disabled={isSimulating}
             max="2.0"
             min="1.0"
             step="0.05"
@@ -125,14 +181,17 @@ export function ScenarioControlPanel({
           />
         </div>
 
-        <div className="rounded-sm border border-[var(--border)] bg-[var(--surface-muted)] p-2.5">
-          <div className="flex justify-between text-xs font-semibold">
-            <span>Infra Strain:</span>
-            <span className="tabnum text-[var(--text)]">{modifiers.infrastructureStrainMultiplier.toFixed(2)}x</span>
+        {/* Infrastructure Strain */}
+        <div className="rounded-xl border border-slate-100 bg-slate-50/60 p-3.5">
+          <div className="flex justify-between items-center text-xs font-semibold">
+            <span className="text-slate-700">Infra Strain:</span>
+            <span className="tabnum font-bold text-slate-900">{modifiers.infrastructureStrainMultiplier.toFixed(2)}x</span>
           </div>
+          <p className="mt-0.5 text-[10px] text-slate-500">Corridor road and power grid disruption</p>
           <input
             aria-label="Adjust infrastructure strain multiplier"
-            className="mt-2 w-full accent-[var(--text)]"
+            className="mt-2.5 w-full accent-slate-800 disabled:opacity-60"
+            disabled={isSimulating}
             max="2.0"
             min="1.0"
             step="0.05"
@@ -143,8 +202,11 @@ export function ScenarioControlPanel({
         </div>
       </div>
 
-      <div className="border-t border-[var(--border)] pt-2 text-[10px] text-[var(--text-muted)]">
-        <strong>Scientific Basis:</strong> {currentPreset.scientificContext}
+      <div className="mt-4 border-t border-slate-100 pt-2.5 text-[11px] text-slate-500 flex items-center justify-between">
+        <span>
+          <strong>Scientific Basis:</strong> {currentPreset.scientificContext}
+        </span>
+        <span className="font-mono text-[10px] text-slate-400">IMD / IPCC Calibration</span>
       </div>
     </div>
   );

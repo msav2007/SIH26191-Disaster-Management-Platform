@@ -43,6 +43,9 @@ export async function getRegionalRiskRollup(district?: string) {
   const medium = assessments.filter((a) => a.assessment.priority === 'MEDIUM').length;
   const monitor = assessments.filter((a) => a.assessment.priority === 'LOW').length;
 
+  const immediate = assessments.filter((a) => a.assessment.timeline === 'immediate').length;
+  const criticalScoreCount = assessments.filter((a) => a.assessment.compositeScore >= 80).length;
+
   const avgCompositeScore =
     total > 0
       ? Math.round(
@@ -59,10 +62,14 @@ export async function getRegionalRiskRollup(district?: string) {
     district: district ?? 'All Districts',
     totalHabitations: total,
     priorityBreakdown: {
-      immediate: critical,
+      critical,
+      high,
+      medium,
+      monitor,
+      immediate,
+      criticalScoreCount,
       shortTerm: high,
       mediumTerm: medium,
-      monitor,
     },
     avgCompositeScore,
     totalPopulationAtRisk,

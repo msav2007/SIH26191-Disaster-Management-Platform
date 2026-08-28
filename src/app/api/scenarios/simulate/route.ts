@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 
 import { runScenarioSimulation } from '@/server/scenarios/scenario-service';
+import { CalculationValidationError } from '@/server/validation/data-validation';
 import type { ScenarioModifiers } from '@/server/scenarios/scenario-types';
 
 export async function POST(request: Request) {
@@ -20,14 +21,29 @@ export async function POST(request: Request) {
 
     return NextResponse.json({
       status: 'success',
-      timestamp: new Date().toISOString(),
+      timestamp: impact.timestamp,
       data: impact,
     });
   } catch (error) {
+    console.error('[Simulation API Error]:', error);
+
+    if (error instanceof CalculationValidationError) {
+      return NextResponse.json(
+        {
+          status: 'error',
+          errorType: 'VALIDATION_ERROR',
+          message: error.message,
+          details: error.details,
+        },
+        { status: 400 },
+      );
+    }
+
     return NextResponse.json(
       {
         status: 'error',
-        message: error instanceof Error ? error.message : 'Simulation failed',
+        errorType: 'SIMULATION_EXECUTION_ERROR',
+        message: error instanceof Error ? error.message : 'Deterministic simulation failed.',
       },
       { status: 500 },
     );

@@ -30,16 +30,18 @@ describe('Command Center Service & Workspace (Phase 9)', () => {
     expect(bottleneckAlert?.description).toContain('constrained by');
   });
 
-  it('renders CommandCenterWorkspace with all 6 operational sections', async () => {
+  it('renders CommandCenterWorkspace with 5 KPIs, GIS Overview, Scenario Simulator, and Priority Settlements', async () => {
     const data = await getCommandCenterData();
 
     render(<CommandCenterWorkspace data={data} />);
 
     expect(screen.getByText(/Multi-Hazard Disaster Relocation Command Center/i)).toBeInTheDocument();
-    expect(screen.getByText(/Assessed Habitations/i)).toBeInTheDocument();
-    expect(screen.getByText(/Operational Habitation Priority Queue/i)).toBeInTheDocument();
-    expect(screen.getByText(/Authority Action Queue/i)).toBeInTheDocument();
-    expect(screen.getByText(/Carrying Capacity Engine/i)).toBeInTheDocument();
-    expect(screen.getByText(/Capacity ≠ Suitability/i)).toBeInTheDocument();
+    expect(screen.getByText(/Assessed Settlements/i)).toBeInTheDocument();
+    expect(screen.getByText(/Critical Status/i)).toBeInTheDocument();
+    expect(screen.getByText(/Immediate Relocation/i)).toBeInTheDocument();
+    expect(screen.getByText(/People at Risk/i)).toBeInTheDocument();
+    expect(screen.getByText(/Relocation Headroom/i)).toBeInTheDocument();
+    expect(screen.getByText(/Geographic Risk Overview/i)).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /Top Priority Settlements/i })).toBeInTheDocument();
   });
 });

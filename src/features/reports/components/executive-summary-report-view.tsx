@@ -1,4 +1,5 @@
 import type { ExecutiveAuthoritySummaryReport } from '@/server/reports/report-types';
+import { getPriorityTone } from '@/server/classification/classification-engine';
 import { Badge } from '@/components/ui/badge';
 import { StatusPill } from '@/components/ui/status-pill';
 import { ReportProvenanceBanner } from './report-provenance-banner';
@@ -158,7 +159,7 @@ export function ExecutiveSummaryReportView({ report }: ExecutiveSummaryReportVie
                     {h.riskScore.toFixed(1)}
                   </td>
                   <td className="px-3 py-2">
-                    <StatusPill tone={h.priority === 'CRITICAL' ? 'critical' : 'high'}>
+                    <StatusPill tone={getPriorityTone(h.priority)}>
                       {h.priority}
                     </StatusPill>
                   </td>

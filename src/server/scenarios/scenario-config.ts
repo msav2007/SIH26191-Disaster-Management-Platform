@@ -1,11 +1,81 @@
-import type { ScenarioModifiers, ScenarioPreset } from './scenario-types';
+import type {
+  ScenarioModifiers,
+  ScenarioParameterMeta,
+  ScenarioPreset,
+} from './scenario-types';
 
-export const defaultScenarioModifiers: ScenarioModifiers = {
+export const BASELINE_SCENARIO_MODIFIERS: ScenarioModifiers = {
   rainfallMultiplier: 1.0,
   cloudburstSurge: 0,
   floodIntensityMultiplier: 1.0,
   slopeSaturationFactor: 1.0,
   infrastructureStrainMultiplier: 1.0,
+};
+
+export const defaultScenarioModifiers: ScenarioModifiers = { ...BASELINE_SCENARIO_MODIFIERS };
+
+export const SCENARIO_PARAMETER_METADATA: ScenarioParameterMeta[] = [
+  {
+    id: 'rainfallMultiplier',
+    label: 'Rainfall Multiplier',
+    min: 1.0,
+    max: 2.0,
+    default: 1.0,
+    step: 0.05,
+    unit: 'x',
+    description: 'Precipitation volume surge scaling hydraulic runoff and aquifer pressure.',
+  },
+  {
+    id: 'cloudburstSurge',
+    label: 'Cloudburst Surge',
+    min: 0,
+    max: 50,
+    default: 0,
+    step: 5,
+    unit: 'pts',
+    description: 'Sudden localized extreme precipitation surge (>100mm/hr microburst).',
+  },
+  {
+    id: 'slopeSaturationFactor',
+    label: 'Slope Saturation',
+    min: 1.0,
+    max: 2.0,
+    default: 1.0,
+    step: 0.05,
+    unit: 'x',
+    description: 'Subsurface pore water pressure accumulation degrading slope shear resistance.',
+  },
+  {
+    id: 'floodIntensityMultiplier',
+    label: 'Flood Inundation Multiplier',
+    min: 1.0,
+    max: 2.0,
+    default: 1.0,
+    step: 0.05,
+    unit: 'x',
+    description: 'Riverine stage discharge and coastal surge inundation height factor.',
+  },
+  {
+    id: 'infrastructureStrainMultiplier',
+    label: 'Infrastructure Strain',
+    min: 1.0,
+    max: 2.0,
+    default: 1.0,
+    step: 0.05,
+    unit: 'x',
+    description: 'Access corridor severances, power blackout durations, and water network disruption.',
+  },
+];
+
+export const baselineScenarioPreset: ScenarioPreset = {
+  id: 'baseline_state',
+  name: 'Authoritative Baseline Condition (No Escalation)',
+  shortLabel: 'Baseline State',
+  description: 'Unmodified baseline field survey conditions without simulated climate or hazard anomalies.',
+  primaryHazard: 'multi_hazard',
+  modifiers: { ...BASELINE_SCENARIO_MODIFIERS },
+  scientificContext: 'Verified multi-criteria field baseline and state disaster management survey benchmarks.',
+  provenance: 'DEMO DATA',
 };
 
 export const scenarioPresets: ScenarioPreset[] = [
@@ -102,10 +172,12 @@ export const scenarioPresets: ScenarioPreset[] = [
 ];
 
 export function findScenarioPresetById(id: string): ScenarioPreset | null {
+  if (id === 'baseline_state') return baselineScenarioPreset;
   return scenarioPresets.find((p) => p.id === id) ?? null;
 }
 
 export function getScenarioPresetById(id: string): ScenarioPreset {
+  if (id === 'baseline_state') return baselineScenarioPreset;
   const found = scenarioPresets.find((p) => p.id === id);
   return found ?? scenarioPresets[0]!;
 }

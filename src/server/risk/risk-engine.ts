@@ -5,7 +5,12 @@ import type {
   RelocationTimeline,
   Severity,
 } from '@/types/domain';
-import { getActiveRiskConfig, type RiskEngineConfig } from './risk-config';
+import {
+  getRelocationPriority,
+  getSeverityLevel,
+} from '@/server/classification/classification-engine';
+import { validateRiskWeights } from '@/server/validation/data-validation';
+import { getActiveRiskConfig, type FactorWeights, type RiskEngineConfig } from './risk-config';
 
 export interface FactorBreakdown {
   raw: number;
@@ -15,12 +20,35 @@ export interface FactorBreakdown {
 
 export interface HabitationRiskResult {
   habitationId: string;
-  compositeScore: number;
+  totalScore: number;
+  compositeScore: number; // Canonical alias for totalScore
   riskLevel: Severity;
   priority: PriorityLevel;
   urgencyWindow: string;
   timeline: RelocationTimeline;
   confidenceScore: number;
+  rawInputs: {
+    hazard: number;
+    vulnerability: number;
+    history: number;
+    exposure: number;
+    infrastructure: number;
+  };
+  normalizedInputs: {
+    hazard: number;
+    vulnerability: number;
+    history: number;
+    exposure: number;
+    infrastructure: number;
+  };
+  weights: FactorWeights;
+  weightedContributions: {
+    hazard: number;
+    vulnerability: number;
+    history: number;
+    exposure: number;
+    infrastructure: number;
+  };
   factors: {
     hazard: FactorBreakdown;
     vulnerability: FactorBreakdown;
@@ -165,17 +193,15 @@ export function calculateExposureScore(habitation: Habitation): number {
 
 /**
  * Classifies composite score into standardized severity level.
+ * (Re-exported from authoritative classification engine for backward compatibility)
  */
 export function classifyRiskLevel(score: number, config?: RiskEngineConfig): Severity {
-  const bands = config?.bands ?? getActiveRiskConfig().bands;
-  if (score >= bands.critical) return 'critical';
-  if (score >= bands.high) return 'high';
-  if (score >= bands.moderate) return 'moderate';
-  return 'low';
+  return getSeverityLevel(score, config);
 }
 
 /**
  * Evaluates priority classification and relocation urgency window.
+ * (Re-exported from authoritative classification engine for backward compatibility)
  */
 export function calculateRelocationPriority(
   habitation: Habitation,
@@ -184,55 +210,14 @@ export function calculateRelocationPriority(
   vulnerabilityScore: number,
   config?: RiskEngineConfig,
 ): { priority: PriorityLevel; urgencyWindow: string; timeline: RelocationTimeline } {
-  const cfg = config?.priorityThresholds ?? getActiveRiskConfig().priorityThresholds;
-
   const hasRedZone = Boolean(habitation.redZoneId);
-
-  // Immediate Relocation Conditions:
-  // 1. Composite score >= 85
-  // 2. OR Red Zone + Hazard >= 90 + Vulnerability >= 80
-  // 3. OR Composite score >= 80 inside Red Zone
-  if (
-    compositeScore >= cfg.immediate.minCompositeScore ||
-    (hasRedZone && compositeScore >= 80) ||
-    (hasRedZone &&
-      hazardScore >= cfg.immediate.minCriticalHazardScore &&
-      vulnerabilityScore >= cfg.immediate.minVulnerabilityScore)
-  ) {
-    return {
-      priority: 'CRITICAL',
-      urgencyWindow: cfg.immediate.window,
-      timeline: 'immediate',
-    };
-  }
-
-  // Short-Term Relocation Conditions:
-  if (
-    compositeScore >= cfg.shortTerm.minCompositeScore ||
-    (hasRedZone && compositeScore >= 60)
-  ) {
-    return {
-      priority: 'HIGH',
-      urgencyWindow: cfg.shortTerm.window,
-      timeline: 'short_term',
-    };
-  }
-
-  // Medium-Term Relocation Conditions:
-  if (compositeScore >= cfg.mediumTerm.minCompositeScore) {
-    return {
-      priority: 'MEDIUM',
-      urgencyWindow: cfg.mediumTerm.window,
-      timeline: 'medium_term',
-    };
-  }
-
-  // Monitoring
-  return {
-    priority: 'LOW',
-    urgencyWindow: cfg.monitor.window,
-    timeline: 'monitoring',
-  };
+  return getRelocationPriority(
+    compositeScore,
+    hazardScore,
+    vulnerabilityScore,
+    hasRedZone,
+    config,
+  );
 }
 
 /**
@@ -294,6 +279,7 @@ export function generateRiskExplanation(
 
 /**
  * Complete deterministic risk calculation for a habitation.
+ * Strict mathematical traceability guarantees zero ungrounded heuristics.
  */
 export function calculateHabitationRisk(
   habitation: Habitation,
@@ -302,7 +288,10 @@ export function calculateHabitationRisk(
   const config = customConfig ?? getActiveRiskConfig();
   const weights = config.factors;
 
-  // 1. Secondary Hazards from Red Zone reference if available
+  // 1. Explicit Weight Validation (sum must equal 100%)
+  validateRiskWeights(weights);
+
+  // 2. Secondary Hazards from Red Zone reference if available
   const secondaryHazards: HazardType[] = [];
   if (habitation.primaryHazard === 'landslide') {
     secondaryHazards.push('cloudburst');
@@ -310,7 +299,7 @@ export function calculateHabitationRisk(
     secondaryHazards.push('flood');
   }
 
-  // 2. Factor Computations
+  // 3. Factor Computations
   const baseIntensity = habitation.factors?.hazardIntensity ?? 85;
   const { compoundScore: hazardScore, multiplier } = calculateMultiHazardRisk(
     habitation.primaryHazard,
@@ -324,7 +313,7 @@ export function calculateHabitationRisk(
   const expoScore = calculateExposureScore(habitation);
   const infraScore = calculateInfrastructureRiskScore(habitation);
 
-  // 3. Weighted Composite Score
+  // 4. Weighted Contributions & Composite Score
   const hazardContr = weights.hazard * hazardScore;
   const vulnContr = weights.vulnerability * vulnScore;
   const histContr = weights.history * histScore;
@@ -335,17 +324,18 @@ export function calculateHabitationRisk(
     hazardContr + vulnContr + histContr + expoContr + infraContr;
   const compositeScore = Math.round(Math.min(100, Math.max(0, rawComposite)) * 10) / 10;
 
-  // 4. Classifications
-  const riskLevel = classifyRiskLevel(compositeScore, config);
-  const { priority, urgencyWindow, timeline } = calculateRelocationPriority(
-    habitation,
+  // 5. Authoritative Classifications
+  const riskLevel = getSeverityLevel(compositeScore, config);
+  const hasRedZone = Boolean(habitation.redZoneId);
+  const { priority, urgencyWindow, timeline } = getRelocationPriority(
     compositeScore,
     hazardScore,
     vulnScore,
+    hasRedZone,
     config,
   );
 
-  // 5. Data Confidence Calculation
+  // 6. Data Confidence Calculation
   let confidence = 0.75;
   if (habitation.demographics.belowPovertyLine > 0) confidence += 0.05;
   if (habitation.history && habitation.history.length > 0) confidence += 0.1;
@@ -353,35 +343,53 @@ export function calculateHabitationRisk(
   if (habitation.infrastructure) confidence += 0.05;
   confidence = Math.min(0.98, confidence);
 
+  const rawInputs = {
+    hazard: hazardScore,
+    vulnerability: vulnScore,
+    history: histScore,
+    exposure: expoScore,
+    infrastructure: infraScore,
+  };
+
+  const normalizedInputs = { ...rawInputs };
+
+  const weightedContributions = {
+    hazard: Math.round(hazardContr * 10) / 10,
+    vulnerability: Math.round(vulnContr * 10) / 10,
+    history: Math.round(histContr * 10) / 10,
+    exposure: Math.round(expoContr * 10) / 10,
+    infrastructure: Math.round(infraContr * 10) / 10,
+  };
+
   const factors = {
     hazard: {
       raw: hazardScore,
       weight: weights.hazard,
-      weightedContribution: Math.round(hazardContr * 10) / 10,
+      weightedContribution: weightedContributions.hazard,
     },
     vulnerability: {
       raw: vulnScore,
       weight: weights.vulnerability,
-      weightedContribution: Math.round(vulnContr * 10) / 10,
+      weightedContribution: weightedContributions.vulnerability,
     },
     history: {
       raw: histScore,
       weight: weights.history,
-      weightedContribution: Math.round(histContr * 10) / 10,
+      weightedContribution: weightedContributions.history,
     },
     exposure: {
       raw: expoScore,
       weight: weights.exposure,
-      weightedContribution: Math.round(expoContr * 10) / 10,
+      weightedContribution: weightedContributions.exposure,
     },
     infrastructure: {
       raw: infraScore,
       weight: weights.infrastructure,
-      weightedContribution: Math.round(infraContr * 10) / 10,
+      weightedContribution: weightedContributions.infrastructure,
     },
   };
 
-  // 6. Explanation
+  // 7. Deterministic Narrative Explanation
   const explanation = generateRiskExplanation(
     habitation,
     compositeScore,
@@ -394,12 +402,17 @@ export function calculateHabitationRisk(
 
   return {
     habitationId: habitation.id,
+    totalScore: compositeScore,
     compositeScore,
     riskLevel,
     priority,
     urgencyWindow,
     timeline,
     confidenceScore: Math.round(confidence * 100) / 100,
+    rawInputs,
+    normalizedInputs,
+    weights: { ...weights },
+    weightedContributions,
     factors,
     hazardDrivers: {
       primary: habitation.primaryHazard,

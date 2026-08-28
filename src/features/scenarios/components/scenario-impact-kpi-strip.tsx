@@ -20,68 +20,94 @@ export function ScenarioImpactKpiStrip({ summary }: ScenarioImpactKpiStripProps)
   } = summary;
 
   return (
-    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+    <div className="grid grid-cols-2 gap-3.5 sm:grid-cols-3 lg:grid-cols-6">
       {/* 1. Habitations Escalated */}
-      <div className="rounded-sm border border-[var(--border)] bg-[var(--surface)] p-3 shadow-xs">
-        <p className="label-xs">Escalated Settlements</p>
-        <p className="tabnum mt-1 text-xl font-black text-[var(--accent-strong)]">
+      <div className="rounded-xl border border-slate-200/90 bg-white p-3.5 shadow-xs transition-all hover:border-slate-300">
+        <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-500">
+          Escalated Settlements
+        </p>
+        <p className="tabnum mt-1 text-xl font-black text-sky-700">
           {totalHabitationsEscalated}
         </p>
-        <p className="text-[10px] text-[var(--text-muted)]">of {summary.totalHabitationsEvaluated} assessed</p>
+        <p className="text-[10px] text-slate-500">Of {summary.totalHabitationsEvaluated} assessed</p>
       </div>
 
       {/* 2. Critical Settlements Shift */}
-      <div className="rounded-sm border border-[var(--critical-border)] bg-[var(--critical-soft)] p-3 shadow-xs">
-        <p className="label-xs text-[var(--critical)]">Critical Tiers</p>
+      <div className="rounded-xl border border-red-200 bg-red-50/40 p-3.5 shadow-xs transition-all hover:border-red-300">
+        <p className="text-[10px] font-semibold uppercase tracking-wider text-red-800">
+          Critical Tiers
+        </p>
         <div className="mt-1 flex items-baseline gap-1.5">
-          <span className="tabnum text-xl font-black text-[var(--critical)]">{scenarioCriticalHabitations}</span>
-          <span className="tabnum text-xs font-bold text-[var(--critical)]">(+{newlyCriticalHabitations})</span>
+          <span className="tabnum text-xl font-black text-red-700">{scenarioCriticalHabitations}</span>
+          <span className="tabnum text-xs font-bold text-red-600">(+{newlyCriticalHabitations})</span>
         </div>
-        <p className="text-[10px] text-[var(--critical)]">was {baselineCriticalHabitations} in baseline</p>
+        <p className="text-[10px] text-red-600">Was {baselineCriticalHabitations} in baseline</p>
       </div>
 
       {/* 3. Immediate Relocation Shift */}
-      <div className="rounded-sm border border-[var(--high-border)] bg-[var(--high-soft)] p-3 shadow-xs">
-        <p className="label-xs text-[var(--high)]">Immediate Relocation (0–6mo)</p>
+      <div className="rounded-xl border border-amber-200 bg-amber-50/40 p-3.5 shadow-xs transition-all hover:border-amber-300">
+        <p className="text-[10px] font-semibold uppercase tracking-wider text-amber-800">
+          Immediate Relocation (0–6mo)
+        </p>
         <div className="mt-1 flex items-baseline gap-1.5">
-          <span className="tabnum text-xl font-black text-[var(--high)]">{scenarioImmediateRelocations}</span>
-          <span className="tabnum text-xs font-bold text-[var(--high)]">(+{newlyImmediateRelocations})</span>
+          <span className="tabnum text-xl font-black text-amber-700">{scenarioImmediateRelocations}</span>
+          <span className="tabnum text-xs font-bold text-amber-600">(+{newlyImmediateRelocations})</span>
         </div>
-        <p className="text-[10px] text-[var(--high)]">was {baselineImmediateRelocations} in baseline</p>
+        <p className="text-[10px] text-amber-700">Was {baselineImmediateRelocations} in baseline</p>
       </div>
 
       {/* 4. Population at Elevated Risk */}
-      <div className="rounded-sm border border-[var(--border)] bg-[var(--surface)] p-3 shadow-xs">
-        <p className="label-xs">Elevated Pop. at Risk</p>
-        <p className="tabnum mt-1 text-xl font-bold text-[var(--text)]">
+      <div className="rounded-xl border border-slate-200/90 bg-white p-3.5 shadow-xs transition-all hover:border-slate-300">
+        <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-500">
+          Elevated Pop. at Risk
+        </p>
+        <p className="tabnum mt-1 text-xl font-black text-slate-900">
           +{additionalPopulationAtRisk.toLocaleString('en-IN')}
         </p>
-        <p className="text-[10px] text-[var(--text-muted)]">residents in escalated tiers</p>
+        <p className="text-[10px] text-slate-500">Residents in escalated tiers</p>
       </div>
 
       {/* 5. Additional Relocation Demand */}
-      <div className="rounded-sm border border-[var(--border)] bg-[var(--surface)] p-3 shadow-xs">
-        <p className="label-xs">Immediate Reloc. Demand</p>
-        <p className="tabnum mt-1 text-xl font-bold text-[var(--text)]">
+      <div className="rounded-xl border border-slate-200/90 bg-white p-3.5 shadow-xs transition-all hover:border-slate-300">
+        <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-500">
+          Immediate Reloc. Demand
+        </p>
+        <p className="tabnum mt-1 text-xl font-black text-slate-900">
           {additionalRelocationDemand.toLocaleString('en-IN')}
         </p>
-        <p className="text-[10px] text-[var(--text-muted)]">immediate absorption demand</p>
+        <p className="text-[10px] text-slate-500">Immediate absorption demand</p>
       </div>
 
       {/* 6. Net Absorption Headroom / Deficit */}
       <div
-        className={`rounded-sm border p-3 shadow-xs ${
+        className={`rounded-xl border p-3.5 shadow-xs transition-all ${
           capacityDeficit > 0
-            ? 'border-[var(--critical-border)] bg-[var(--critical-soft)]'
-            : 'border-[var(--safe-border)] bg-[var(--safe-soft)]'
+            ? 'border-red-200 bg-red-50/40 hover:border-red-300'
+            : 'border-emerald-200 bg-emerald-50/40 hover:border-emerald-300'
         }`}
       >
-        <p className="label-xs">Relocation Headroom</p>
-        <p className="tabnum mt-1 text-xl font-black text-[var(--safe)]">
+        <p
+          className={`text-[10px] font-semibold uppercase tracking-wider ${
+            capacityDeficit > 0 ? 'text-red-800' : 'text-emerald-800'
+          }`}
+        >
+          Relocation Headroom
+        </p>
+        <p
+          className={`tabnum mt-1 text-xl font-black ${
+            capacityDeficit > 0 ? 'text-red-700' : 'text-emerald-700'
+          }`}
+        >
           {totalAvailableRelocationHeadroom.toLocaleString('en-IN')}
         </p>
-        <p className="text-[10px] text-[var(--text-muted)]">
-          {capacityDeficit > 0 ? `${capacityDeficit} deficit` : 'Sufficient headroom'}
+        <p
+          className={`text-[10px] font-medium ${
+            capacityDeficit > 0 ? 'text-red-600' : 'text-emerald-700'
+          }`}
+        >
+          {capacityDeficit > 0
+            ? `${capacityDeficit.toLocaleString('en-IN')} person deficit`
+            : 'Sufficient headroom'}
         </p>
       </div>
     </div>

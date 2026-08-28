@@ -55,8 +55,14 @@ export async function getRelocationKpiSummary(): Promise<RelocationKpiSummary> {
     listAllRelocationPlans(),
   ]);
 
-  const totalHabitationsRequiringRelocation = plans.length;
-  const immediateRelocationHabitations = plans.filter((p) => p.habitation.priority === 'CRITICAL').length;
+  const immediateRelocationHabitations = plans.filter(
+    (p) => p.riskAssessment.priority === 'CRITICAL' || p.riskAssessment.timeline === 'immediate',
+  ).length;
+
+  const totalHabitationsRequiringRelocation = plans.filter(
+    (p) => p.riskAssessment.priority !== 'LOW',
+  ).length;
+
   const unabsorbedPopulationShortfall = plans.reduce((sum, p) => sum + p.unabsorbedPopulation, 0);
 
   return {

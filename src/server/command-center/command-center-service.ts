@@ -3,6 +3,7 @@ import { getRelocationSites } from '@/server/repositories/relocation-sites';
 import { getRegionalCapacityRollup } from '@/server/capacity/capacity-service';
 import { findRelocationCandidates } from '@/server/relocation/matching-engine';
 import { calculateHabitationRisk } from '@/server/risk/risk-engine';
+import { calculateSiteCapacity } from '@/server/capacity/capacity-engine';
 import { runScenarioSimulation } from '@/server/scenarios/scenario-service';
 import type {
   AuthorityActionItem,
@@ -48,6 +49,7 @@ export async function getCommandCenterData(): Promise<CommandCenterData> {
       riskLevel: risk.riskLevel,
       priority: risk.priority,
       timeline: risk.timeline,
+      urgencyWindow: risk.urgencyWindow,
       population: h.population,
       households: h.households,
       recommendedSite: topSite,
@@ -65,7 +67,9 @@ export async function getCommandCenterData(): Promise<CommandCenterData> {
   // 2. Compute Top Operational KPIs
   const criticalHabitationsCount = priorityItems.filter((i) => i.priority === 'CRITICAL').length;
   const immediateRelocationCount = priorityItems.filter((i) => i.timeline === 'immediate').length;
-  const totalPopulationAtRisk = priorityItems.reduce((sum, i) => sum + i.population, 0);
+  const totalPopulationAtRisk = priorityItems
+    .filter((i) => i.priority === 'CRITICAL' || i.priority === 'HIGH')
+    .reduce((sum, i) => sum + i.population, 0);
 
   const kpis: CommandCenterKpis = {
     totalAssessedHabitations: habitations.length,
@@ -77,33 +81,28 @@ export async function getCommandCenterData(): Promise<CommandCenterData> {
   };
 
   // 3. Compute Relocation Capacity Overview
-  const { listSiteCapacityAssessments } = await import('@/server/capacity/capacity-service');
-  const siteAssessments = await listSiteCapacityAssessments();
+  const siteAssessments = allSites.map((s) => ({
+    site: s,
+    assessment: calculateSiteCapacity(s),
+  }));
 
   const topConstrainedSites = siteAssessments
-    .sort((a, b) => b.utilizationPercent - a.utilizationPercent)
+    .sort((a, b) => b.assessment.utilizationPercent - a.assessment.utilizationPercent)
     .slice(0, 4)
-    .map((s) => ({
-      siteId: s.siteId,
-      siteName: s.siteName,
-      district: s.siteId.includes('WY')
-        ? 'Wayanad'
-        : s.siteId.includes('CH')
-          ? 'Chamoli'
-          : s.siteId.includes('RP')
-            ? 'Rudraprayag'
-            : s.siteId.includes('MJ')
-              ? 'Majuli'
-              : s.siteId.includes('KP')
-                ? 'Kendrapara'
-                : 'Pithoragarh',
-      headroom: s.availableHeadroom,
-      limitingFactor: s.limitingFactorLabel,
-      utilizationPercent: s.utilizationPercent,
+    .map(({ site, assessment }) => ({
+      siteId: site.id,
+      siteName: site.name,
+      district: site.district,
+      headroom: assessment.availableHeadroom,
+      limitingFactor: assessment.limitingFactorLabel,
+      utilizationPercent: assessment.utilizationPercent,
     }));
 
   const avgUtilization = siteAssessments.length > 0
-    ? Math.round(siteAssessments.reduce((sum, s) => sum + s.utilizationPercent, 0) / siteAssessments.length)
+    ? Math.round(
+        siteAssessments.reduce((sum, s) => sum + s.assessment.utilizationPercent, 0) /
+          siteAssessments.length,
+      )
     : 0;
 
   const capacityOverview: RelocationCapacityOverview = {
@@ -137,18 +136,18 @@ export async function getCommandCenterData(): Promise<CommandCenterData> {
   }
 
   // Action: Capacity bottleneck warnings
-  for (const site of topConstrainedSites) {
-    if (site.limitingFactor.includes('Shelter') || site.limitingFactor.includes('Water')) {
+  for (const item of topConstrainedSites) {
+    if (item.limitingFactor.includes('Shelter') || item.limitingFactor.includes('Water')) {
       actionQueue.push({
-        id: `ACT-BOTTLENECK-${site.siteId}`,
-        title: `Absorption Bottleneck Relief: ${site.siteName}`,
-        description: `Carrying capacity headroom is strictly constrained by ${site.limitingFactor} (${site.headroom.toLocaleString('en-IN')} available). Infrastructure expansion required.`,
+        id: `ACT-BOTTLENECK-${item.siteId}`,
+        title: `Absorption Bottleneck Relief: ${item.siteName}`,
+        description: `Carrying capacity headroom is strictly constrained by ${item.limitingFactor} (${item.headroom.toLocaleString('en-IN')} available). Infrastructure expansion required.`,
         severity: 'high',
         actionType: 'bottleneck_relief',
-        targetEntityId: site.siteId,
+        targetEntityId: item.siteId,
         targetEntityType: 'relocation_site',
-        href: `/relocation?selectedSiteId=${site.siteId}`,
-        evidenceReference: `Limiting Bottleneck: ${site.limitingFactor}`,
+        href: `/relocation?selectedSiteId=${item.siteId}`,
+        evidenceReference: `Limiting Bottleneck: ${item.limitingFactor}`,
         timestamp: new Date().toISOString(),
       });
     }

@@ -63,6 +63,10 @@ export async function generateHabitationsPrioritizationCsv(filter?: {
     }
 
     const risk = calculateHabitationRisk(h);
+    if (filter?.priority && filter.priority !== 'all' && risk.priority !== filter.priority) {
+      continue;
+    }
+
     const plan = findRelocationCandidates(h, allSites);
     const topSite = plan.recommendedSite;
 
@@ -207,7 +211,11 @@ export async function generateScenarioImpactCsv(
 
   const rows: string[] = [headers.join(',')];
 
-  for (const r of impact.changedHabitations) {
+  const list = impact.allHabitations && impact.allHabitations.length > 0
+    ? impact.allHabitations
+    : impact.changedHabitations;
+
+  for (const r of list) {
     const row = [
       escapeCsvField(r.habitation.id),
       escapeCsvField(r.habitation.name),

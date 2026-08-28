@@ -78,20 +78,53 @@ export function RelocationWorkspace({
   }, [activePlan]);
 
   return (
-    <div className="space-y-4">
-      {/* Top Level Summary KPIs */}
+    <div className="space-y-6">
+      {/* 1. Page Header */}
+      <div className="flex flex-wrap items-center justify-between gap-4 rounded-xl border border-slate-200 bg-white p-5 shadow-xs">
+        <div>
+          <div className="flex items-center gap-2">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-sky-700">
+              State Disaster Management Authority
+            </span>
+            <span className="rounded bg-emerald-50 px-1.5 py-0.5 text-[10px] font-bold text-emerald-700 ring-1 ring-emerald-600/20">
+              RELOCATION PLANNING
+            </span>
+          </div>
+          <h1 className="mt-1 text-lg font-bold text-slate-900">
+            Relocation Planning & Site Matching
+          </h1>
+          <p className="mt-0.5 text-xs text-slate-500">
+            Match displaced populations from high-risk habitations to safe candidate resettlement sites based on carrying capacity, transit distance, and essential services readiness.
+          </p>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-2.5 text-xs">
+          <ProvenanceTag value="DEMO DATA" />
+          {activePlan && (
+            <Link
+              className={buttonStyles({ size: 'sm', variant: 'secondary' })}
+              href={`/map?selected=${activePlan.habitation.id}`}
+            >
+              <MapPinIcon className="size-3.5" />
+              View on GIS Map
+            </Link>
+          )}
+        </div>
+      </div>
+
+      {/* 2. Top Level Summary KPIs */}
       <RelocationKpiSummaryBar summary={kpis} />
 
-      {/* Main Workspace Navigation & Habitation Selector */}
-      <div className="flex flex-wrap items-center justify-between gap-3 rounded-sm border border-[var(--border)] bg-[var(--surface)] p-3 shadow-[var(--shadow-subtle)]">
+      {/* 3. Main Workspace Navigation & Habitation Selector */}
+      <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-slate-200 bg-white p-4 shadow-xs">
         <div className="flex flex-wrap items-center gap-3">
           {/* Mode Switcher */}
-          <div className="flex rounded-sm border border-[var(--border)] bg-[var(--surface-muted)] p-0.5">
+          <div className="flex rounded-lg border border-slate-200 bg-slate-100 p-0.5">
             <button
-              className={`rounded-sm px-3 py-1 text-xs font-semibold transition-colors ${
+              className={`rounded-md px-3.5 py-1.5 text-xs font-semibold transition-all ${
                 activeTab === 'matching'
-                  ? 'bg-[var(--surface)] text-[var(--text)] shadow-xs'
-                  : 'text-[var(--text-muted)] hover:text-[var(--text)]'
+                  ? 'bg-white text-slate-900 shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900'
               }`}
               onClick={() => setActiveTab('matching')}
               type="button"
@@ -99,10 +132,10 @@ export function RelocationWorkspace({
               Habitation Matching
             </button>
             <button
-              className={`rounded-sm px-3 py-1 text-xs font-semibold transition-colors ${
+              className={`rounded-md px-3.5 py-1.5 text-xs font-semibold transition-all ${
                 activeTab === 'inventory'
-                  ? 'bg-[var(--surface)] text-[var(--text)] shadow-xs'
-                  : 'text-[var(--text-muted)] hover:text-[var(--text)]'
+                  ? 'bg-white text-slate-900 shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900'
               }`}
               onClick={() => setActiveTab('inventory')}
               type="button"
@@ -114,13 +147,13 @@ export function RelocationWorkspace({
           {/* Habitation Selector */}
           {activeTab === 'matching' && (
             <div className="flex items-center gap-2">
-              <label className="label-xs" htmlFor="habitation-selector">
-                Habitation:
+              <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500" htmlFor="habitation-selector">
+                Target Habitation:
               </label>
               <select
                 id="habitation-selector"
                 aria-label="Select target habitation for relocation matching"
-                className="h-8 rounded-sm border border-[var(--border)] bg-[var(--surface-muted)] px-2.5 text-xs font-semibold text-[var(--text)] focus:border-[var(--accent)] focus:outline-none"
+                className="h-8.5 rounded-lg border border-slate-200 bg-slate-50/60 px-3 text-xs font-semibold text-slate-900 focus:border-cyan-500 focus:bg-white focus:outline-none"
                 onChange={(e) => handleSelectHabitation(e.target.value)}
                 value={selectedHabitationId}
               >
@@ -132,8 +165,6 @@ export function RelocationWorkspace({
               </select>
             </div>
           )}
-
-          <ProvenanceTag value="DEMO DATA" />
         </div>
 
         {activePlan && (
@@ -149,7 +180,7 @@ export function RelocationWorkspace({
               href={`/map?selected=${activePlan.habitation.id}`}
             >
               <MapPinIcon className="size-3.5" />
-              View Habitation on GIS
+              View on GIS
             </Link>
           </div>
         )}
@@ -161,16 +192,16 @@ export function RelocationWorkspace({
       )}
 
       {/* Main Workspace Layout: Comparison / Candidate List + Right Dossier */}
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-12">
+      <div className="grid grid-cols-1 gap-5 lg:grid-cols-12">
         {/* Left Section */}
-        <section className="space-y-3 lg:col-span-7 xl:col-span-8">
+        <section className="space-y-4 lg:col-span-7 xl:col-span-8">
           {activeTab === 'matching' ? (
             <div>
-              <div className="mb-2.5 flex items-center justify-between">
-                <h3 className="label-xs text-[var(--text)]">
+              <div className="mb-3 flex items-center justify-between">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-slate-700">
                   Ranked Relocation Candidate Sectors ({allCandidateMatches.length} Evaluated)
                 </h3>
-                <span className="text-[11px] text-[var(--text-muted)]">
+                <span className="text-[11px] text-slate-500">
                   Ranked by 10-Factor Suitability & Limiting Headroom
                 </span>
               </div>
@@ -182,11 +213,11 @@ export function RelocationWorkspace({
             </div>
           ) : (
             <div>
-              <div className="mb-2.5 flex items-center justify-between">
-                <h3 className="label-xs text-[var(--text)]">
+              <div className="mb-3 flex items-center justify-between">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-slate-700">
                   Candidate Relocation Sites Master Inventory
                 </h3>
-                <span className="text-[11px] text-[var(--text-muted)]">
+                <span className="text-[11px] text-slate-500">
                   Evaluated with 10-Dimension Carrying Capacity Engine
                 </span>
               </div>
@@ -201,7 +232,7 @@ export function RelocationWorkspace({
 
         {/* Right Section: Deep Site Dossier */}
         <aside
-          className="rounded-sm border border-[var(--border)] bg-[var(--surface)] shadow-[var(--shadow-subtle)] lg:col-span-5 xl:col-span-4"
+          className="rounded-xl border border-slate-200 bg-white shadow-xs lg:col-span-5 xl:col-span-4"
           style={{ minHeight: '640px' }}
         >
           {activeTab === 'matching' ? (
