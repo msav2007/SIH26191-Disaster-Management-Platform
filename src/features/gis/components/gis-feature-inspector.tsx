@@ -6,13 +6,11 @@ import type {
   RedZone,
   RelocationSite,
 } from '@/types/domain';
-import { Badge } from '@/components/ui/badge';
 import { CloseIcon } from '@/components/ui/icons';
 import { KeyValue } from '@/components/ui/key-value';
 import { MetricBar } from '@/components/ui/metric-bar';
 import { ProvenanceTag } from '@/components/ui/provenance-tag';
 import { StatusPill } from '@/components/ui/status-pill';
-import { evaluateCandidateSites } from '@/server/gis/spatial-queries';
 import { calculateHabitationRisk } from '@/server/risk/risk-engine';
 import { calculateSiteCapacity } from '@/server/capacity/capacity-engine';
 import { getPriorityTone } from '@/server/classification/classification-engine';
@@ -32,17 +30,16 @@ export interface GisFeatureInspectorProps {
 export function GisFeatureInspector({
   feature,
   onClose,
-  onSelectFeature,
 }: GisFeatureInspectorProps) {
   if (!feature) {
     return (
-      <div className="flex h-full flex-col items-center justify-center p-6 text-center text-xs text-[var(--text-muted)]">
-        <div className="mb-2 size-8 rounded-full border border-dashed border-[var(--border)] p-2">
+      <div className="flex h-full flex-col items-center justify-center p-6 text-center text-xs text-slate-500">
+        <div className="mb-3 flex size-12 items-center justify-center rounded-2xl bg-blue-50 text-blue-600 shadow-2xs">
           🗺️
         </div>
-        <p className="font-medium text-[var(--text)]">No feature selected</p>
-        <p className="mt-1 max-w-[220px]">
-          Click on any Red Zone, habitation, relocation site, or infrastructure marker on the map to inspect evidence.
+        <p className="font-bold text-sm text-slate-900">No Feature Selected</p>
+        <p className="mt-1 max-w-[240px] text-xs text-slate-500 leading-relaxed">
+          Click on any Statutory Red Zone, Habitation, Relocation Site, or Infrastructure node on the map to inspect evidence.
         </p>
       </div>
     );
@@ -53,24 +50,24 @@ export function GisFeatureInspector({
     const tone = z.severity === 'critical' ? 'critical' : z.severity === 'high' ? 'high' : 'moderate';
 
     return (
-      <div className="flex h-full flex-col overflow-y-auto p-4">
+      <div className="flex h-full flex-col overflow-y-auto p-4 space-y-4">
         <header className="flex items-start justify-between gap-2 border-b border-slate-100 pb-3">
           <div>
             <div className="flex items-center gap-1.5 mb-1">
               <span className="rounded bg-red-100 px-1.5 py-0.5 text-[9px] font-bold uppercase text-red-800">
-                RED ZONE
+                STATUTORY RED ZONE
               </span>
-              <StatusPill tone={tone}>{z.severity}</StatusPill>
+              <StatusPill tone={tone}>{z.severity.toUpperCase()}</StatusPill>
               <ProvenanceTag value={z.provenance} />
             </div>
-            <h3 className="text-sm font-bold text-slate-900">{z.name}</h3>
+            <h3 className="text-base font-bold text-slate-900">{z.name}</h3>
             <p className="text-[11px] text-slate-500 font-mono">
               {z.id} · {z.district}, {z.state}
             </p>
           </div>
           <button
             aria-label="Close inspector"
-            className="text-slate-400 hover:text-slate-700 transition-colors"
+            className="text-slate-400 hover:text-slate-700 transition-colors p-1"
             onClick={onClose}
             type="button"
           >
@@ -78,53 +75,66 @@ export function GisFeatureInspector({
           </button>
         </header>
 
-        <div className="mt-3 space-y-4 text-xs">
+        {/* 1. WHAT IS THIS? */}
+        <div className="rounded-xl border border-slate-200/90 bg-slate-50/70 p-3 text-xs space-y-1">
+          <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500">1. WHAT IS THIS?</p>
+          <p className="font-semibold text-slate-900">
+            Statutory high-risk hazard boundary designated under Disaster Management Act 2005.
+          </p>
+          <p className="text-[11px] text-slate-600">
+            Primary hazard: <strong className="capitalize text-red-700">{z.primaryHazard.replace('_', ' ')}</strong> across a {z.radiusKm} km radius envelope ({z.areaSqKm} sq km).
+          </p>
+        </div>
+
+        {/* 2. WHY DOES IT MATTER? */}
+        <div className="rounded-xl border border-red-200 bg-red-50/40 p-3 text-xs space-y-1">
+          <p className="text-[10px] font-bold uppercase tracking-wider text-red-800">2. WHY DOES IT MATTER?</p>
+          <p className="font-semibold text-red-950">
+            {z.affectedPopulation.toLocaleString('en-IN')} residents face acute landslide/flood runout hazard.
+          </p>
+          <p className="text-[11px] text-slate-700">
+            {z.affectedHabitations} surveyed habitations fall within the direct impact envelope, requiring statutory construction moratoriums and phased resettlement.
+          </p>
+        </div>
+
+        {/* 3. KEY DATA */}
+        <div className="space-y-2 text-xs">
+          <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500">3. KEY DATA</p>
           <div className="grid grid-cols-2 gap-2">
             <div className="rounded-xl border border-red-200 bg-red-50/40 p-2.5">
-              <p className="text-[10px] font-bold uppercase tracking-wider text-red-800">Affected Population</p>
+              <p className="text-[10px] font-bold uppercase text-red-800">Affected Population</p>
               <p className="tabnum mt-1 text-base font-black text-red-700">
                 {z.affectedPopulation.toLocaleString('en-IN')}
               </p>
             </div>
             <div className="rounded-xl border border-slate-200 bg-slate-50/70 p-2.5">
-              <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Zone Area</p>
+              <p className="text-[10px] font-bold uppercase text-slate-500">Zone Envelope</p>
               <p className="tabnum mt-1 text-base font-bold text-slate-900">{z.areaSqKm} sq km</p>
             </div>
           </div>
 
-          <div>
-            <p className="text-[10px] font-bold uppercase tracking-wider text-slate-600 mb-1.5">Identified Hazards</p>
-            <div className="flex flex-wrap gap-1.5">
-              <Badge variant="critical">Primary: {z.primaryHazard}</Badge>
-              {z.secondaryHazards.map((hz) => (
-                <Badge key={hz} variant="outline">
-                  {hz}
-                </Badge>
-              ))}
-            </div>
-          </div>
-
           <dl className="rounded-xl border border-slate-100 bg-slate-50/50 p-2.5 space-y-1">
-            <KeyValue label="Radial Boundary" value={`${z.radiusKm} km radius`} />
-            <KeyValue label="Affected Settlements" value={`${z.affectedHabitations} habitations`} />
             <KeyValue label="Notification Status" value={z.status} />
-            <KeyValue label="Last Assessed" mono value={z.lastUpdated} />
             <KeyValue label="Coordinates" mono value={`${z.coordinates.latitude.toFixed(4)}°N, ${z.coordinates.longitude.toFixed(4)}°E`} />
+            <KeyValue label="Scientific Source" value={z.source} />
           </dl>
+        </div>
 
-          <div className="rounded-xl border border-slate-200 bg-slate-50/60 p-2.5">
-            <p className="text-[10px] font-bold uppercase tracking-wider text-slate-600 mb-1">Scientific Source Provenance</p>
-            <p className="text-[11px] leading-relaxed text-slate-600">{z.source}</p>
-          </div>
-
-          <div className="border-t border-slate-100 pt-3">
-            <Link
-              className="inline-flex w-full items-center justify-center rounded-lg bg-red-600 px-3 py-2 text-xs font-semibold text-white shadow-xs hover:bg-red-700 transition-colors"
-              href="/habitations"
-            >
-              View Vulnerable Settlements Queue →
-            </Link>
-          </div>
+        {/* 4. WHAT ACTION CAN I TAKE? */}
+        <div className="space-y-2 border-t border-slate-100 pt-3 text-xs">
+          <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500">4. WHAT ACTION CAN I TAKE?</p>
+          <Link
+            className="inline-flex w-full items-center justify-center rounded-xl bg-red-600 px-3.5 py-2.5 text-xs font-semibold text-white shadow-xs hover:bg-red-700 transition-colors"
+            href="/habitations"
+          >
+            Inspect Vulnerable Habitations Queue →
+          </Link>
+          <Link
+            className="inline-flex w-full items-center justify-center rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors"
+            href="/relocation"
+          >
+            Find Relocation Sites for Affected Residents →
+          </Link>
         </div>
       </div>
     );
@@ -134,30 +144,26 @@ export function GisFeatureInspector({
     const h = feature.data;
     const risk = calculateHabitationRisk(h);
     const tone = getPriorityTone(risk.priority);
-    const candidateMatches = evaluateCandidateSites(h);
 
     return (
-      <div className="flex h-full flex-col overflow-y-auto p-4">
+      <div className="flex h-full flex-col overflow-y-auto p-4 space-y-4">
         <header className="flex items-start justify-between gap-2 border-b border-slate-100 pb-3">
           <div>
             <div className="flex items-center gap-1.5 mb-1">
               <span className="rounded bg-blue-100 px-1.5 py-0.5 text-[9px] font-bold uppercase text-blue-800">
-                HABITATION
+                VULNERABLE HABITATION
               </span>
               <StatusPill tone={tone}>{risk.priority} Priority</StatusPill>
               <ProvenanceTag value={h.provenance} />
             </div>
-            <h3 className="text-sm font-bold text-slate-900">{h.name}</h3>
+            <h3 className="text-base font-bold text-slate-900">{h.name}</h3>
             <p className="text-[11px] text-slate-500 font-mono">
               {h.id} · {h.block} Block, {h.district}, {h.state}
-            </p>
-            <p className="text-[11px] font-semibold text-red-700 mt-0.5">
-              Composite Risk: {risk.compositeScore.toFixed(1)} / 100
             </p>
           </div>
           <button
             aria-label="Close inspector"
-            className="text-slate-400 hover:text-slate-700 transition-colors"
+            className="text-slate-400 hover:text-slate-700 transition-colors p-1"
             onClick={onClose}
             type="button"
           >
@@ -165,85 +171,63 @@ export function GisFeatureInspector({
           </button>
         </header>
 
-        <div className="mt-3 space-y-4 text-xs">
-          <div className="grid grid-cols-3 gap-2">
-            <div className="rounded-xl border border-slate-200 bg-slate-50/70 p-2 text-center">
-              <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Population</p>
-              <p className="tabnum mt-1 text-sm font-bold text-slate-900">{h.population.toLocaleString('en-IN')}</p>
-            </div>
-            <div className="rounded-xl border border-slate-200 bg-slate-50/70 p-2 text-center">
-              <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Households</p>
-              <p className="tabnum mt-1 text-sm font-bold text-slate-900">{h.households}</p>
-            </div>
-            <div className="rounded-xl border border-slate-200 bg-slate-50/70 p-2 text-center">
-              <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Slope / Elev</p>
-              <p className="tabnum mt-1 text-sm font-bold text-slate-900">{h.slopeDeg}° / {h.elevationM}m</p>
-            </div>
+        {/* 1. WHAT IS THIS? */}
+        <div className="rounded-xl border border-slate-200/90 bg-slate-50/70 p-3 text-xs space-y-1">
+          <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500">1. WHAT IS THIS?</p>
+          <p className="font-semibold text-slate-900">
+            Assessed human settlement in multi-hazard catchment zone.
+          </p>
+          <p className="text-[11px] text-slate-600">
+            Population of <strong>{h.population.toLocaleString('en-IN')} persons ({h.households} HH)</strong> on a {h.slopeDeg}° terrain gradient ({h.elevationM}m MSL).
+          </p>
+        </div>
+
+        {/* 2. WHY DOES IT MATTER? */}
+        <div className="rounded-xl border border-red-200 bg-red-50/40 p-3 text-xs space-y-1">
+          <p className="text-[10px] font-bold uppercase tracking-wider text-red-800">2. WHY DOES IT MATTER?</p>
+          <p className="font-semibold text-red-950">
+            Composite Risk Score: <span className="tabnum font-black text-red-700">{risk.compositeScore.toFixed(1)}/100</span> ({risk.priority} Priority).
+          </p>
+          <p className="text-[11px] text-slate-700">
+            {risk.explanation.primaryDriverText}
+          </p>
+        </div>
+
+        {/* 3. KEY DATA */}
+        <div className="space-y-2 text-xs">
+          <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+            3. KEY DATA · Multi-Criteria Vulnerability Factors
+          </p>
+          <div className="space-y-1.5">
+            <MetricBar label="Hazard Intensity" showValue tone={h.factors.hazardIntensity >= 90 ? 'critical' : 'high'} value={h.factors.hazardIntensity} />
+            <MetricBar label="Population Vulnerability" showValue tone="high" value={h.factors.populationVulnerability} />
+            <MetricBar label="Disaster History Recurrence" showValue tone="high" value={h.factors.disasterHistory} />
+            <MetricBar label="Infrastructure Isolation" showValue tone="moderate" value={h.factors.infrastructureRisk} />
           </div>
 
-          <div>
-            <div className="mb-1.5 flex items-baseline justify-between">
-              <p className="text-[10px] font-bold uppercase tracking-wider text-slate-600">Multi-Criteria Vulnerability Factors</p>
-              <span className="text-[10px] text-slate-400 font-mono">Factor weights</span>
-            </div>
-            <div className="space-y-1.5">
-              <MetricBar label="Hazard Intensity" showValue tone={h.factors.hazardIntensity >= 90 ? 'critical' : 'high'} value={h.factors.hazardIntensity} />
-              <MetricBar label="Population Vulnerability" showValue tone="high" value={h.factors.populationVulnerability} />
-              <MetricBar label="Disaster History Impact" showValue tone="high" value={h.factors.disasterHistory} />
-              <MetricBar label="Infrastructure Risk" showValue tone="moderate" value={h.factors.infrastructureRisk} />
-              <MetricBar label="Terrain Exposure" showValue tone="moderate" value={h.factors.exposure} />
-            </div>
+          <div className="grid grid-cols-2 gap-1.5 rounded-xl border border-slate-200 bg-slate-50/60 p-2.5 text-[11px]">
+            <div>Elderly: <span className="tabnum font-bold text-slate-900">{h.demographics.elderly}</span></div>
+            <div>Children: <span className="tabnum font-bold text-slate-900">{h.demographics.children}</span></div>
+            <div>BPL: <span className="tabnum font-bold text-slate-900">{h.demographics.belowPovertyLine}</span></div>
+            <div>Road: <span className="font-bold text-slate-900">{h.infrastructure.allWeatherRoad ? 'Paved' : 'Unpaved'}</span></div>
           </div>
+        </div>
 
-          <div>
-            <p className="text-[10px] font-bold uppercase tracking-wider text-slate-600 mb-1">Demographics Breakdown</p>
-            <div className="grid grid-cols-2 gap-1.5 rounded-xl border border-slate-200 bg-slate-50/60 p-2.5 text-[11px]">
-              <div>Elderly: <span className="tabnum font-bold text-slate-900">{h.demographics.elderly}</span></div>
-              <div>Children: <span className="tabnum font-bold text-slate-900">{h.demographics.children}</span></div>
-              <div>PWD: <span className="tabnum font-bold text-slate-900">{h.demographics.pwd}</span></div>
-              <div>BPL: <span className="tabnum font-bold text-slate-900">{h.demographics.belowPovertyLine}</span></div>
-            </div>
-          </div>
-
-          {candidateMatches.length > 0 && (
-            <div>
-              <p className="text-[10px] font-bold uppercase tracking-wider text-slate-600 mb-1.5">Candidate Relocation Sites</p>
-              <div className="space-y-2">
-                {candidateMatches.slice(0, 2).map((m) => (
-                  <div
-                    key={m.site.id}
-                    className="cursor-pointer rounded-xl border border-slate-200 bg-white p-2.5 transition-all hover:border-blue-300 hover:bg-blue-50/30"
-                    onClick={() => onSelectFeature?.({ type: 'relocation_site', data: m.site })}
-                  >
-                    <div className="flex items-start justify-between gap-1">
-                      <p className="font-bold text-slate-900 line-clamp-1">{m.site.name}</p>
-                      <span className="tabnum text-[10px] text-slate-500 font-mono">{m.distanceKm} km</span>
-                    </div>
-                    <div className="mt-1 flex items-center justify-between text-[11px]">
-                      <span className="text-slate-500">Available headroom:</span>
-                      <span className="tabnum font-bold text-emerald-700">{m.availableCapacity.toLocaleString('en-IN')} persons</span>
-                    </div>
-                    <MetricBar className="mt-1.5" label="Population Absorption Coverage" showValue tone={m.coveragePct >= 100 ? 'safe' : 'moderate'} value={m.coveragePct} />
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          <div className="border-t border-slate-100 pt-3 space-y-2">
-            <Link
-              className="inline-flex w-full items-center justify-center rounded-lg bg-blue-600 px-3 py-2 text-xs font-semibold text-white shadow-xs hover:bg-blue-700"
-              href={`/habitations?selected=${h.id}`}
-            >
-              Open Full Habitation Dossier →
-            </Link>
-            <Link
-              className="inline-flex w-full items-center justify-center rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50"
-              href={`/relocation?habitationId=${h.id}`}
-            >
-              View Candidate Relocation Sites →
-            </Link>
-          </div>
+        {/* 4. WHAT ACTION CAN I TAKE? */}
+        <div className="space-y-2 border-t border-slate-100 pt-3 text-xs">
+          <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500">4. WHAT ACTION CAN I TAKE?</p>
+          <Link
+            className="inline-flex w-full items-center justify-center rounded-xl bg-blue-600 px-3.5 py-2.5 text-xs font-semibold text-white shadow-xs hover:bg-blue-700 transition-colors"
+            href={`/relocation?habitationId=${h.id}`}
+          >
+            Find Relocation Sites for {h.name} →
+          </Link>
+          <Link
+            className="inline-flex w-full items-center justify-center rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors"
+            href={`/habitations?selected=${h.id}`}
+          >
+            Open Full Habitation Dossier →
+          </Link>
         </div>
       </div>
     );
@@ -257,24 +241,24 @@ export function GisFeatureInspector({
     const suitabilityTone = s.suitability === 'suitable' ? 'safe' : s.suitability === 'conditionally_suitable' ? 'moderate' : 'critical';
 
     return (
-      <div className="flex h-full flex-col overflow-y-auto p-4">
+      <div className="flex h-full flex-col overflow-y-auto p-4 space-y-4">
         <header className="flex items-start justify-between gap-2 border-b border-slate-100 pb-3">
           <div>
             <div className="flex items-center gap-1.5 mb-1">
               <span className="rounded bg-emerald-100 px-1.5 py-0.5 text-[9px] font-bold uppercase text-emerald-800">
-                RELOCATION SITE
+                RELOCATION SECTOR
               </span>
-              <StatusPill tone={suitabilityTone}>{s.suitability.replace('_', ' ')}</StatusPill>
+              <StatusPill tone={suitabilityTone}>{s.suitability.replace('_', ' ').toUpperCase()}</StatusPill>
               <ProvenanceTag value={s.provenance} />
             </div>
-            <h3 className="text-sm font-bold text-slate-900">{s.name}</h3>
+            <h3 className="text-base font-bold text-slate-900">{s.name}</h3>
             <p className="text-[11px] text-slate-500 font-mono">
               {s.id} · {s.block} Block, {s.district}, {s.state}
             </p>
           </div>
           <button
             aria-label="Close inspector"
-            className="text-slate-400 hover:text-slate-700 transition-colors"
+            className="text-slate-400 hover:text-slate-700 transition-colors p-1"
             onClick={onClose}
             type="button"
           >
@@ -282,64 +266,54 @@ export function GisFeatureInspector({
           </button>
         </header>
 
-        <div className="mt-3 space-y-4 text-xs">
-          {/* Capacity vs Suitability Callout */}
-          <div className="rounded-xl border border-blue-200 bg-blue-50/50 p-2.5 text-[11px] text-blue-900">
-            <p className="font-bold">Capacity vs Suitability Distinction</p>
-            <p className="mt-0.5 leading-relaxed text-slate-700">
-              This site has <strong className="text-emerald-700">{available.toLocaleString('en-IN')} persons</strong> effective absorption headroom (bottleneck: {capacityAssessment.limitingFactorLabel}), with suitability status <strong>{s.suitability.replace('_', ' ')}</strong> based on infrastructure and statutory clearances.
-            </p>
-          </div>
+        {/* 1. WHAT IS THIS? */}
+        <div className="rounded-xl border border-slate-200/90 bg-slate-50/70 p-3 text-xs space-y-1">
+          <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500">1. WHAT IS THIS?</p>
+          <p className="font-semibold text-slate-900">
+            Government revenue land parcel vetted for post-disaster resettlement.
+          </p>
+          <p className="text-[11px] text-slate-600">
+            Area: <strong>{s.areaHectares} hectares</strong> ({s.landClass.replace('_', ' ')}).
+          </p>
+        </div>
 
+        {/* 2. WHY DOES IT MATTER? */}
+        <div className="rounded-xl border border-emerald-200 bg-emerald-50/40 p-3 text-xs space-y-1">
+          <p className="text-[10px] font-bold uppercase tracking-wider text-emerald-800">2. WHY DOES IT MATTER?</p>
+          <p className="font-semibold text-emerald-950">
+            Safe absorption capacity: <span className="tabnum font-black text-emerald-700">{available.toLocaleString('en-IN')} persons</span> available.
+          </p>
+          <p className="text-[11px] text-slate-700">
+            Bottleneck factor: <strong>{capacityAssessment.limitingFactorLabel}</strong>. Calculated with a 15% safety factor to avoid secondary disaster creation.
+          </p>
+        </div>
+
+        {/* 3. KEY DATA */}
+        <div className="space-y-2 text-xs">
+          <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500">3. KEY DATA</p>
           <div className="grid grid-cols-2 gap-2">
             <div className="rounded-xl border border-slate-200 bg-slate-50/70 p-2.5">
-              <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Effective Capacity</p>
+              <p className="text-[10px] font-bold uppercase text-slate-500">Effective Capacity</p>
               <p className="tabnum mt-1 text-base font-bold text-slate-900">{capacityAssessment.effectiveCapacity.toLocaleString('en-IN')}</p>
             </div>
             <div className="rounded-xl border border-emerald-200 bg-emerald-50/40 p-2.5">
-              <p className="text-[10px] font-bold uppercase tracking-wider text-emerald-800">Available Headroom</p>
+              <p className="text-[10px] font-bold uppercase text-emerald-800">Available Headroom</p>
               <p className="tabnum mt-1 text-base font-black text-emerald-700">{available.toLocaleString('en-IN')}</p>
             </div>
           </div>
 
-          <div>
-            <div className="mb-1 flex items-baseline justify-between">
-              <p className="text-[10px] font-bold uppercase tracking-wider text-slate-600">Current Utilization</p>
-              <span className="tabnum text-[11px] font-bold text-slate-900">{utilPct}%</span>
-            </div>
-            <MetricBar max={100} tone={utilPct > 80 ? 'critical' : 'safe'} value={utilPct} />
-          </div>
+          <MetricBar label={`Utilization (${utilPct}%)`} max={100} tone={utilPct > 80 ? 'critical' : 'safe'} value={utilPct} />
+        </div>
 
-          <div>
-            <p className="text-[10px] font-bold uppercase tracking-wider text-slate-600 mb-1.5">Essential Services Readiness Matrix</p>
-            <div className="grid grid-cols-2 gap-2 text-[11px]">
-              {Object.entries(s.services).map(([service, rating]) => (
-                <div key={service} className="flex items-center justify-between rounded-lg border border-slate-200 bg-white p-2 shadow-2xs">
-                  <span className="capitalize text-slate-600">{service.replace(/([A-Z])/g, ' $1')}</span>
-                  <StatusPill dot={false} tone={rating === 'adequate' ? 'safe' : rating === 'partial' ? 'moderate' : 'critical'}>
-                    {rating}
-                  </StatusPill>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <dl className="rounded-xl border border-slate-100 bg-slate-50/50 p-2.5 space-y-1">
-            <KeyValue label="Land Classification" value={s.landClass.replace('_', ' ')} />
-            <KeyValue label="Site Area" value={`${s.areaHectares} hectares`} />
-            <KeyValue label="Emergency Shelter Capacity" value={`${s.shelterCapacity} persons`} />
-            <KeyValue label="Hazard Exposure Level" value={s.hazardExposure} />
-            <KeyValue label="Commissioning Status" value={s.status} />
-          </dl>
-
-          <div className="border-t border-slate-100 pt-3">
-            <Link
-              className="inline-flex w-full items-center justify-center rounded-lg bg-blue-600 px-3 py-2 text-xs font-semibold text-white shadow-xs hover:bg-blue-700"
-              href={`/relocation?siteId=${s.id}`}
-            >
-              Open Site Assessment →
-            </Link>
-          </div>
+        {/* 4. WHAT ACTION CAN I TAKE? */}
+        <div className="space-y-2 border-t border-slate-100 pt-3 text-xs">
+          <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500">4. WHAT ACTION CAN I TAKE?</p>
+          <Link
+            className="inline-flex w-full items-center justify-center rounded-xl bg-blue-600 px-3.5 py-2.5 text-xs font-semibold text-white shadow-xs hover:bg-blue-700 transition-colors"
+            href={`/relocation?siteId=${s.id}`}
+          >
+            Open Complete Site Assessment &amp; Matches →
+          </Link>
         </div>
       </div>
     );
@@ -348,7 +322,7 @@ export function GisFeatureInspector({
   // Infrastructure
   const inf = feature.data;
   return (
-    <div className="flex h-full flex-col overflow-y-auto p-4">
+    <div className="flex h-full flex-col overflow-y-auto p-4 space-y-4">
       <header className="flex items-start justify-between gap-2 border-b border-slate-100 pb-3">
         <div>
           <div className="flex items-center gap-1.5 mb-1">
@@ -357,14 +331,14 @@ export function GisFeatureInspector({
             </span>
             <StatusPill tone="info">{inf.kind.toUpperCase()}</StatusPill>
           </div>
-          <h3 className="text-sm font-bold text-slate-900">{inf.name}</h3>
+          <h3 className="text-base font-bold text-slate-900">{inf.name}</h3>
           <p className="text-[11px] text-slate-500 font-mono">
             {inf.id} · {inf.district}, {inf.state}
           </p>
         </div>
         <button
           aria-label="Close inspector"
-          className="text-slate-400 hover:text-slate-700 transition-colors"
+          className="text-slate-400 hover:text-slate-700 transition-colors p-1"
           onClick={onClose}
           type="button"
         >
@@ -372,28 +346,47 @@ export function GisFeatureInspector({
         </button>
       </header>
 
-      <div className="mt-3 space-y-4 text-xs">
+      {/* 1. WHAT IS THIS? */}
+      <div className="rounded-xl border border-slate-200/90 bg-slate-50/70 p-3 text-xs space-y-1">
+        <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500">1. WHAT IS THIS?</p>
+        <p className="font-semibold text-slate-900 capitalize">
+          {inf.kind.replace('_', ' ')} emergency response facility.
+        </p>
+        <p className="text-[11px] text-slate-600">
+          Jurisdiction: <strong>{inf.district}, {inf.state}</strong>.
+        </p>
+      </div>
+
+      {/* 2. WHY DOES IT MATTER? */}
+      <div className="rounded-xl border border-blue-200 bg-blue-50/40 p-3 text-xs space-y-1">
+        <p className="text-[10px] font-bold uppercase tracking-wider text-blue-800">2. WHY DOES IT MATTER?</p>
+        <p className="font-semibold text-blue-950">
+          Essential frontline node for casualty evacuation, logistics airlift, and shelter operations.
+        </p>
+        <p className="text-[11px] text-slate-700">
+          Directly supports surrounding habitations during monsoon/landslide emergencies.
+        </p>
+      </div>
+
+      {/* 3. KEY DATA */}
+      <div className="space-y-2 text-xs">
+        <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500">3. KEY DATA</p>
         <dl className="rounded-xl border border-slate-100 bg-slate-50/50 p-2.5 space-y-1">
-          <KeyValue label="Infrastructure Asset Type" value={inf.kind.replace('_', ' ').toUpperCase()} />
-          <KeyValue label="District Jurisdiction" value={inf.district} />
-          <KeyValue label="State" value={inf.state} />
+          <KeyValue label="Asset Classification" value={inf.kind.replace('_', ' ').toUpperCase()} />
+          <KeyValue label="District" value={inf.district} />
           <KeyValue label="Coordinates" mono value={`${inf.coordinates.latitude.toFixed(4)}°N, ${inf.coordinates.longitude.toFixed(4)}°E`} />
         </dl>
-        <div className="rounded-xl border border-slate-200 bg-slate-50/60 p-2.5">
-          <p className="text-[10px] font-bold uppercase tracking-wider text-slate-600 mb-1">Operational Use</p>
-          <p className="text-[11px] text-slate-600">
-            Identified as critical emergency response asset for nearby vulnerable habitations and planned relocation sites.
-          </p>
-        </div>
+      </div>
 
-        <div className="border-t border-slate-100 pt-3">
-          <Link
-            className="inline-flex w-full items-center justify-center rounded-lg bg-blue-600 px-3 py-2 text-xs font-semibold text-white shadow-xs hover:bg-blue-700 transition-colors"
-            href="/dashboard"
-          >
-            View Command Dashboard →
-          </Link>
-        </div>
+      {/* 4. WHAT ACTION CAN I TAKE? */}
+      <div className="space-y-2 border-t border-slate-100 pt-3 text-xs">
+        <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500">4. WHAT ACTION CAN I TAKE?</p>
+        <Link
+          className="inline-flex w-full items-center justify-center rounded-xl bg-blue-600 px-3.5 py-2.5 text-xs font-semibold text-white shadow-xs hover:bg-blue-700 transition-colors"
+          href="/dashboard"
+        >
+          Return to Command Dashboard →
+        </Link>
       </div>
     </div>
   );

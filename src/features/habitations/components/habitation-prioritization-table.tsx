@@ -349,13 +349,25 @@ export function HabitationPrioritizationTable({
                       </td>
 
                       <td className="px-3.5 py-2.5">
-                        <Link
-                          className="inline-flex items-center gap-1 text-[11px] font-semibold text-blue-700 hover:text-blue-900 hover:underline"
-                          href={`/relocation?habitationId=${h.id}`}
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          Find Relocation Site <ChevronRightIcon className="size-3" />
-                        </Link>
+                        <div className="flex flex-col gap-1">
+                          <button
+                            className="inline-flex items-center gap-1 text-[11px] font-bold text-blue-700 hover:text-blue-900 hover:underline text-left"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              onSelect(item);
+                            }}
+                            type="button"
+                          >
+                            View Assessment →
+                          </button>
+                          <Link
+                            className="inline-flex items-center gap-1 text-[11px] font-semibold text-slate-700 hover:text-blue-700 hover:underline"
+                            href={`/relocation?habitationId=${h.id}`}
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            Find Relocation Site <ChevronRightIcon className="size-3" />
+                          </Link>
+                        </div>
                       </td>
                     </tr>
                   );

@@ -66,10 +66,10 @@ export function SidebarNav({
                 <li key={item.href}>
                   <Link
                     className={cn(
-                      'group flex items-center justify-between gap-3 rounded-lg px-3 py-2 text-xs font-medium transition-all',
+                      'group flex items-center justify-between gap-3 rounded-xl px-3 py-2 text-xs font-medium transition-all duration-150',
                       isActive
-                        ? 'bg-blue-600 text-white font-semibold shadow-xs'
-                        : 'text-slate-300 hover:bg-slate-800/70 hover:text-white',
+                        ? 'bg-blue-600 text-white font-semibold shadow-xs ring-1 ring-blue-700/40'
+                        : 'text-slate-300 hover:bg-slate-800/60 hover:text-white',
                     )}
                     href={item.href}
                     onClick={() => onNavigate?.()}
@@ -91,7 +91,7 @@ export function SidebarNav({
                     {item.badge && (
                       <span
                         className={cn(
-                          'rounded px-1.5 py-0.5 text-[9px] font-bold',
+                          'rounded-md px-1.5 py-0.5 text-[9px] font-bold',
                           isActive
                             ? 'bg-blue-700 text-white'
                             : 'bg-slate-800 text-blue-300 ring-1 ring-blue-500/20',

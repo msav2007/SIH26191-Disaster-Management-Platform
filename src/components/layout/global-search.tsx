@@ -102,7 +102,7 @@ export function GlobalSearch() {
           aria-controls="global-search-results"
           aria-expanded={isOpen && results.length > 0}
           aria-label="Global authority search"
-          className="h-8 w-full rounded-sm border border-[var(--border)] bg-[var(--surface-muted)] px-3 pr-16 text-xs text-[var(--text)] placeholder-[var(--text-muted)] focus:border-[var(--accent)] focus:bg-[var(--surface)] focus:outline-none"
+          className="h-9 w-full rounded-xl border border-slate-200 bg-slate-50/70 px-3.5 pr-16 text-xs text-slate-900 placeholder:text-slate-400 focus:border-blue-600 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-600/20 shadow-2xs transition-all"
           placeholder="Search settlements, red zones, relocation sectors..."
           role="combobox"
           type="text"
@@ -113,39 +113,39 @@ export function GlobalSearch() {
           }}
           onKeyDown={handleInputKeyDown}
         />
-        <div className="pointer-events-none absolute inset-y-0 right-2 flex items-center gap-1">
-          <kbd className="rounded-xs border border-[var(--border)] bg-[var(--surface)] px-1 py-0.5 font-mono text-[9px] text-[var(--text-muted)]">
+        <div className="pointer-events-none absolute inset-y-0 right-2.5 flex items-center gap-1">
+          <kbd className="rounded-md border border-slate-200 bg-white px-1.5 py-0.5 font-mono text-[9px] font-semibold text-slate-500 shadow-2xs">
             Ctrl K
           </kbd>
         </div>
       </div>
 
       {isOpen && (results.length > 0 || isLoading) && (
-        <div className="absolute top-full z-50 mt-1 max-h-80 w-full overflow-y-auto rounded-sm border border-[var(--border)] bg-[var(--surface)] p-1 shadow-lg">
+        <div className="absolute top-full z-50 mt-1.5 max-h-80 w-full overflow-y-auto rounded-2xl border border-slate-200 bg-white/98 p-1.5 shadow-elevated backdrop-blur-md">
           {isLoading && (
-            <div className="p-2 text-center text-xs text-[var(--text-muted)]">Searching authority registries...</div>
+            <div className="p-3 text-center text-xs text-slate-500">Searching authority registries...</div>
           )}
           {!isLoading && results.length === 0 && (
-            <div className="p-2 text-center text-xs text-[var(--text-muted)]">No matching entities found.</div>
+            <div className="p-3 text-center text-xs text-slate-500">No matching entities found.</div>
           )}
           {!isLoading &&
             results.map((item, idx) => (
               <button
                 key={`${item.category}-${item.id}`}
-                className={`flex w-full items-start justify-between gap-2 rounded-xs p-2 text-left text-xs transition-colors ${
-                  selectedIndex === idx ? 'bg-[var(--accent-soft)]/40 font-medium' : 'hover:bg-[var(--surface-muted)]'
+                className={`flex w-full items-start justify-between gap-2 rounded-xl p-2.5 text-left text-xs transition-colors ${
+                  selectedIndex === idx ? 'bg-blue-50/80 font-medium text-blue-950' : 'hover:bg-slate-50 text-slate-800'
                 }`}
                 onClick={() => handleSelect(item)}
                 type="button"
               >
                 <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-1.5 font-semibold text-[var(--text)]">
+                  <div className="flex items-center gap-1.5 font-bold text-slate-900">
                     <span>{item.title}</span>
-                    <span className="rounded-xs border border-[var(--border)] px-1 text-[9px] uppercase tracking-wider text-[var(--text-muted)]">
+                    <span className="rounded-md border border-slate-200 bg-slate-50 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-slate-500">
                       {item.categoryLabel}
                     </span>
                   </div>
-                  <div className="truncate text-[11px] text-[var(--text-muted)]">{item.subtitle}</div>
+                  <div className="truncate text-[11px] text-slate-500 mt-0.5">{item.subtitle}</div>
                 </div>
                 {item.badgeTone && (
                   <StatusPill tone={item.badgeTone}>

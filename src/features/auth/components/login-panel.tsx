@@ -44,16 +44,16 @@ export function LoginPanel() {
   };
 
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
-      <div className="flex items-center gap-3">
-        <div className="flex size-11 items-center justify-center rounded-xl bg-blue-700 text-white shadow-sm ring-1 ring-white/20">
-          <ShieldAlertIcon className="size-6" />
+    <div className="rounded-3xl border border-slate-200/90 bg-white p-7 shadow-card sm:p-10">
+      <div className="flex items-center gap-3.5">
+        <div className="flex size-11 items-center justify-center rounded-2xl bg-blue-600 text-white shadow-xs ring-1 ring-blue-700/30">
+          <ShieldAlertIcon className="size-5.5" />
         </div>
         <div>
           <span className="text-[11px] font-bold uppercase tracking-wider text-blue-700">
-            State Disaster Management Authority
+            STATE DISASTER MANAGEMENT AUTHORITY
           </span>
-          <h1 className="text-xl font-black text-slate-900">
+          <h1 className="text-xl font-extrabold text-slate-900">
             Disaster Relocation Intelligence Platform
           </h1>
         </div>

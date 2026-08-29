@@ -2,32 +2,32 @@
 
 :root {
   /* Layout & Surfaces */
-  --bg: #f1f5f9;
-  --bg-subtle: #e8edf5;
+  --bg: #f8fafc;
+  --bg-subtle: #f1f5f9;
   --surface: #ffffff;
-  --surface-glass: rgba(255, 255, 255, 0.94);
-  --surface-glass-subtle: rgba(248, 250, 252, 0.88);
+  --surface-glass: rgba(255, 255, 255, 0.96);
+  --surface-glass-subtle: rgba(248, 250, 252, 0.9);
   --surface-muted: #f8fafc;
-  --surface-strong: #091224;
-  --surface-sidebar: #0c1427;
-  --surface-sidebar-hover: #17233f;
+  --surface-strong: #081525;
+  --surface-sidebar: #081525;
+  --surface-sidebar-hover: #132238;
   --surface-sidebar-active: #2563eb;
   
   /* Borders */
   --border: #e2e8f0;
   --border-subtle: #edf2f7;
   --border-strong: #cbd5e1;
-  --border-sidebar: #1e293b;
+  --border-sidebar: #1a2a42;
   
   /* Typography */
   --text: #0f172a;
   --text-muted: #64748b;
   --text-secondary: #475569;
-  --text-inverse: #f8fafc;
+  --text-inverse: #ffffff;
   --text-sidebar: #94a3b8;
   --text-sidebar-bright: #ffffff;
   
-  /* Interaction Accent (Royal Blue / Command Navy) */
+  /* Interaction Accent (CarbonTwin Royal Blue) */
   --accent: #2563eb;
   --accent-hover: #1d4ed8;
   --accent-strong: #1e40af;
@@ -36,26 +36,26 @@
   --accent-cyan-soft: #f0f9ff;
   --accent-border: #bfdbfe;
 
-  /* Restrained Status Colors */
-  --critical: #dc2626;
+  /* Restrained Semantic Status Colors */
+  --critical: #ef4444;
   --critical-soft: #fef2f2;
   --critical-border: #fecaca;
-  --critical-text: #991b1b;
+  --critical-text: #b91c1c;
 
-  --high: #d97706;
+  --high: #f59e0b;
   --high-soft: #fffbeb;
   --high-border: #fde68a;
-  --high-text: #92400e;
+  --high-text: #b45309;
 
-  --moderate: #ca8a04;
+  --moderate: #eab308;
   --moderate-soft: #fefce8;
   --moderate-border: #fef08a;
-  --moderate-text: #854d0e;
+  --moderate-text: #a16207;
 
-  --safe: #16a34a;
-  --safe-soft: #f0fdf4;
-  --safe-border: #bbf7d0;
-  --safe-text: #166534;
+  --safe: #10b981;
+  --safe-soft: #ecfdf5;
+  --safe-border: #a7f3d0;
+  --safe-text: #047857;
 
   --info: #2563eb;
   --info-soft: #eff6ff;
@@ -66,10 +66,11 @@
   --neutral-soft: #f1f5f9;
   --neutral-border: #cbd5e1;
 
-  /* Shadows & Elevations */
-  --shadow-subtle: 0 1px 3px 0 rgba(15, 23, 42, 0.05), 0 1px 2px -1px rgba(15, 23, 42, 0.03);
-  --shadow-card: 0 2px 6px -1px rgba(15, 23, 42, 0.06), 0 1px 4px -1px rgba(15, 23, 42, 0.04);
-  --shadow-elevated: 0 10px 25px -3px rgba(15, 23, 42, 0.08), 0 4px 10px -2px rgba(15, 23, 42, 0.04);
+  /* Premium CarbonTwin Shadows & Elevations */
+  --shadow-subtle: 0 1px 2px 0 rgba(15, 23, 42, 0.04);
+  --shadow-card: 0 2px 8px -2px rgba(15, 23, 42, 0.05), 0 1px 4px -1px rgba(15, 23, 42, 0.03);
+  --shadow-elevated: 0 12px 32px -4px rgba(15, 23, 42, 0.08), 0 4px 12px -2px rgba(15, 23, 42, 0.04);
+  --shadow-glow-blue: 0 0 28px -4px rgba(37, 99, 235, 0.15);
 }
 
 * {
@@ -85,20 +86,21 @@ body {
   margin: 0;
   color: var(--text);
   font-family:
-    'Segoe UI Variable',
-    Aptos,
+    'Plus Jakarta Sans',
     'Inter',
-    'Noto Sans',
     -apple-system,
     BlinkMacSystemFont,
+    'Segoe UI',
     system-ui,
     sans-serif;
   background-color: var(--bg);
   background-image:
-    radial-gradient(at 0% 0%, rgba(37, 99, 235, 0.035) 0px, transparent 50%),
-    radial-gradient(at 100% 0%, rgba(30, 64, 175, 0.025) 0px, transparent 50%),
-    radial-gradient(at 50% 100%, rgba(15, 23, 42, 0.015) 0px, transparent 50%);
+    radial-gradient(ellipse 80% 50% at 50% -20%, rgba(37, 99, 235, 0.06), transparent 70%),
+    radial-gradient(ellipse 60% 40% at 100% 20%, rgba(30, 64, 175, 0.03), transparent 60%),
+    radial-gradient(ellipse 50% 30% at 0% 80%, rgba(37, 99, 235, 0.025), transparent 50%);
   background-attachment: fixed;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 a {
@@ -114,15 +116,15 @@ textarea {
 }
 
 ::selection {
-  color: var(--text-inverse);
-  background: var(--accent-strong);
+  color: #ffffff;
+  background: #2563eb;
 }
 
 /* Glassmorphism & Elevation Utilities */
 .glass-panel {
   background: var(--surface-glass);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   border: 1px solid var(--border);
   box-shadow: var(--shadow-card);
 }
@@ -130,7 +132,7 @@ textarea {
 .command-card {
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 16px;
+  border-radius: 18px;
   box-shadow: var(--shadow-subtle);
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }

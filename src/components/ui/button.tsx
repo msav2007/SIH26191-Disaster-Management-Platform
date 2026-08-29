@@ -12,24 +12,24 @@ type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
 
 const variantClasses: Record<ButtonVariant, string> = {
   primary:
-    'bg-blue-600 text-white shadow-xs hover:bg-blue-700 active:scale-[0.98] ring-1 ring-blue-700/20 font-semibold',
+    'bg-blue-600 text-white shadow-xs hover:bg-blue-700 active:scale-[0.98] ring-1 ring-blue-700/30 font-semibold',
   cyan:
-    'bg-sky-600 text-white shadow-xs hover:bg-sky-700 active:scale-[0.98] ring-1 ring-sky-700/20 font-semibold',
+    'bg-blue-600 text-white shadow-xs hover:bg-blue-700 active:scale-[0.98] ring-1 ring-blue-700/30 font-semibold',
   info:
-    'bg-blue-500 text-white shadow-xs hover:bg-blue-600 active:scale-[0.98] ring-1 ring-blue-600/20 font-semibold',
+    'bg-blue-600 text-white shadow-xs hover:bg-blue-700 active:scale-[0.98] ring-1 ring-blue-700/30 font-semibold',
   success:
-    'bg-emerald-600 text-white shadow-xs hover:bg-emerald-700 active:scale-[0.98] ring-1 ring-emerald-700/20 font-semibold',
+    'bg-emerald-600 text-white shadow-xs hover:bg-emerald-700 active:scale-[0.98] ring-1 ring-emerald-700/30 font-semibold',
   secondary:
-    'border border-slate-200 bg-white text-slate-700 shadow-xs hover:bg-slate-50 hover:border-slate-300 hover:text-slate-900 active:scale-[0.98]',
+    'border border-slate-200 bg-white text-slate-800 shadow-xs hover:bg-slate-50 hover:border-slate-300 hover:text-slate-900 active:scale-[0.98] font-semibold',
   outline:
-    'border border-slate-300 bg-transparent text-slate-700 hover:bg-slate-50 hover:text-slate-900 active:scale-[0.98]',
+    'border border-slate-200 bg-white/80 text-slate-700 hover:bg-slate-50 hover:text-slate-900 active:scale-[0.98] font-medium',
   ghost: 'bg-transparent text-slate-600 hover:bg-slate-100 hover:text-slate-900 active:scale-[0.98]',
   danger:
-    'bg-red-600 text-white shadow-xs hover:bg-red-700 active:scale-[0.98] ring-1 ring-red-700/20 font-semibold',
+    'bg-red-600 text-white shadow-xs hover:bg-red-700 active:scale-[0.98] ring-1 ring-red-700/30 font-semibold',
 };
 
 const sizeClasses: Record<ButtonSize, string> = {
-  md: 'px-4 py-2 text-xs font-semibold rounded-lg',
+  md: 'px-4 py-2 text-xs font-semibold rounded-xl',
   sm: 'px-3 py-1.5 text-xs font-medium rounded-lg',
   xs: 'px-2.5 py-1 text-[11px] font-medium rounded-md',
 };

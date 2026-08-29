@@ -190,16 +190,19 @@ export function OperationalGisMap({
       {/* Top Header & GIS Controls */}
       <header className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 bg-white/95 px-5 py-4">
         <div className="flex items-center gap-3">
-          <span className="flex size-8 items-center justify-center rounded-xl bg-blue-600 text-white shadow-2xs">
+          <span className="flex size-9 items-center justify-center rounded-xl bg-blue-600 text-white shadow-xs ring-1 ring-blue-700/30">
             <LayersIcon className="size-4.5" />
           </span>
           <div>
             <div className="flex items-center gap-2">
-              <h2 className="text-sm font-bold text-slate-900">
-                GIS Risk Map
-              </h2>
+              <span className="text-[10px] font-bold uppercase tracking-wider text-blue-700">
+                STATE DISASTER MANAGEMENT AUTHORITY
+              </span>
               <ProvenanceTag value="DEMO DATA" />
             </div>
+            <h2 className="text-sm font-bold text-slate-900">
+              OPERATIONAL MULTI-HAZARD GIS
+            </h2>
             <p className="text-xs text-slate-500">
               Explore statutory red zones, vulnerable habitations, candidate relocation sites and critical infrastructure.
             </p>
